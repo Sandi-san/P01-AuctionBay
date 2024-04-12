@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//DEFINIRAJ SHEME ZA DB
+//USERS
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  firstName String?
+  lastName  String?
+
+  email    String @unique
+  password String
+
+  image   String?
+
+  Auction Auction[]
+  Bid     Bid[]
+
+  @@map("users")
+}
+
+//AUCTIONS
+model Auction {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  description String?
+
+  currentPrice Int
+  //status auction, ko user se ni biddal
+  status       String @default("In progress") //done, in progress
+
+  duration DateTime
+  image    String?
+
+  //FOREIGN KEY
+  userId Int
+  user   User  @relation(fields: [userId], references: [id])
+
+  Bid    Bid[]
+
+  @@map("auctions")
+}
+
+//BIDS
+model Bid {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  price  Int
+  //status auction, ko je user dodal bid
+  status String //outbid, winning, done
+
+  //FOREIGN KEYS
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+  auctionId Int
+  auction   Auction @relation(fields: [auctionId], references: [id])
+
+  @@map("bids")
+}
