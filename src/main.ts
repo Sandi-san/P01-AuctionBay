@@ -7,9 +7,8 @@ import * as express from 'express'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  //za class-validation
-  app.useGlobalPipes(new ValidationPipe())
-  //{whitelist:true}),
+  //za class-validation (whitelist=odstrani var ki niso pricakovani v definiranem dto)
+  app.useGlobalPipes(new ValidationPipe({whitelist:true}))
   
   //app.use(cookieParser()) //cookies visible na client side
   

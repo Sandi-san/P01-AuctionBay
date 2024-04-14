@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
-//vsi moduli v aplikaciji imajo dostop
+//PrismaService ZA VSE MODULE V PROJEKTU (NI POTREBEN IMPORT)
 @Global()
 @Module({
   providers: [PrismaService],

@@ -1,4 +1,4 @@
-//CONNECT Z DB
+//POVEZAVA Z DB
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
