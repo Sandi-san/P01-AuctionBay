@@ -12,6 +12,7 @@ export class AuthService {
     //POVEZAVA Z REPOSITORY
     constructor(private prisma: PrismaService) { }
 
+    //REGISTER USER
     async register(dto: AuthDto) {
         //generiraj hash za password
         const hash = await argon.hash(dto.password)
@@ -43,7 +44,24 @@ export class AuthService {
         }
     }
 
-    login() {
-        return "Reached login from controller to service"
+    //LOGIN USER
+    async login(dto: AuthDto) {
+        //find user by email
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: dto.email
+            }
+        })
+        //ce user ne obstaja, vrni exception (guard condition)
+        if(!user) throw new ForbiddenException('User with that email does not exist!')
+
+        //preveri password (password iz base, password iz dto)
+        const pwMatch = await argon.verify(user.password,dto.password)
+        if(!pwMatch) throw new ForbiddenException('Passwords do not match!')
+
+        //delete password is user objekta (ne baze) predenj returnas kot json
+        delete user.password
+        //return user
+        return user
     }
 }
