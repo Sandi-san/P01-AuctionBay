@@ -6,11 +6,19 @@ import { AuthDto } from './dto';
 //za password hashing
 import * as argon from 'argon2'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
     //POVEZAVA Z REPOSITORY
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        //za jwt token user authentication
+        private jwt: JwtService,
+        //za dostop do .env var
+        private config: ConfigService
+    ) { }
 
     //REGISTER USER
     async register(dto: AuthDto) {
@@ -27,15 +35,15 @@ export class AuthService {
             })
             //odstrani password var predenj vrnes userja
             //POZOR: v password ne bo vec obstajal v tem user objektu (v DB se shrani normalno)
-            delete user.password
+            //delete user.password
 
             //return user
-            return user
+            return this.signToken(user.id, user.email)
         } catch (error) {
             //preveri ce se je pojavil v prisma clientu
             if (error instanceof PrismaClientKnownRequestError) {
                 //error, kjer email novega register userja ze obstaja v bazi
-                if(error.code==='P2002')
+                if (error.code === 'P2002')
                     throw new ForbiddenException('Email already taken!');
             } else {
                 //ni email alredy taken error, vrni prvotnega
@@ -53,15 +61,33 @@ export class AuthService {
             }
         })
         //ce user ne obstaja, vrni exception (guard condition)
-        if(!user) throw new ForbiddenException('User with that email does not exist!')
+        if (!user) throw new ForbiddenException('User with that email does not exist!')
 
         //preveri password (password iz base, password iz dto)
-        const pwMatch = await argon.verify(user.password,dto.password)
-        if(!pwMatch) throw new ForbiddenException('Passwords do not match!')
+        const pwMatch = await argon.verify(user.password, dto.password)
+        if (!pwMatch) throw new ForbiddenException('Passwords do not match!')
 
-        //delete password is user objekta (ne baze) predenj returnas kot json
-        delete user.password
         //return user
-        return user
+        return this.signToken(user.id, user.email)
+    }
+
+    //JWT AUTHENTICATION TOKEN ZA LOGIN
+    async signToken(userId: number, email: string): Promise<{access_token}> {
+        //struktura jwt token
+        const payload = {
+            sub: userId,
+            email
+        }
+        //(payload, signature) 
+        const token = await this.jwt.signAsync(payload, {
+            expiresIn: '15m',
+            secret: `${this.config.get('JWT_SECRET')}`
+        })
+
+        
+        //definiraj strukturo return stavka (json) 
+        return {
+            access_token: token
+        }
     }
 }
