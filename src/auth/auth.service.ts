@@ -84,7 +84,6 @@ export class AuthService {
             secret: `${this.config.get('JWT_SECRET')}`
         })
 
-        
         //definiraj strukturo return stavka (json) 
         return {
             access_token: token

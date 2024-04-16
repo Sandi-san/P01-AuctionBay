@@ -19,6 +19,12 @@ Content-Type: application/json
 }
 
 
+### GET /users/me
+GET http://localhost:8080/users/me HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3MTMyNTY4NjMsImV4cCI6MTcxMzI1Nzc2M30.TpYHW_pwXzcZ3FANqHFjPVGUeS_ihiicWsE_V5_iBwk
+
+
 ### GET /
 GET http://localhost:8080 HTTP/1.1
 
