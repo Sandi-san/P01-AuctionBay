@@ -1,26 +1,48 @@
 //ROUTE MANAGER
 //KLIČE SE PRVI OB ROUTE REQUESTIH
 
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
+import { Response } from 'express'
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @HttpCode(HttpStatus.CREATED)
-    @Post('register')
-    register(@Body() dto: AuthDto) {
+    @Post('signup')
+    register(
+        @Body() dto: AuthDto,
+        @Res({ passthrough: true }) res: Response
+    ) {
         console.log(dto)
-        return this.authService.register(dto)
+        //dobi jwt access token
+        const access_token = this.authService.register(dto)
+        //shrani access token kot cookie v browserju
+        res.cookie('access_token', access_token, { httpOnly: true })
+        return access_token
     }
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
-    login(@Body() dto: AuthDto) {
+    login(
+        @Body() dto: AuthDto,
+        @Res({ passthrough: true }) res: Response
+    ) {
         console.log(dto)
-        return this.authService.login(dto)
+        //dobi jwt access token
+        const access_token = this.authService.login(dto)
+        //shrani access token kot cookie v browserju
+        res.cookie('access_token', access_token, { httpOnly: true })
+        return access_token
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('signout')
+    async signout(@Res({ passthrough: true }) res: Response): Promise<{ msg: string }> {
+        //delete token iz cookies
+        res.clearCookie('access_token')
+        return { msg: 'logout successful' }
     }
 }

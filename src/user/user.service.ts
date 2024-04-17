@@ -7,16 +7,18 @@ export class UserService {
     //POVEZAVA Z REPOSITORY
     constructor(private prisma: PrismaService) { }
 
-    async find(){
-        return "Reached find()"
-    }
-    /*
-    async findAll(): User[] {
-        return this.users;
+    //UPDATE USER INFO
+    async update() {
+
     }
 
-    async findById(id: string): User {
-        return this.users.find(user => user.id === id);
+    //UPDATE USER PASSWORD
+    async changePassword() {
+
     }
-    */
+
+    //SPREMENI AVATAR SLIKO
+    async updateUserImage() {
+
+    }
 }
