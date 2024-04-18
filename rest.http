@@ -1,15 +1,18 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3MTM0Mjk4NDIsImV4cCI6MTcxMzQzMDc0Mn0.eFQ3WBe83-afs0p31Un5jDwGqMtHo8ovwGtVN31_h2s
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjExLCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNDM0OTIwLCJleHAiOjE3MTM0MzU4MjB9.T59m73CR_ZTpk0p5upJwqiEKY58xq0_b9rWUvG9t1wU
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
 Content-Type: application/json
 
 {
-  	"email": "john@gmail.com",
+  	"firstName": "John",
+	"lastName": "Johnson",
+	"email": "john@gmail.com",
   	"password": "John123!",
+  	"confirm_password": "John123!",
 	"this_should_be_passed": "filtered_variable"
 }
 

@@ -1,6 +1,6 @@
 import {createParamDecorator,ExecutionContext} from '@nestjs/common'
 //namesto uporabe @Req Request v user.controller, vrni User objekt
-export const GetUser = createParamDecorator(
+export const GetLoggedUser = createParamDecorator(
     (data: string | undefined, ctx: ExecutionContext) => {
         const request: Express.Request = ctx
         .switchToHttp()

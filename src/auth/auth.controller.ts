@@ -4,7 +4,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express'
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
+import { LoginUserDto, RegisterUserDto } from './dto';
 
 @Controller('auth')
 export class AuthController {
@@ -13,10 +13,11 @@ export class AuthController {
     @HttpCode(HttpStatus.CREATED)
     @Post('signup')
     register(
-        @Body() dto: AuthDto,
+        @Body() dto: RegisterUserDto,
         @Res({ passthrough: true }) res: Response
     ) {
-        console.log(dto)
+        //console.log(dto)
+        
         //dobi jwt access token
         const access_token = this.authService.register(dto)
         //shrani access token kot cookie v browserju
@@ -27,10 +28,11 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('login')
     login(
-        @Body() dto: AuthDto,
+        @Body() dto: LoginUserDto,
         @Res({ passthrough: true }) res: Response
     ) {
-        console.log(dto)
+        //console.log(dto)
+        
         //dobi jwt access token
         const access_token = this.authService.login(dto)
         //shrani access token kot cookie v browserju

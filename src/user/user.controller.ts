@@ -1,8 +1,11 @@
-import { Controller, Get, HttpCode, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { GetUser } from 'src/auth/decorator';
+import { GetLoggedUser } from 'src/auth/decorator';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { join } from 'path';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 //nastavi dostop do route: users/... z UseGuards (restricta VSE route v tem fileu)
 @UseGuards(JwtGuard)
@@ -17,30 +20,39 @@ export class UserController {
     //@UseGuards(JwtGuard)
     @Get('')
     //dobi posamezni var z @GetUser('email') email: string
-    async getMe(@GetUser() user: User): Promise<User> {
-        //dobi info userja glede trenutni access token
+    async getMe(@GetLoggedUser() user: User): Promise<User> {
+        //dobi info userja glede trenutni access_token
         return user
     }
-
+    /*
     //SPREMENI PASSWORD OD USERJA
     @HttpCode(HttpStatus.CREATED)
     @Post('upload-image')
-    async uploadAvatar() {
-        return this.userService.updateUserImage()
+    @UseInterceptors(FileInterceptor('avatar', saveImageToStorage))
+    async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Param('id') id: number): Promise<User> {
+        const filename = file?.filename
+        if (!filename) throw new BadRequestException('File must be of type png, jpg or jpeg!')
+        const imagesFolderPath = join(process.cwd(), 'files')
+        const fullImagePath = join(imagesFolderPath + '/' + file.filename)
+        if (await isFileExtensionSafe(fullImagePath)) {
+          return this.userService.updateUserImage(id, filename)
+        }
+        removeFile(fullImagePath)
+        throw new BadRequestException('File is corrupted!')
     }
-
+    */
     //SPREMENI USER INFO (NE PASSWORD)
     @HttpCode(HttpStatus.OK)
     @Patch('edit')
-    async editUser() {
-        return this.userService.update()
+    async editUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+        return this.userService.update(id, updateUserDto)
     }
 
     //SPREMENI (SAMO) PASSWORD OD USERJA
     @HttpCode(HttpStatus.OK)
     @Patch('update-password')
-    async editPassword() {
-        return this.userService.changePassword()
+    async editPassword(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+        return this.userService.changePassword(id, updateUserDto)
     }
 
 

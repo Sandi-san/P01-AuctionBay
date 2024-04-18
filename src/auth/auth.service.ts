@@ -1,14 +1,13 @@
 //DEJANSKA LOGIKA IZ CONTROLLERJA/ROUTEOV
 
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { LoginUserDto, RegisterUserDto } from './dto';
 //za password hashing
 import * as argon from 'argon2'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { userInfo } from 'os';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +21,7 @@ export class AuthService {
     ) { }
 
     //REGISTER USER
-    async register(dto: AuthDto) {
+    async register(dto: RegisterUserDto) {
         //generiraj hash za password
         const hash = await argon.hash(dto.password)
 
@@ -30,6 +29,8 @@ export class AuthService {
             //shrani user v db (data=format ki se shrani v bazo)
             const user = await this.prisma.user.create({
                 data: {
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
                     email: dto.email,
                     password: hash,
                 }
@@ -48,13 +49,14 @@ export class AuthService {
                     throw new ForbiddenException('Email already taken!');
             } else {
                 //ni email alredy taken error, vrni prvotnega
-                throw error;
+                console.log(error)
+                throw new BadRequestException('Something went wrong while creating new user!')
             }
         }
     }
 
     //LOGIN USER
-    async login(dto: AuthDto) {
+    async login(dto: LoginUserDto) {
         //find user by email
         const user = await this.prisma.user.findUnique({
             where: {
@@ -62,32 +64,37 @@ export class AuthService {
             }
         })
         //ce user ne obstaja, vrni exception (guard condition)
-        if (!user) throw new ForbiddenException('User with that email does not exist!')
+        if (!user) throw new NotFoundException('User with that email does not exist!')
 
         //preveri password (password iz base, password iz dto)
         const pwMatch = await argon.verify(user.password, dto.password)
-        if (!pwMatch) throw new ForbiddenException('Passwords do not match!')
+        if (!pwMatch) throw new UnauthorizedException('Passwords do not match!')
 
         //return user
         return this.signToken(user.id, user.email)
     }
 
     //JWT AUTHENTICATION TOKEN ZA LOGIN
-    async signToken(userId: number, email: string): Promise<{access_token}> {
+    async signToken(userId: number, email: string): Promise<{ access_token }> {
         //struktura jwt token
         const payload = {
             sub: userId,
             email
         }
-        //(payload, signature) 
-        const token = await this.jwt.signAsync(payload, {
-            expiresIn: '15m',
-            secret: `${this.config.get('JWT_SECRET')}`
-        })
+        try {
+            //(payload, signature) 
+            const token = await this.jwt.signAsync(payload, {
+                expiresIn: '15m',
+                secret: `${this.config.get('JWT_SECRET')}`
+            })
 
-        //definiraj strukturo return stavka (json) 
-        return {
-            access_token: token
+            //definiraj strukturo return stavka (json) 
+            return {
+                access_token: token
+            }
+        } catch (error) {
+            console.log(error)
+            throw new BadRequestException('Something went wrong while creating access token!')
         }
     }
 }
