@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
-import { Auction, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/guard';
@@ -17,7 +17,7 @@ export class UserController {
     //@UseGuards(JwtGuard)
     @Get('')
     //dobi posamezni var z @GetUser('email') email: string
-    async findMe(@GetUser() user: User): Promise<User> {
+    async getMe(@GetUser() user: User): Promise<User> {
         //dobi info userja glede trenutni access token
         return user
     }
@@ -26,21 +26,21 @@ export class UserController {
     @HttpCode(HttpStatus.CREATED)
     @Post('upload-image')
     async uploadAvatar() {
-        return 'TODO: uploading new avatar';
+        return this.userService.updateUserImage()
     }
 
     //SPREMENI USER INFO (NE PASSWORD)
     @HttpCode(HttpStatus.OK)
     @Patch('edit')
     async editUser() {
-        return 'TODO: editing user';
+        return this.userService.update()
     }
 
     //SPREMENI (SAMO) PASSWORD OD USERJA
     @HttpCode(HttpStatus.OK)
     @Patch('update-password')
     async editPassword() {
-        return 'TODO: updating password';
+        return this.userService.changePassword()
     }
 
 
@@ -49,7 +49,7 @@ export class UserController {
     @Get('auctions')
     async getAuctions() {
         //async getAuctions(): Promise<Auction[]> {
-        return 'TODO: getting all auctions';
+        return this.userService.getUserAuctions()
     }
 
     //USTVARI AUCTION
@@ -57,7 +57,7 @@ export class UserController {
     @Post('auction')
     async createAuction() {
         //async getAuctions(): Promise<Auction> {
-        return 'TODO: creating new auction';
+        return this.userService.createUserAuction()
     }
 
     //USTVARI AUCTION
@@ -65,7 +65,7 @@ export class UserController {
     @Patch('auction/:id')
     async editAuction() {
         //async getAuctions(): Promise<Auction> {
-        return 'TODO: editing auction';
+        return this.userService.editUserAuction()
     }
 
     //DOBI VSE BIDE OD USERJA
@@ -73,7 +73,7 @@ export class UserController {
     @Get('bids')
     async getBids() {
         //async getBids(): Promise<Bid[]> {
-        return 'TODO: getting all bids';
+        return this.userService.getUserBids()
     }
 
     //USTVARI NOV AUCTION
@@ -81,6 +81,6 @@ export class UserController {
     @Get('bids/won')
     async getBidsWon() {
         //async getBidsWon(): Promise<Bid[]> {
-        return 'TODO: getting all won bids';
+        return this.userService.getUserBidsWon()
     }
 }
