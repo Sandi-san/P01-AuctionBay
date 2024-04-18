@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AuctionService } from 'src/auction/auction.service';
 import { BidService } from 'src/bid/bid.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon from 'argon2'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UserService {
@@ -16,16 +17,22 @@ export class UserService {
     ) { }
 
     //SPREMENI AVATAR SLIKO
-    async updateUserImage(id: number, avatar: string): Promise<User> {
+    async updateUserImage(
+        id: number,
+        image: string
+    ): Promise<User> {
         const user = await this.prisma.user.findUnique({
             where: { id }
         })
         //klici user update, vendar samo z avatar linkom
-        return this.update(user.id, { avatar })
+        return this.update(user.id, { image })
     }
 
     //UPDATE USER INFO
-    async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    async update(
+        id: number, 
+        updateUserDto: UpdateUserDto
+    ): Promise<User> {
         //dobi userja iz db
         const user = await this.prisma.user.findUnique({
             where: { id }
@@ -33,27 +40,45 @@ export class UserService {
         //user ne obstaja
         if (!user) throw new NotFoundException(`User with id \'${id}\' does not exist!`)
 
-        
-        //spremeni vrednosti userja in posodobi bazo
-        const updatedUser = await this.prisma.user.update({
-            where: {id},
-            data: {
-                ...updateUserDto
+        try {
+            //spremeni vrednosti userja in posodobi bazo
+            const updatedUser = await this.prisma.user.update({
+                where: { id },
+                data: {
+                    ...updateUserDto,
+                    //ce slucajno dobil password v dto, odstrani 
+                    //password se NE sme spreminjat v update(), samo v changePassword()
+                    password: undefined
+                }
+            })
+            delete updatedUser.password
+            return updatedUser
+        } catch (error) {
+            //preveri ce se je pojavil v prisma clientu
+            if (error instanceof PrismaClientKnownRequestError) {
+                //error, kjer email novega register userja ze obstaja v bazi
+                if (error.code === 'P2002')
+                    throw new ForbiddenException('Email already taken!');
+            } else {
+                //ni email alredy taken error, vrni prvotnega
+                console.log(error)
+                throw new BadRequestException('Something went wrong while creating new user!')
             }
-        })
-        
-        return updatedUser
+        }
     }
 
     //UPDATE USER PASSWORD
-    async changePassword(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    async changePassword(
+        id: number, 
+        updateUserDto: UpdateUserDto
+    ): Promise<{ response: string }> {
         //dobo userja iz db
         const user = await this.prisma.user.findUnique({
             where: { id }
         })
-        
+
         //destructiraj posamezne var iz dto
-        const {password, confirm_password} = updateUserDto
+        const { password, confirm_password } = updateUserDto
         
         //preveri ce user dodal oba passworda
         if (password && confirm_password) {
@@ -61,13 +86,15 @@ export class UserService {
             if (password !== confirm_password)
                 throw new BadRequestException('Passwords do not match!')
             //password isti kot v bazi?
-            if(await argon.verify(user.password, password))
+            //preveri password (password iz base, password iz dto)
+            const pwMatch = await argon.verify(user.password, password)
+            if (pwMatch)
                 throw new BadRequestException('New password cannot be the same as old password!')
             //vse vredu? hashaj nov password in shrani v user objekt
             user.password = await argon.hash(password)
         }
         //vrni user-ja, ce se pass ni spremenil, ostane isti 
-        return user
+        return { response: 'Password changed successfully!' }
     }
 
     //DOBI VSE POSTANE AUCTIONE OD USERJA

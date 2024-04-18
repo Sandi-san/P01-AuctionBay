@@ -21,7 +21,7 @@ export class AuthService {
     ) { }
 
     //REGISTER USER
-    async register(dto: RegisterUserDto) {
+    async register(dto: RegisterUserDto): Promise<{ access_token }> {
         //generiraj hash za password
         const hash = await argon.hash(dto.password)
 
@@ -39,6 +39,7 @@ export class AuthService {
             //POZOR: v password ne bo vec obstajal v tem user objektu (v DB se shrani normalno)
             //delete user.password
 
+            console.log(user)
             //return user
             return this.signToken(user.id, user.email)
         } catch (error) {
@@ -56,7 +57,7 @@ export class AuthService {
     }
 
     //LOGIN USER
-    async login(dto: LoginUserDto) {
+    async login(dto: LoginUserDto): Promise<{ access_token }> {
         //find user by email
         const user = await this.prisma.user.findUnique({
             where: {
@@ -70,6 +71,7 @@ export class AuthService {
         const pwMatch = await argon.verify(user.password, dto.password)
         if (!pwMatch) throw new UnauthorizedException('Passwords do not match!')
 
+        console.log(user)
         //return user
         return this.signToken(user.id, user.email)
     }

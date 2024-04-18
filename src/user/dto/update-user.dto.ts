@@ -34,5 +34,5 @@ export class UpdateUserDto {
   // refresh_token?: string
 
   @IsOptional()
-  avatar?: string
+  image?: string
 }

@@ -44,15 +44,21 @@ export class UserController {
     //SPREMENI USER INFO (NE PASSWORD)
     @HttpCode(HttpStatus.OK)
     @Patch('edit')
-    async editUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-        return this.userService.update(id, updateUserDto)
+    async editUser(
+        @GetLoggedUser() user: User,
+        @Body() updateUserDto: UpdateUserDto
+    ): Promise<User> {
+        return this.userService.update(user.id, updateUserDto)
     }
 
     //SPREMENI (SAMO) PASSWORD OD USERJA
     @HttpCode(HttpStatus.OK)
     @Patch('update-password')
-    async editPassword(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-        return this.userService.changePassword(id, updateUserDto)
+    async editPassword(
+        @GetLoggedUser() user: User,
+        @Body() updateUserDto: UpdateUserDto
+    ): Promise<{ response: string }> {
+        return this.userService.changePassword(user.id, updateUserDto)
     }
 
 

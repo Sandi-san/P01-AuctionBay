@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjExLCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNDM0OTIwLCJleHAiOjE3MTM0MzU4MjB9.T59m73CR_ZTpk0p5upJwqiEKY58xq0_b9rWUvG9t1wU
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNDU2MTgxLCJleHAiOjE3MTM0NTcwODF9.T-88n29M8BM5XFQ83p2m8BLDuIV2XAEMTki0exDLjL8
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
@@ -13,7 +13,7 @@ Content-Type: application/json
 	"email": "john@gmail.com",
   	"password": "John123!",
   	"confirm_password": "John123!",
-	"this_should_be_passed": "filtered_variable"
+	"this_field_should_not_be_passed": "filtered_variable"
 }
 
 ### POST /auth/login
@@ -45,15 +45,31 @@ POST http://localhost:8080/me/upload-image HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}} 
 
-### GET /me/edit
+### PATCH /me/edit
 PATCH http://localhost:8080/me/edit HTTP/1.1
 Content-Type: application/json
-Authorization: {{token}} 
+Authorization: {{token}}
+
+{
+  	"firstName": "Not John",
+	"lastName": "Not Johnson",
+	"email": "john@gmail.com",
+  	"password": "John123456!",
+	"image": "new_path"
+}
 
 ### GET /me/update-password
 PATCH http://localhost:8080/me/update-password HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}} 
+
+{
+  	"firstName": "Johnny",
+	"lastName": "Johnsssss",
+	"email": "john@gmail.com",
+  	"password": "John1234!",
+  	"confirm_password": "John1234!"
+}
 
 ### GET /me/auctions
 GET http://localhost:8080/me/auctions HTTP/1.1

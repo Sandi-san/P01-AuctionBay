@@ -15,7 +15,7 @@ export class AuthController {
     register(
         @Body() dto: RegisterUserDto,
         @Res({ passthrough: true }) res: Response
-    ) {
+    ): Promise<{ access_token }> {
         //console.log(dto)
         
         //dobi jwt access token
@@ -30,7 +30,7 @@ export class AuthController {
     login(
         @Body() dto: LoginUserDto,
         @Res({ passthrough: true }) res: Response
-    ) {
+    ): Promise<{ access_token }> {
         //console.log(dto)
         
         //dobi jwt access token
@@ -42,9 +42,9 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @Post('signout')
-    async signout(@Res({ passthrough: true }) res: Response): Promise<{ msg: string }> {
+    async signout(@Res({ passthrough: true }) res: Response): Promise<{ response: string }> {
         //delete token iz cookies
         res.clearCookie('access_token')
-        return { msg: 'logout successful' }
+        return { response: 'logout successful' }
     }
 }
