@@ -6,6 +6,7 @@ import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { saveImageToStorage } from 'src/helpers/image-storage.helper';
 
 //nastavi dostop do route: users/... z UseGuards (restricta VSE route v tem fileu)
 @UseGuards(JwtGuard)
@@ -24,23 +25,32 @@ export class UserController {
         //dobi info userja glede trenutni access_token
         return user
     }
-    /*
+    
     //SPREMENI PASSWORD OD USERJA
     @HttpCode(HttpStatus.CREATED)
     @Post('upload-image')
-    @UseInterceptors(FileInterceptor('avatar', saveImageToStorage))
-    async uploadAvatar(@UploadedFile() file: Express.Multer.File, @Param('id') id: number): Promise<User> {
+    @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+    async uploadAvatar(
+        @GetLoggedUser() user: User,
+        @UploadedFile() file: Express.Multer.File
+    ): Promise<User> {
+
         const filename = file?.filename
+        console.log(user.id,file)
+        return this.userService.updateUserImage(user.id, filename)
+        
         if (!filename) throw new BadRequestException('File must be of type png, jpg or jpeg!')
         const imagesFolderPath = join(process.cwd(), 'files')
         const fullImagePath = join(imagesFolderPath + '/' + file.filename)
+        /*
         if (await isFileExtensionSafe(fullImagePath)) {
           return this.userService.updateUserImage(id, filename)
         }
         removeFile(fullImagePath)
         throw new BadRequestException('File is corrupted!')
+        */        
     }
-    */
+    
     //SPREMENI USER INFO (NE PASSWORD)
     @HttpCode(HttpStatus.OK)
     @Patch('edit')

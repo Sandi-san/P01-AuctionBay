@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNDU2MTgxLCJleHAiOjE3MTM0NTcwODF9.T-88n29M8BM5XFQ83p2m8BLDuIV2XAEMTki0exDLjL8
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNjAwNTQ3LCJleHAiOjE3MTM2MDE0NDd9.GKfxusQjrW3erg8tKXssK5m1qh-geoJk5_lprCUziP8
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
@@ -42,8 +42,16 @@ Authorization: {{token}}
 
 ### GET /me/upload-image
 POST http://localhost:8080/me/upload-image HTTP/1.1
-Content-Type: application/json
-Authorization: {{token}} 
+Content-Type: multipart/form-data boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test_image.png"
+Content-Type: image/png
+
+0000000000000000000010000
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
 
 ### PATCH /me/edit
 PATCH http://localhost:8080/me/edit HTTP/1.1

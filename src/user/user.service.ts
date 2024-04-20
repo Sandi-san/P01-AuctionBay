@@ -21,11 +21,9 @@ export class UserService {
         id: number,
         image: string
     ): Promise<User> {
-        const user = await this.prisma.user.findUnique({
-            where: { id }
-        })
+        console.log({id,image})
         //klici user update, vendar samo z avatar linkom
-        return this.update(user.id, { image })
+        return this.update(id, { image })
     }
 
     //UPDATE USER INFO
@@ -33,6 +31,7 @@ export class UserService {
         id: number, 
         updateUserDto: UpdateUserDto
     ): Promise<User> {
+        console.log({id,updateUserDto})
         //dobi userja iz db
         const user = await this.prisma.user.findUnique({
             where: { id }
