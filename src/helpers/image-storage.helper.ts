@@ -1,3 +1,7 @@
+//DYNAMIC IMPORT (POZOR: tsconfig.json mora biti "module": "NodeNext",
+//sicer Erorr: require() of ES Module is not supported "file-type")
+const FileType = import('file-type')
+
 import fs from 'fs'
 import { diskStorage, Options } from 'multer'
 import { extname } from 'path'
@@ -29,14 +33,12 @@ export const saveImageToStorage: Options = {
   },
 }
 
-export const isFileExtensionSafe = async (fullFilePath: string): Promise<boolean> => {
-  //DYNAMIC IMPORT, sicer ti ts vrne Module must use import to load ES instead of require()???
-  const { fileTypeFromFile } = await import('file-type')
-  
-  return fileTypeFromFile(fullFilePath).then((fileExtensionsAndMimeType) => {
+export const isFileExtensionSafe = async (fullFilePath: string): Promise<boolean> => {  
+  return (await FileType).fileTypeFromFile(fullFilePath).then((fileExtensionsAndMimeType) => {
     if (!fileExtensionsAndMimeType?.ext) return false
     const isFileTypeLegit = validFileExtensions.includes(fileExtensionsAndMimeType.ext as validFileExtensionsType)
-    const isMimeTypeLegit = validMimeTypes.includes(fileExtensionsAndMimeType.ext as validMimeType)
+    const isMimeTypeLegit = validMimeTypes.includes(fileExtensionsAndMimeType.mime as validMimeType)
+    //image type (extension) in mime type mora biti veljaven
     const isFileLegit = isFileTypeLegit && isMimeTypeLegit
     return isFileLegit
   })
