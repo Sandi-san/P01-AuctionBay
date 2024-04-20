@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Auction, User } from '@prisma/client';
 import { GetLoggedUser } from 'src/auth/decorator';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/guard';
@@ -7,6 +7,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { isFileExtensionSafe, removeFile, saveImageToStorage } from 'src/helpers/image-storage.helper';
+import { CreateAuctionDto, UpdateAuctionDto } from 'src/auction/dto';
 
 //nastavi dostop do route: users/... z UseGuards (restricta VSE route v tem fileu)
 @UseGuards(JwtGuard)
@@ -78,17 +79,22 @@ export class UserController {
     //USTVARI AUCTION
     @HttpCode(HttpStatus.CREATED)
     @Post('auction')
-    async createAuction() {
-        //async getAuctions(): Promise<Auction> {
-        return this.userService.createUserAuction()
+    async createAuction(
+        @GetLoggedUser() user: User,
+        @Body() dto: CreateAuctionDto
+    ): Promise<Auction> {
+        return this.userService.createUserAuction(user.id,dto)
     }
 
     //USTVARI AUCTION
     @HttpCode(HttpStatus.OK)
     @Patch('auction/:id')
-    async editAuction() {
-        //async getAuctions(): Promise<Auction> {
-        return this.userService.editUserAuction()
+    async editAuction(
+        @GetLoggedUser() user: User,
+        @Body() dto: UpdateAuctionDto
+    ) {
+    // ): Promise<Auction> {
+        return this.userService.editUserAuction(user.id,dto)
     }
 
     //DOBI VSE BIDE OD USERJA

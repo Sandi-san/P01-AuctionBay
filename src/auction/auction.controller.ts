@@ -18,7 +18,7 @@ export class AuctionController {
     @Get(':id')
     async getAuction() {
         //async getAuctions(): Promise<Auction> {
-        return this.auctionService.getById()
+        return this.auctionService.getById(0)
     }
     
     //BID ON AUCTION BY ID
@@ -26,7 +26,7 @@ export class AuctionController {
     @Get(':id/bid')
     async bidOnAuction() {
         //async getAuctions(): Promise<Auction> {
-        return this.auctionService.bidOnId()
+        return this.auctionService.bidOnId(0)
     }
 
 }

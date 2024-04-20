@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { BidService } from 'src/bid/bid.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { CreateAuctionDto } from './dto';
+import { Auction } from '@prisma/client';
 
 @Injectable()
 export class AuctionService {
@@ -16,25 +18,46 @@ export class AuctionService {
         return 'TODO: getting all auctions'
     }
 
+    //PAGINATE
+
     //DOBI EN AUCTION
-    async getById(){
+    async getById(
+        id: number
+    ){
         return 'TODO: getting one auction'
     }
 
     //BIDDAJ NA EN AUCTION
-    async bidOnId(){
+    async bidOnId(
+        auctionId: number
+    ){
         return this.bidService.create()
     }
 
     
     //DOBI VSE AUCTIONE OD USERJA
-    async getAllForUser() {
+    async getAllForUser(
+        userId: number
+    ) {
         return 'TODO: getting all auctions for user';
     }
 
     //USTAVARI NOV AUCTION
-    async create() {
-        return 'TODO: creating new auction';
+    async create(
+        dto: CreateAuctionDto
+    ): Promise<Auction> {
+        console.log(dto)
+        try {
+            const createdAuction = await this.prisma.auction.create({
+                data: {
+                    ...dto,
+                }
+            })
+            return createdAuction;
+        } catch (error) {
+            console.log(error)
+            throw new BadRequestException('Something went wrong while creating new auction!')
+        }
     }
 
     //UPDATE AUCTION

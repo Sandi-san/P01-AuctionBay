@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNjAwNTQ3LCJleHAiOjE3MTM2MDE0NDd9.GKfxusQjrW3erg8tKXssK5m1qh-geoJk5_lprCUziP8
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzNjI2ODc3LCJleHAiOjE3MTM2Mjc3Nzd9.6tczHkSULLhS92ETndGyq09FhRyCODgiQcpiL0x7wTc
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
@@ -79,6 +79,15 @@ Authorization: {{token}}
 POST http://localhost:8080/me/auction HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
+
+{
+	"title": "new auction",
+	"currentPrice": 100,
+	"status": "new status",
+	"duration": "2024-04-15T12:30:00",
+	"image": "new_image.png",
+	"userId": 0
+}
 
 ### GET /me/auction/:id
 PATCH http://localhost:8080/me/auction/:id HTTP/1.1

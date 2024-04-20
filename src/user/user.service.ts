@@ -1,11 +1,12 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Auction, User } from '@prisma/client';
 import { AuctionService } from 'src/auction/auction.service';
 import { BidService } from 'src/bid/bid.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon from 'argon2'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { CreateAuctionDto } from 'src/auction/dto';
 
 @Injectable()
 export class UserService {
@@ -98,16 +99,28 @@ export class UserService {
 
     //DOBI VSE POSTANE AUCTIONE OD USERJA
     async getUserAuctions() {
-        return this.auctionService.getAllForUser()
+        //return this.auctionService.getAllForUser()
     }
 
     //USTAVARI NOV AUCTION
-    async createUserAuction() {
-        return this.auctionService.create()
+    async createUserAuction(
+        userId: number,
+        dto: CreateAuctionDto
+    ): Promise<Auction> {
+        const duration = new Date(dto.duration)
+        dto = {
+            ...dto,
+            userId: userId,
+            duration: duration
+        }
+        return this.auctionService.create(dto)
     }
 
     //UPDATE AUCTION
-    async editUserAuction() {
+    async editUserAuction(
+        userId: number,
+        dto: UpdateUserDto
+    ) {
         return this.auctionService.edit()
     }
 
