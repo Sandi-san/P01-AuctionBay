@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon from 'argon2'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { CreateAuctionDto } from 'src/auction/dto';
+import { CreateAuctionDto, UpdateAuctionDto } from 'src/auction/dto';
 
 @Injectable()
 export class UserService {
@@ -22,17 +22,17 @@ export class UserService {
         id: number,
         image: string
     ): Promise<User> {
-        console.log({id,image})
+        console.log({ id, image })
         //klici user update, vendar samo z avatar linkom
         return this.update(id, { image })
     }
 
     //UPDATE USER INFO
     async update(
-        id: number, 
+        id: number,
         updateUserDto: UpdateUserDto
     ): Promise<User> {
-        console.log({id,updateUserDto})
+        console.log({ id, updateUserDto })
         //dobi userja iz db
         const user = await this.prisma.user.findUnique({
             where: { id }
@@ -69,7 +69,7 @@ export class UserService {
 
     //UPDATE USER PASSWORD
     async changePassword(
-        id: number, 
+        id: number,
         updateUserDto: UpdateUserDto
     ): Promise<{ response: string }> {
         //dobo userja iz db
@@ -79,7 +79,7 @@ export class UserService {
 
         //destructiraj posamezne var iz dto
         const { password, confirm_password } = updateUserDto
-        
+
         //preveri ce user dodal oba passworda
         if (password && confirm_password) {
             //passworda sta razlicna
@@ -107,21 +107,15 @@ export class UserService {
         userId: number,
         dto: CreateAuctionDto
     ): Promise<Auction> {
-        const duration = new Date(dto.duration)
-        dto = {
-            ...dto,
-            userId: userId,
-            duration: duration
-        }
-        return this.auctionService.create(dto)
+        return this.auctionService.create(userId,dto)
     }
 
     //UPDATE AUCTION
     async editUserAuction(
-        userId: number,
-        dto: UpdateUserDto
-    ) {
-        return this.auctionService.edit()
+        auctionId: number,
+        dto: UpdateAuctionDto
+    ): Promise<Auction> {
+        return this.auctionService.update(auctionId, dto)
     }
 
     //DOBI VSE BIDE KI JE USER USTVARIL

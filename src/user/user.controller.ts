@@ -26,7 +26,7 @@ export class UserController {
         //dobi info userja glede trenutni access_token
         return user
     }
-    
+
     //SPREMENI PASSWORD OD USERJA
     @HttpCode(HttpStatus.CREATED)
     @Post('upload-image')
@@ -35,18 +35,18 @@ export class UserController {
         @GetLoggedUser() user: User,
         @UploadedFile() file: Express.Multer.File
     ): Promise<User> {
-        const filename = file?.filename        
+        const filename = file?.filename
         if (!filename) throw new BadRequestException('File must be of type png, jpg or jpeg!')
         const imagesFolderPath = join(process.cwd(), 'files')
         const fullImagePath = join(imagesFolderPath + '/' + file.filename)
         //preveri ce je image file veljaven in sele nato update-aj
         if (await isFileExtensionSafe(fullImagePath)) {
-          return this.userService.updateUserImage(user.id, filename)
+            return this.userService.updateUserImage(user.id, filename)
         }
         removeFile(fullImagePath)
         throw new BadRequestException('File is corrupted!')
     }
-    
+
     //SPREMENI USER INFO (NE PASSWORD)
     @HttpCode(HttpStatus.OK)
     @Patch('edit')
@@ -83,18 +83,27 @@ export class UserController {
         @GetLoggedUser() user: User,
         @Body() dto: CreateAuctionDto
     ): Promise<Auction> {
-        return this.userService.createUserAuction(user.id,dto)
+        return this.userService.createUserAuction(user.id, dto)
     }
+
 
     //USTVARI AUCTION
     @HttpCode(HttpStatus.OK)
     @Patch('auction/:id')
     async editAuction(
-        @GetLoggedUser() user: User,
-        @Body() dto: UpdateAuctionDto
-    ) {
-    // ): Promise<Auction> {
-        return this.userService.editUserAuction(user.id,dto)
+        @Param('id') id: string,
+        @Body() dto: UpdateAuctionDto,
+    ): Promise<Auction> {
+        try {
+            const auctionId = parseInt(id, 10)
+            if (isNaN(auctionId)) {
+                throw new BadRequestException('Invalid ID');
+            }
+            return this.userService.editUserAuction(auctionId, dto)
+        } catch (error) {
+            console.log(error)
+            throw new BadRequestException('Invalid ID');
+        }
     }
 
     //DOBI VSE BIDE OD USERJA

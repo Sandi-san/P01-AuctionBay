@@ -1,4 +1,4 @@
-import { IsDate, IsOptional, IsString } from "class-validator"
+import { IsDateString, IsNumber, IsOptional, IsString } from "class-validator"
 
 export class UpdateAuctionDto{
     @IsString()
@@ -8,10 +8,15 @@ export class UpdateAuctionDto{
     @IsOptional()
     description?: string
 
+    @IsNumber()
+    @IsOptional()
+    currentPrice: number
+
     @IsString()
+    @IsOptional()
     status: string
 
-    @IsDate()
+    @IsDateString()
     duration: Date
 
     @IsOptional()
