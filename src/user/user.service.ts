@@ -102,12 +102,19 @@ export class UserService {
         //return this.auctionService.getAllForUser()
     }
 
+    //DOBI EN AUCTIONE OD USERJA
+    async getUserAuction(
+        id: number
+    ): Promise<Auction> {
+        return this.auctionService.getById(id)
+    }
+
     //USTAVARI NOV AUCTION
     async createUserAuction(
         userId: number,
         dto: CreateAuctionDto
     ): Promise<Auction> {
-        return this.auctionService.create(userId,dto)
+        return this.auctionService.create(userId, dto)
     }
 
     //UPDATE AUCTION

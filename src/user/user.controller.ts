@@ -27,7 +27,7 @@ export class UserController {
         return user
     }
 
-    //SPREMENI PASSWORD OD USERJA
+    //SPREMENI AVATAR IMAGE OD USERJA
     @HttpCode(HttpStatus.CREATED)
     @Post('upload-image')
     @UseInterceptors(FileInterceptor('image', saveImageToStorage))
@@ -79,31 +79,67 @@ export class UserController {
     //USTVARI AUCTION
     @HttpCode(HttpStatus.CREATED)
     @Post('auction')
+    @UseInterceptors(FileInterceptor('image', saveImageToStorage))
     async createAuction(
         @GetLoggedUser() user: User,
-        @Body() dto: CreateAuctionDto
+        @Body() dto: CreateAuctionDto,
+        @UploadedFile() file: Express.Multer.File
     ): Promise<Auction> {
+        //ce je podan image file, shrani img v files in dodaj filename v dto.image
+        if (file) {
+            const filename = file?.filename
+            if (!filename) throw new BadRequestException('File must be of type png, jpg or jpeg!')
+            const imagesFolderPath = join(process.cwd(), 'files')
+            const fullImagePath = join(imagesFolderPath + '/' + file.filename)
+            //preveri ce je image file veljaven in sele nato update-aj
+            if (await isFileExtensionSafe(fullImagePath)) {
+                dto.image = filename
+            }
+            else {
+                removeFile(fullImagePath)
+                throw new BadRequestException('File is corrupted!')
+            }
+        }
         return this.userService.createUserAuction(user.id, dto)
     }
-
 
     //USTVARI AUCTION
     @HttpCode(HttpStatus.OK)
     @Patch('auction/:id')
+    @UseInterceptors(FileInterceptor('image', saveImageToStorage))
     async editAuction(
         @Param('id') id: string,
         @Body() dto: UpdateAuctionDto,
+        @UploadedFile() file: Express.Multer.File
     ): Promise<Auction> {
-        try {
-            const auctionId = parseInt(id, 10)
-            if (isNaN(auctionId)) {
-                throw new BadRequestException('Invalid ID');
-            }
-            return this.userService.editUserAuction(auctionId, dto)
-        } catch (error) {
-            console.log(error)
+        //parsaj string iz url v int
+        const auctionId = parseInt(id, 10)
+        if (isNaN(auctionId)) {
             throw new BadRequestException('Invalid ID');
         }
+        //ce je podan image file, shrani img v files in dodaj filename v dto.image
+        if (file) {
+            const filename = file?.filename
+            if (!filename) throw new BadRequestException('File must be of type png, jpg or jpeg!')
+            const imagesFolderPath = join(process.cwd(), 'files')
+            const fullImagePath = join(imagesFolderPath + '/' + file.filename)
+            //preveri ce je image file veljaven in sele nato update-aj
+            if (await isFileExtensionSafe(fullImagePath)) {
+                dto.image = filename
+            }
+            else {
+                removeFile(fullImagePath)
+                throw new BadRequestException('File is corrupted!')
+            }
+            //FINE-TUNE: zbrisi old file
+            //dobi previous filename iz auctiona in deletaj file z istim imenom (ce obstaja)
+            const auction = this.userService.getUserAuction(auctionId)
+            if (auction && (await auction).image) {
+                const fullImagePathToDelete = join(imagesFolderPath + '/' + (await auction).image)
+                removeFile(fullImagePathToDelete)
+            }
+        }
+        return this.userService.editUserAuction(auctionId, dto)
     }
 
     //DOBI VSE BIDE OD USERJA

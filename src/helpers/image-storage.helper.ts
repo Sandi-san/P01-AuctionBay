@@ -33,7 +33,7 @@ export const saveImageToStorage: Options = {
   },
 }
 
-export const isFileExtensionSafe = async (fullFilePath: string): Promise<boolean> => {  
+export const isFileExtensionSafe = async (fullFilePath: string): Promise<boolean> => {
   return (await FileType).fileTypeFromFile(fullFilePath).then((fileExtensionsAndMimeType) => {
     if (!fileExtensionsAndMimeType?.ext) return false
     const isFileTypeLegit = validFileExtensions.includes(fileExtensionsAndMimeType.ext as validFileExtensionsType)
