@@ -30,18 +30,12 @@ export class AuctionService {
             });
 
             if (!auction) throw new NotFoundException(`Auction with id \'${id}\' does not exist!`)
-            console.log(auction)
+
             return auction;
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError) {
-                //error, kjer posljemo id, ki ne obstaja v DB
-                if (error.code === 'P2025')
-                    throw new BadRequestException('Auction id is invalid!');
-                else {
-                    console.log(error)
-                    throw new BadRequestException('Something went wrong while getting auction!')
-                }
-            }
+            console.log(error)
+            throw error
+            // throw new BadRequestException('Something went wrong while getting auction!')
         }
     }
 
@@ -131,11 +125,11 @@ export class AuctionService {
                 if (error instanceof PrismaClientKnownRequestError) {
                     //error, kjer posljemo id, ki ne obstaja v DB
                     if (error.code === 'P2025')
-                        throw new BadRequestException('Auction id is invalid!');
-                    else {
-                        console.log(error)
-                        throw new BadRequestException('Something went wrong while updating auction!')
-                    }
+                        throw new BadRequestException(`Id ${id} is invalid!`);
+                }
+                else {
+                    console.log(error)
+                    throw new BadRequestException('Something went wrong while updating auction!')
                 }
             }
         }
@@ -174,11 +168,11 @@ export class AuctionService {
             if (error instanceof PrismaClientKnownRequestError) {
                 //error, kjer posljemo id, ki ne obstaja v DB
                 if (error.code === 'P2025')
-                    throw new BadRequestException('Id is invalid!');
-                else {
-                    console.log(error)
-                    throw new BadRequestException('Something went wrong while updating auction!')
-                }
+                    throw new BadRequestException(`Id ${id} is invalid!`);
+            }
+            else {
+                console.log(error)
+                throw new BadRequestException('Something went wrong while updating auction!')
             }
         }
     }

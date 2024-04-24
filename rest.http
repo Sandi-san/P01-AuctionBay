@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzOTQ3OTU1LCJleHAiOjE3MTM5NDg4NTV9.tJ8NIAcBi70yiZTlhOnJIYD4W4pSeb4JNUQ15vOGlqs
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzEzOTQ5OTEzLCJleHAiOjE3MTM5NTA4MTN9.iNmAsHNigZKn8SbVpSw1v0fmUKrJKo7cH15ZLRXPHTE
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
@@ -117,7 +117,7 @@ Authorization: {{token}}
 GET http://localhost:8080/auctions HTTP/1.1
 
 ### GET /auctions/:id
-GET http://localhost:8080/auctions/1 HTTP/1.1
+GET http://localhost:8080/auctions/3 HTTP/1.1
 
 ### GET /auctions/:id/bid
 GET http://localhost:8080/auctions/1/bid HTTP/1.1

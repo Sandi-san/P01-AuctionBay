@@ -52,7 +52,7 @@ export class UserService {
                 //error, kjer email novega register userja ze obstaja v bazi
                 if (error.code === 'P2002')
                     throw new ForbiddenException('Email already taken!');
-                //error, kjer posljemo id, ki ne obstaja v DB
+                //error, kjer posljemo id, ki ne obstaja v DB (za prisma.update ONLY)
                 else if (error.code === 'P2025')
                     throw new BadRequestException(`Id ${id} is invalid!`);
             } else {
@@ -103,8 +103,15 @@ export class UserService {
 
                 return { response: 'Password changed successfully!' }
             } catch (error) {
-                console.log(error)
-                throw new BadRequestException('Something went wrong while updating user password!')
+                //preveri ce se je pojavil v prisma clientu
+                if (error instanceof PrismaClientKnownRequestError) {
+                    //error, kjer posljemo id, ki ne obstaja v DB
+                    if (error.code === 'P2025')
+                        throw new BadRequestException(`Id ${id} is invalid!`);
+                } else {
+                    console.log(error)
+                    throw new BadRequestException('Something went wrong while updating user password!')
+                }
             }
         }
         return { response: 'Something went wrong while changing password!' }
