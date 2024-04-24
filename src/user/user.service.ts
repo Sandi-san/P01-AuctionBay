@@ -32,14 +32,7 @@ export class UserService {
         id: number,
         updateUserDto: UpdateUserDto
     ): Promise<User> {
-        console.log({ id, updateUserDto })
-        //dobi userja iz db
-        const user = await this.prisma.user.findUnique({
-            where: { id }
-        })
-        //user ne obstaja
-        if (!user) throw new NotFoundException(`User with id \'${id}\' does not exist!`)
-
+        
         try {
             //spremeni vrednosti userja in posodobi bazo
             const updatedUser = await this.prisma.user.update({
@@ -59,6 +52,9 @@ export class UserService {
                 //error, kjer email novega register userja ze obstaja v bazi
                 if (error.code === 'P2002')
                     throw new ForbiddenException('Email already taken!');
+                //error, kjer posljemo id, ki ne obstaja v DB
+                else if (error.code === 'P2025')
+                    throw new BadRequestException(`Id ${id} is invalid!`);
             } else {
                 //ni email alredy taken error, vrni prvotnega
                 console.log(error)
@@ -77,6 +73,9 @@ export class UserService {
             where: { id }
         })
 
+        //user ne obstaja
+        if (!user) throw new NotFoundException(`User with id \'${id}\' does not exist!`)
+
         //destructiraj posamezne var iz dto
         const { password, confirm_password } = updateUserDto
 
@@ -91,18 +90,34 @@ export class UserService {
             if (pwMatch)
                 throw new BadRequestException('New password cannot be the same as old password!')
             //vse vredu? hashaj nov password in shrani v user objekt
-            user.password = await argon.hash(password)
+            const hashedPass = await argon.hash(password)
+
+            try {
+                //posodobi bazo (spremeni le password, ostalo v dto ignoriraj)
+                await this.prisma.user.update({
+                    where: { id },
+                    data: {
+                        password: hashedPass
+                    }
+                })
+
+                return { response: 'Password changed successfully!' }
+            } catch (error) {
+                console.log(error)
+                throw new BadRequestException('Something went wrong while updating user password!')
+            }
         }
-        //vrni user-ja, ce se pass ni spremenil, ostane isti 
-        return { response: 'Password changed successfully!' }
+        return { response: 'Something went wrong while changing password!' }
     }
 
     //DOBI VSE POSTANE AUCTIONE OD USERJA
-    async getUserAuctions() {
-        //return this.auctionService.getAllForUser()
+    async getUserAuctions(
+        userId: number
+    ): Promise<Auction[]> {
+        return this.auctionService.getAllForUser(userId)
     }
 
-    //DOBI EN AUCTIONE OD USERJA
+    //DOBI EN AUCTION OD USERJA
     async getUserAuction(
         id: number
     ): Promise<Auction> {

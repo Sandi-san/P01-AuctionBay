@@ -71,9 +71,10 @@ export class UserController {
     //DOBI VSE AUCTIONE OD USERJA
     @HttpCode(HttpStatus.OK)
     @Get('auctions')
-    async getAuctions() {
-        //async getAuctions(): Promise<Auction[]> {
-        return this.userService.getUserAuctions()
+    async getAuctions(
+        @GetLoggedUser() user: User,
+    ): Promise<Auction[]> {
+        return this.userService.getUserAuctions(user.id)
     }
 
     //USTVARI AUCTION
@@ -103,7 +104,7 @@ export class UserController {
         return this.userService.createUserAuction(user.id, dto)
     }
 
-    //USTVARI AUCTION
+    //UPDATE AUCTION
     @HttpCode(HttpStatus.OK)
     @Patch('auction/:id')
     @UseInterceptors(FileInterceptor('image', saveImageToStorage))

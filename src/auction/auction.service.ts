@@ -30,31 +30,34 @@ export class AuctionService {
             });
 
             if (!auction) throw new NotFoundException(`Auction with id \'${id}\' does not exist!`)
-
+            console.log(auction)
             return auction;
         } catch (error) {
-            console.log(error)
-            throw new BadRequestException('Something went wrong while creating new auction!')
+            if (error instanceof PrismaClientKnownRequestError) {
+                //error, kjer posljemo id, ki ne obstaja v DB
+                if (error.code === 'P2025')
+                    throw new BadRequestException('Auction id is invalid!');
+                else {
+                    console.log(error)
+                    throw new BadRequestException('Something went wrong while getting auction!')
+                }
+            }
         }
     }
-
-    //BIDDAJ NA EN AUCTION
-    async bidOnId(
-        auctionId: number
-    ) {
-
-        //TODO, IF BID SUCCESSFUL
-        //edit(new_currency)
-
-        return this.bidService.create()
-    }
-
 
     //DOBI VSE AUCTIONE OD USERJA
     async getAllForUser(
         userId: number
-    ) {
-        return 'TODO: getting all auctions for user';
+    ): Promise<Auction[]> {
+        try {
+            const auctions = await this.prisma.auction.findMany({
+                where: { userId }
+            })
+            return auctions
+        } catch (error) {
+            console.error(error)
+            throw new BadRequestException(`Something went wrong while getting auctions from user with id ${userId}!`)
+        }
     }
 
     //USTAVARI NOV AUCTION
@@ -107,6 +110,38 @@ export class AuctionService {
         })
     }
 
+    //SPREMENI STATUS GLEDE NA DATE (OB PRIDOBITVI AUCTIONA/U?)
+    //UPDATE AVTOMATSKE VARIANTE
+    async statusDateChange(
+        id: number
+    ): Promise<Auction> {
+        //PREVERI CE JE CURRENT DATE CEZ DURATION DATE, CE JE SPREMENI STATUS V DONE
+        const auction = this.getById(id)
+        if (Date.now() > (await auction).duration.getTime()) {
+            const status = "Done"
+            try {
+                const editedAuction = await this.prisma.auction.update({
+                    where: { id },
+                    data: {
+                        status: status
+                    }
+                })
+                return editedAuction;
+            } catch (error) {
+                if (error instanceof PrismaClientKnownRequestError) {
+                    //error, kjer posljemo id, ki ne obstaja v DB
+                    if (error.code === 'P2025')
+                        throw new BadRequestException('Auction id is invalid!');
+                    else {
+                        console.log(error)
+                        throw new BadRequestException('Something went wrong while updating auction!')
+                    }
+                }
+            }
+        }
+        return auction
+    }
+
     //UPDATE AUCTION
     //UPDATE SAMO Z USERJOVE STRANI (glej Date Invalid)
     async update(
@@ -139,7 +174,7 @@ export class AuctionService {
             if (error instanceof PrismaClientKnownRequestError) {
                 //error, kjer posljemo id, ki ne obstaja v DB
                 if (error.code === 'P2025')
-                    throw new BadRequestException('Auction id is invalid!');
+                    throw new BadRequestException('Id is invalid!');
                 else {
                     console.log(error)
                     throw new BadRequestException('Something went wrong while updating auction!')
@@ -153,35 +188,14 @@ export class AuctionService {
         return this.bidService.getAllForAuction()
     }
 
-    //SPREMENI STATUS GLEDE NA DATE (OB PRIDOBITVI AUCTIONA/U?)
-    //UPDATE AVTOMATSKE VARIANTE
-    async statusDateChange(
-        id: number
-    ): Promise<Auction> {
-        //PREVERI CE JE CURRENT DATE CEZ DURATION DATE, CE JE SPREMENI STATUS V DONE
-        const auction = this.getById(id)
-        if (Date.now() > (await auction).duration.getTime()) {
-            const status = "Done"
-            try {
-                const editedAuction = await this.prisma.auction.update({
-                    where: { id },
-                    data: {
-                        status: status
-                    }
-                })
-                return editedAuction;
-            } catch (error) {
-                if (error instanceof PrismaClientKnownRequestError) {
-                    //error, kjer posljemo id, ki ne obstaja v DB
-                    if (error.code === 'P2025')
-                        throw new BadRequestException('Auction id is invalid!');
-                    else {
-                        console.log(error)
-                        throw new BadRequestException('Something went wrong while updating auction!')
-                    }
-                }
-            }
-        }
-        return auction
+    //BIDDAJ NA EN AUCTION
+    async bidOnId(
+        auctionId: number
+    ) {
+        console.log(auctionId)
+        //TODO, IF BID SUCCESSFUL
+        //edit(new_currency)
+
+        return this.bidService.create()
     }
 }
