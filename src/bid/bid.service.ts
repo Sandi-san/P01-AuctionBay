@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Bid } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { CreateBidDto } from './dto/create-bid.dto';
 
 @Injectable()
 export class BidService {
@@ -22,9 +24,37 @@ export class BidService {
         return 'TODO: getting all bids of auction'
     }
 
+    //SPREMENI/DOBI STATUS BIDA GLEDE OSTALE (WINNING, OUTBID,...)
+    async getBidStatus(){
+
+    }
+
     //BIDDAJ NA EN AUCTION
-    async create() {
-        return 'TODO: creating bid on auction'
+    async create(
+        auctionId: number,
+        dto: CreateBidDto,
+        userId: number
+    ): Promise<Bid> {
+
+        //dodaj foreign key-e
+        dto = {
+            ...dto,
+            status: "In progress",
+            userId: userId,
+            auctionId: auctionId
+        }
+
+        try {
+            const createdBid = await this.prisma.bid.create({
+                data: {
+                    ...dto
+                }
+            })
+            return createdBid;
+        } catch (error) {
+            console.log(error)
+            throw new BadRequestException('Something went wrong while creating new bid!')
+        }
     }
 
     //DOBI AVATAR IMAGE OD USERJA ZA DISPLAY

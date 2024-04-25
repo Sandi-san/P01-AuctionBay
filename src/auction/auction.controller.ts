@@ -1,6 +1,9 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 import { AuctionService } from './auction.service';
-import { Auction } from '@prisma/client';
+import { Auction, Bid, User } from '@prisma/client';
+import { GetLoggedUser } from 'src/auth/decorator';
+import { CreateBidDto } from 'src/bid/dto/create-bid.dto';
+import { JwtGuard } from 'src/auth/guard';
 
 @Controller('auctions')
 export class AuctionController {
@@ -27,19 +30,23 @@ export class AuctionController {
         }
         return this.auctionService.getById(auctionId)
     }
-    
+
     //BID ON AUCTION BY ID
     @HttpCode(HttpStatus.OK)
-    @Get(':id/bid')
+    //user mora biti logged in za POST bid
+    @UseGuards(JwtGuard)
+    @Post(':id/bid')
     async bidOnAuction(
-        @Param('id') id: string
-    ) {
+        @Param('id') id: string,
+        @Body() dto: CreateBidDto,
+        @GetLoggedUser() user: User,
+    ): Promise<Bid> {
         //parsaj string iz url v int
         const auctionId = parseInt(id, 10)
         if (isNaN(auctionId)) {
             throw new BadRequestException('Invalid ID');
         }
-        return this.auctionService.bidOnId(auctionId)
-    }
 
+        return this.auctionService.bidOnId(auctionId, dto, user.id)
+    }
 }

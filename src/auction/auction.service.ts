@@ -2,8 +2,9 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { BidService } from 'src/bid/bid.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAuctionDto, UpdateAuctionDto } from './dto';
-import { Auction } from '@prisma/client';
+import { Auction, Bid } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { CreateBidDto } from 'src/bid/dto/create-bid.dto';
 
 @Injectable()
 export class AuctionService {
@@ -151,9 +152,11 @@ export class AuctionService {
             throw new ForbiddenException('Date must be valid!');
         }
         //spremeni duration iz string v Date (ker posiljamo json)
-        dto = {
-            ...dto,
-            duration: new Date(dto.duration)
+        if (dto.duration) {
+            dto = {
+                ...dto,
+                duration: new Date(dto.duration)
+            }
         }
 
         try {
@@ -184,12 +187,28 @@ export class AuctionService {
 
     //BIDDAJ NA EN AUCTION
     async bidOnId(
-        auctionId: number
-    ) {
-        console.log(auctionId)
-        //TODO, IF BID SUCCESSFUL
-        //edit(new_currency)
-
-        return this.bidService.create()
+        auctionId: number,
+        dto: CreateBidDto,
+        userId: number
+    ): Promise<Bid> {
+        //preveri ce je podan price vecji od trenutnega
+        if (dto.price > (await this.getById(auctionId)).currentPrice) {
+            const bid = this.bidService.create(auctionId, dto, userId)
+            //IF BID SUCCESSFUL: update(new_currency)
+            if (bid) {
+                const currentPrice = (await bid).price
+                //klici auction update in spremeni le price
+                this.update(auctionId, {
+                    currentPrice,
+                    title: undefined,
+                    status: undefined,
+                    duration: undefined
+                })
+                return bid
+            }
+        }
+        else {
+            throw new BadRequestException('New bid must be higher than current price!')
+        }
     }
 }

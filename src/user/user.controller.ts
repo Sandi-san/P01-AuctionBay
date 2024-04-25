@@ -22,7 +22,9 @@ export class UserController {
     //@UseGuards(JwtGuard)
     @Get('')
     //dobi posamezni var z @GetUser('email') email: string
-    async getMe(@GetLoggedUser() user: User): Promise<User> {
+    async getMe(
+        @GetLoggedUser() user: User
+    ): Promise<User> {
         //dobi info userja glede trenutni access_token
         return user
     }
