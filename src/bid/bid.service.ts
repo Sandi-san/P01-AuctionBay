@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Bid } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
 import { CreateBidDto } from './dto/create-bid.dto';
 
 @Injectable()
@@ -9,24 +8,62 @@ export class BidService {
     //POVEZAVA Z REPOSITORY
     constructor(private prisma: PrismaService) { }
 
-    //DOBI VSE BIDE KI JE USER USTVARIL
-    async getAllForUser() {
-        return 'TODO: getting all user\'s bids';
-    }
-
-    //DOBI VSE BIDE S KATERIMI JE USER ZMAGAL
-    async getAllWonForUser() {
-        return 'TODO: getting all won user\'s bids';
+    //DOBI VSE BIDE OD USER-JA
+    //userId, status: 1-all bids, 0-only won bids
+    async getAllForUser(
+        userId: number,
+        status: boolean
+    ): Promise<Bid[]> {
+        //get all user bids
+        if (status) {
+            try {
+                const bids = await this.prisma.bid.findMany({
+                    where: { userId }
+                })
+                return bids
+            } catch (error) {
+                console.error(error)
+                throw new BadRequestException(`Something went wrong while getting bids for user with id ${userId}!`)
+            }
+        }
+        //get Won user bids
+        else {
+            try {
+                const bids = await this.prisma.bid.findMany({
+                    where: { 
+                        userId,
+                        OR: [
+                            { status: "Won" },
+                            { status: "Winning" }
+                        ]
+                    }
+                })
+                return bids
+            } catch (error) {
+                console.error(error)
+                throw new BadRequestException(`Something went wrong while getting bids for user with id ${userId}!`)
+            }
+        }
     }
 
     //DOBI VSE BIDDE OD AUCTIONA
-    async getAllForAuction() {
-        return 'TODO: getting all bids of auction'
+    async getAllForAuction(
+        auctionId: number
+    ): Promise<Bid[]> {
+        try {
+            const bids = await this.prisma.bid.findMany({
+                where: { auctionId }
+            })
+            return bids
+        } catch (error) {
+            console.error(error)
+            throw new BadRequestException(`Something went wrong while getting bids for auction with id ${auctionId}!`)
+        }
     }
 
-    //SPREMENI/DOBI STATUS BIDA GLEDE OSTALE (WINNING, OUTBID,...)
-    async getBidStatus(){
-
+    //SPREMENI STATUS VSEH OSTALIH BIDOV KO SE POSTA NOV (Winning->In progress?)
+    async changeBidsStatus() {
+        return 'TODO: changing other bids'
     }
 
     //BIDDAJ NA EN AUCTION
@@ -35,11 +72,10 @@ export class BidService {
         dto: CreateBidDto,
         userId: number
     ): Promise<Bid> {
-
         //dodaj foreign key-e
         dto = {
             ...dto,
-            status: "In progress",
+            status: "In progress", //Winning?
             userId: userId,
             auctionId: auctionId
         }

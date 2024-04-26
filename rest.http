@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzE0MDM2NDYwLCJleHAiOjE3MTQwMzczNjB9.d1ranKineQrGR-6PJXvCWPBVLJ96Fz65d4ck2J9nqXI
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzE0MTI1MDkyLCJleHAiOjE3MTQxMjU5OTJ9.EEVfMmIhgGT-fzwXCFbYOe0tI4EuRwD0Vvk-bayUyWM
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
@@ -113,19 +113,22 @@ Content-Type: application/json
 Authorization: {{token}}
 
 
-### GET /auctions
+### GET all auctions
 GET http://localhost:8080/auctions HTTP/1.1
 
-### GET /auctions/:id
+### GET one auction
 GET http://localhost:8080/auctions/3 HTTP/1.1
 
-### POST /auctions/:id/bid
-POST http://localhost:8080/auctions/3/bid HTTP/1.1
+### GET all bids from auction
+GET http://localhost:8080/auctions/3/bids HTTP/1.1
+
+### POST bid on auction
+POST http://localhost:8080/auctions/2/bid HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-	"price": 270,
+	"price": 200,
 	"status": "status changeD",
 	"userId": 0,
 	"auctionId": 0

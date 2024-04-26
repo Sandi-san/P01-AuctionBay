@@ -31,6 +31,21 @@ export class AuctionController {
         return this.auctionService.getById(auctionId)
     }
 
+    //DOBI BIDE OD AUCTION BY ID
+    @HttpCode(HttpStatus.OK)
+    @Get(':id/bids')
+    async getBidsForAuction(
+        @Param('id') id: string
+    ): Promise<Bid[]> {
+        //parsaj string iz url v int
+        const auctionId = parseInt(id, 10)
+        if (isNaN(auctionId)) {
+            throw new BadRequestException('Invalid ID');
+        }
+        return this.auctionService.getBids(auctionId)
+    }
+
+    
     //BID ON AUCTION BY ID
     @HttpCode(HttpStatus.OK)
     //user mora biti logged in za POST bid
@@ -46,7 +61,6 @@ export class AuctionController {
         if (isNaN(auctionId)) {
             throw new BadRequestException('Invalid ID');
         }
-
         return this.auctionService.bidOnId(auctionId, dto, user.id)
     }
 }

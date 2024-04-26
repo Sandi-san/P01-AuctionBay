@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { Auction, User } from '@prisma/client';
+import { Auction, Bid, User } from '@prisma/client';
 import { AuctionService } from 'src/auction/auction.service';
 import { BidService } from 'src/bid/bid.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -148,12 +148,16 @@ export class UserService {
     }
 
     //DOBI VSE BIDE KI JE USER USTVARIL
-    async getUserBids() {
-        return this.bidService.getAllForUser()
+    async getUserBids(
+        userId: number
+    ): Promise<Bid[]> {
+        return this.bidService.getAllForUser(userId,true)
     }
 
     //DOBI VSE BIDE S KATERIMI JE USER ZMAGAL
-    async getUserBidsWon() {
-        return this.bidService.getAllWonForUser()
+    async getUserBidsWon(
+        userId: number
+    ): Promise<Bid[]> {
+        return this.bidService.getAllForUser(userId,false)
     }
 }

@@ -143,7 +143,7 @@ export class AuctionService {
         id: number,
         dto: UpdateAuctionDto
     ): Promise<Auction> {
-        console.log(dto)
+        // console.log(dto)
 
         //CAS MORA BITI V PRIHODNOSTI
         //avtomatski changeDate ne klice edit() funkcije, ker bi ta if prepreceval ustrezno posodobitev
@@ -181,8 +181,10 @@ export class AuctionService {
     }
 
     //DOBI VSE BIDE KI SO NA AUCTIONU
-    async getBids() {
-        return this.bidService.getAllForAuction()
+    async getBids(
+        auctionId: number
+    ): Promise<Bid[]> {
+        return this.bidService.getAllForAuction(auctionId)
     }
 
     //BIDDAJ NA EN AUCTION

@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Auction, User } from '@prisma/client';
+import { Auction, Bid, User } from '@prisma/client';
 import { GetLoggedUser } from 'src/auth/decorator';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/guard';
@@ -148,16 +148,18 @@ export class UserController {
     //DOBI VSE BIDE OD USERJA
     @HttpCode(HttpStatus.OK)
     @Get('bids')
-    async getBids() {
-        //async getBids(): Promise<Bid[]> {
-        return this.userService.getUserBids()
+    async getBids(
+        @GetLoggedUser() user: User,
+    ): Promise<Bid[]> {
+        return this.userService.getUserBids(user.id)
     }
 
     //USTVARI NOV AUCTION
     @HttpCode(HttpStatus.OK)
     @Get('bids/won')
-    async getBidsWon() {
-        //async getBidsWon(): Promise<Bid[]> {
-        return this.userService.getUserBidsWon()
+    async getBidsWon(
+        @GetLoggedUser() user: User,
+    ): Promise<Bid[]> {
+        return this.userService.getUserBidsWon(user.id)
     }
 }
