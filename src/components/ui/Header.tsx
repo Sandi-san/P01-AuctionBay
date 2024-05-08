@@ -22,6 +22,7 @@ const Header: FC = () => {
                     // div z logo, zraven z Buttoni, da so vsi na levi strani (items-start)
                     <>
                         <div className="flex items-center">
+                            {/* POZOR: uporabi Link, ker normalni a href unici style novi strani */}
                             <Link to="/">
                                 <img src="/images/logo.png" alt="Logo" className="h-12 w-12 rounded-full mr-2" />
                             </Link>
@@ -91,7 +92,7 @@ const Header: FC = () => {
                         <div className="flex items-center">
                             <Link to="/login" className="text-black font-bold mr-4">Log in</Link>
                             <span className="text-black">or</span>
-                            <Link to="/register" className="ml-4 bg-black px-4 py-2 rounded-md">Sign up</Link>
+                            <Link to="/signup" className="ml-4 bg-black px-4 py-2 rounded-md">Sign up</Link>
                         </div>
                     </>
                 )}

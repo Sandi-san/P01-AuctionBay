@@ -1,12 +1,12 @@
-import Layout from '../components/ui/Layout'
+import Sidebar from '../components/ui/Sidebar'
 import RegisterForm from '../components/user/RegisterForm'
 import { FC } from 'react'
 
 const Register: FC = () => {
   return (
-    <Layout>
+    <Sidebar>
       <RegisterForm />
-    </Layout>
+    </Sidebar>
   )
 }
 export default Register
