@@ -22,7 +22,9 @@ const Header: FC = () => {
                     // div z logo, zraven z Buttoni, da so vsi na levi strani (items-start)
                     <>
                         <div className="flex items-center">
-                            <img src="/images/logo.png" alt="Logo" className="h-12 w-12 rounded-full mr-2" />
+                            <Link to="/">
+                                <img src="/images/logo.png" alt="Logo" className="h-12 w-12 rounded-full mr-2" />
+                            </Link>
                             {/* background med buttonoma */}
                             <div className="flex items-start bg-white rounded-full p-1">
                                 <Link to="/auctions"
@@ -53,24 +55,28 @@ const Header: FC = () => {
                         {/* Buttoni na desni strani */}
                         <div className="flex items-end bg-white rounded-full p-1">
                             {/* levi button */}
-                            <button className="rounded-full bg-white mr-2">
-                                <img src="/images/new.png" alt="Add new auction"
-                                    className="h-12 w-12" />
-                            </button>
+                            <Link to="/new_auction">
+                                <button className="rounded-full bg-white mr-2">
+                                    <img src="/images/new.png" alt="Add new auction"
+                                        className="h-12 w-12" />
+                                </button>
+                            </Link>
                             {/* desni button, preveri vnesenega userja (null-safety) */}
                             {authStore.user && (
-                                <button className="rounded-full bg-white">
-                                    <img
-                                        // ce user ima avatar, display, ce nima, uporabi staticno sliko
-                                        src={authStore.user.avatar || '/images/unknown_user.png'}
-                                        alt={
-                                            authStore.user?.first_name || authStore.user?.last_name
-                                                ? `${authStore.user?.first_name} ${authStore.user?.last_name}`
-                                                : authStore.user?.email
-                                        }
-                                        className="h-12 w-12"
-                                    />
-                                </button>
+                                <Link to="/edit_profile">
+                                    <button className="rounded-full bg-white">
+                                        <img
+                                            // ce user ima avatar, display, ce nima, uporabi staticno sliko
+                                            src={authStore.user.avatar || '/images/unknown_user.png'}
+                                            alt={
+                                                authStore.user?.first_name || authStore.user?.last_name
+                                                    ? `${authStore.user?.first_name} ${authStore.user?.last_name}`
+                                                    : authStore.user?.email
+                                            }
+                                            className="h-12 w-12"
+                                        />
+                                    </button>
+                                </Link>
                             )}
                         </div>
                     </>
@@ -78,7 +84,9 @@ const Header: FC = () => {
                     // prikaz ce user ni logged in (logo, login in register buttons)
                     <>
                         <div className="flex items-center">
-                            <img src="/images/logo.png" alt="Logo" className="h-12 w-12 rounded-full mr-2" />
+                            <Link to="/">
+                                <img src="/images/logo.png" alt="Logo" className="h-12 w-12 rounded-full mr-2" />
+                            </Link>
                         </div>
                         <div className="flex items-center">
                             <Link to="/login" className="text-black font-bold mr-4">Log in</Link>

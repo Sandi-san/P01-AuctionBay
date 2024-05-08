@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Header from '../components/ui/Header'
 import Layout from '../components/ui/Layout'
 import { FC } from 'react'
@@ -5,29 +6,15 @@ import { FC } from 'react'
 const Home: FC = () => {
   return (
     <>
-    <Header/>
-    <Layout>
-      <div className="p-2 mb-4">
-        <div className="container-fluid py-4">
-          <h1 className="display-5 fw-bold">Welcome</h1>
-          <p className="col-md-8 fs-4">
-            In this tutorial you will learn how to use:
-          </p>
-          <ol>
-            <li>react-bootstrap</li>
-            <li>react-hook-form with yup validation</li>
-            <li>CRUD functionality - Create Read Update Delete</li>
-            <li>file upload with NestJS</li>
-            <li>connect ReactJS and NestJS</li>
-            <li>setup NestJS with custom logging</li>
-            <li>connect to PostgreSQL database using TypeORM</li>
-            <li>create dtos with validation</li>
-            <li>deploy ReactJS to AWS S3 Bucket</li>
-            <li>deploy NestJS to AWS ECS (Elastic Container Service)</li>
-          </ol>
+      <Layout>
+        <div className="flex flex-col items-center justify-center h-full">
+          <h1 className="text-6xl font-bold mb-4">E-auctions made easy!</h1>
+          <p className="text-lg text-center mb-8">Simple way for selling your unused products, or<br>
+          </br>getting a deal on product you want!</p>
+          <Link to="/auctions" className="bg-customYellow py-2 px-4 rounded-lg">Start bidding</Link>
+          <img src="/images/landing_page_preview.png" alt="Static Image" className="mt-auto" />
         </div>
-      </div>
-    </Layout>
+      </Layout>
     </>
   )
 }
