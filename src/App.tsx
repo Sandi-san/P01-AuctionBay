@@ -7,7 +7,7 @@ const App: FC = () => {
   usePageIdentification()
 
   return (
-    <div className="bg-gray-100  min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
     <Routes />
     </div>
   )

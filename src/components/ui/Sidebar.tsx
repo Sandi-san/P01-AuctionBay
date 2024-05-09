@@ -10,8 +10,9 @@ const Sidebar: FC<Props> = ({ children }) => {
   const location = useLocation();
 
   return (
-    <>
-      <div className="layout-container container-xxl p-4 flex flex-col justify-between h-full bg-white rounded-lg m-2">
+    //container da lahko vidimo rounded cornerje brez da extendamo vsebino
+    <div className="h-screen p-2">
+      <div className="layout-container container-xxl p-4 flex flex-col justify-between h-full bg-white rounded-lg">
         {/* slika logo center zgoraj */}
         <div className="flex items-center justify-center mb-4">
           <Link to="/">
@@ -36,8 +37,7 @@ const Sidebar: FC<Props> = ({ children }) => {
           )}
         </div>
       </div>
-      {/* <Footer /> */}
-    </>
+    </div>
   );
 };
 

@@ -24,7 +24,7 @@ const Card: FC<Props> = ({ item }) => {
     const { name, price, image, status, date } = item
 
     return (
-        <div className="h-[250px] w-[216px] bg-white rounded-lg flex flex-col overflow-hidden">
+        <div className="h-[250px] w-[216px] bg-white rounded-2xl flex flex-col overflow-hidden">
             {/* Content section */}
             <div className="pt-2 pr-2 pl-2 pb-1">
                 {/* Tag header section */}
@@ -48,7 +48,6 @@ const Card: FC<Props> = ({ item }) => {
 
             {/* Image container */}
             <div className="flex justify-center items-center overflow-hidden h-full">
-                {/* Image with border-radius */}
                 <img src={image} alt="Product" className="rounded-xl object-cover h-full w-full p-2" />
             </div>
         </div>
