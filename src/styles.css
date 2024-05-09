@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* CUSTOM STYLE: vec tailwind stylov kot en */
+@layer components {
+    .form-control {
+        @apply border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 w-full
+    }
+    .invalid-feedback {
+        @apply text-red-500 text-sm mt-1
+    }
+}

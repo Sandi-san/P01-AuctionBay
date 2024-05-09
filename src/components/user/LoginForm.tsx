@@ -55,7 +55,7 @@ const LoginForm: FC = () => {
                 }
               />
               {errors.email && (
-                <div className="invalid-feedback text-danger">
+                <div className="invalid-feedback text-red-500">
                   {errors.email.message}
                 </div>
               )}
@@ -79,7 +79,7 @@ const LoginForm: FC = () => {
                 }
               />
               {errors.password && (
-                <div className="invalid-feedback text-danger">
+                <div className="invalid-feedback text-red-500">
                   {errors.password.message}
                 </div>
               )}
@@ -100,9 +100,9 @@ const LoginForm: FC = () => {
         <ToastContainer className="p-3" position="top-end">
           <Toast onClose={() => setShowError(false)} show={showError}>
             <Toast.Header>
-              <strong className="me-auto text-danger">Error</strong>
+              <strong className="me-auto text-red-500">Error</strong>
             </Toast.Header>
-            <Toast.Body className="text-danger bg-light">{apiError}</Toast.Body>
+            <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
           </Toast>
         </ToastContainer>
       )} */}

@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 
 const Page404: FC = () => {
   return (
-    <div className="page-404">
-      <h1>
-        Nothing found <b>404</b>!
-      </h1>
-      <Link to="/">Go home</Link>
+    <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-3xl font-bold mb-4">
+            Nothing found <span className="text-red-500">404</span>!
+        </h1>
+        <Link to="/" className="text-blue-500 hover:underline">Go home</Link>
     </div>
-  )
+);
 }
 
 export default Page404

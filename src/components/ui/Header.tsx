@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
-import '../../styles.css'
 
 const Header: FC = () => {
     //za preverjanje na kateri strani smo (spremninjanje button stilov)
@@ -54,7 +53,7 @@ const Header: FC = () => {
                             </div>
                         </div>
                         {/* Buttoni na desni strani */}
-                        <div className="flex items-end bg-white rounded-full p-1">
+                        <div className="flex items-end bg-white rounded-full pt-1 pl-1 pr-1">
                             {/* levi button */}
                             <Link to="/new_auction">
                                 <button className="rounded-full bg-white mr-2">
@@ -101,9 +100,9 @@ const Header: FC = () => {
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>
                         <Toast.Header>
-                            <strong className="me-auto text-danger">Error</strong>
+                            <strong className="me-auto text-red-500">Error</strong>
                         </Toast.Header>
-                        <Toast.Body className="text-danger bg-light">{apiError}</Toast.Body>
+                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
                     </Toast>
                 </ToastContainer>
             )}
@@ -196,9 +195,9 @@ const Header: FC = () => {
                     <ToastContainer className="p-3" position="top-end">
                         <Toast onClose={() => setShowError(false)} show={showError}>
                             <Toast.Header>
-                                <strong className="me-auto text-danger">Error</strong>
+                                <strong className="me-auto text-red-500">Error</strong>
                             </Toast.Header>
-                            <Toast.Body className="text-danger bg-light">{apiError}</Toast.Body>
+                            <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
                         </Toast>
                     </ToastContainer>
                 )}
