@@ -11,7 +11,7 @@ const Sidebar: FC<Props> = ({ children }) => {
 
   return (
     <>
-      <div className="layout-container container-xxl p-4 flex flex-col justify-between h-full">
+      <div className="layout-container container-xxl p-4 flex flex-col justify-between h-full bg-white rounded-lg m-2">
         {/* slika logo center zgoraj */}
         <div className="flex items-center justify-center mb-4">
           <Link to="/">

@@ -1,4 +1,5 @@
 import { FC, ReactNode, useEffect, useState } from 'react';
+import Card from './Card';
 //import { fetchItemsFromBackend } from 'backend-api'; // TODO: Import backend API function
 
 interface Item {
@@ -18,37 +19,37 @@ const Flow: FC = () => {
             try {
                 //klic API class, ki dobi 4 trenutne auctione iz baze
                 // const data = await TODO();
-                
+
                 const data: Item[] = [
                     {
-                      name: "Item 1",
-                      price: 10,
-                      image: "image1.jpg",
-                      status: "In Stock",
-                      date: "2023-05-01"
+                        name: "Item 1",
+                        price: 10,
+                        image: "images/landing_page_preview.png",
+                        status: "In progress",
+                        date: "59m"
                     },
                     {
-                      name: "Item 2",
-                      price: 20,
-                      image: "image2.jpg",
-                      status: "Out of Stock",
-                      date: "2023-05-02"
+                        name: "Item 2",
+                        price: 20,
+                        image: "images/landing_page_preview.png",
+                        status: "In progress",
+                        date: "1h"
                     },
                     {
-                      name: "Item 3",
-                      price: 30,
-                      image: "image3.jpg",
-                      status: "In Stock",
-                      date: "2023-05-03"
+                        name: "Item 3",
+                        price: 30,
+                        image: "images/test.png",
+                        status: "In progress",
+                        date: "7h"
                     },
                     {
-                      name: "Item 4",
-                      price: 40,
-                      image: "image4.jpg",
-                      status: "Out of Stock",
-                      date: "2023-05-04"
+                        name: "Item 4",
+                        price: 40,
+                        image: "images/new.png",
+                        status: "In progress",
+                        date: "12h"
                     }
-                  ];
+                ];
 
                 setItems(data);
             } catch (error) {
@@ -68,15 +69,8 @@ const Flow: FC = () => {
                     <div key={index} className="w-64 h-64 flex items-center justify-center m-4 relative">
                         <div>
                             {/* renderiraj karto z podatki iz Item */}
-                            {/* <Card item={item} /> */}
-                            
-                            <img src={item.image} alt={item.name} className="w-32 h-32 object-cover" />
-                            <p className="text-xl font-bold">{item.name}</p>
-                            <p className="text-lg">${item.price}</p>
-                            <p className="text-sm text-gray-500">{item.status}</p>
-                            <p className="text-sm text-gray-500">{item.date}</p>
+                            <Card item={item} />
                         </div>
-                        <div className="absolute w-full h-2 bg-gradient-to-r from-gray-200 to-transparent bottom-0"></div>
                     </div>
                 ))}
             </div >
