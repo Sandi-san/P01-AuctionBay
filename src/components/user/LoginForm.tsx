@@ -113,6 +113,12 @@ const LoginForm: FC = () => {
                     {errors.password.message}
                   </div>
                 )}
+                {/* Forgot password link */}
+                <div className="text-right right-0 bottom-0 mt-1 mr-2">
+                  <Link to="/forgot_password" className="text-gray-500 text-xs cursor-pointer">
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
             </Form.Group>
           )}

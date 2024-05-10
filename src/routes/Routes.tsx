@@ -62,7 +62,7 @@ export const AppRoutes: AppRoute[] = [
   },
   {
     type: RouteType.RESTRICTED,
-    path: '/password',
+    path: '/forgot_password',
     children: <Password />,
   },
 
