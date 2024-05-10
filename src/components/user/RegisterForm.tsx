@@ -36,64 +36,23 @@ const RegisterForm: FC = () => {
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
         //if (!file) return
 
-        const response = await API.register(data)
-        if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
+        const response = await API.register(data)        
+        console.log(response);
+
+        //TODO vsi status code ki lahko tu dobis
+        if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+            response.data?.statusCode === StatusCode.FORBIDDEN
+        ) {
             setApiError(response.data.message)
             setShowError(true)
         } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
             setApiError(response.data.message)
             setShowError(true)
-        } else {
-            //Logini userja predenj shranis avatar sliko
-            const loginResponse = await API.login({
-                email: data.email,
-                password: data.password,
-            })
-
-            if (loginResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-                setApiError(loginResponse.data.message)
-                setShowError(true)
-            } else if (
-                loginResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
-            ) {
-                setApiError(loginResponse.data.message)
-                setShowError(true)
-            } else {
-                /*
-                //Upload file
-                const formData = new FormData()
-                //'image' isto kot v backend (modules/controller - FileInterceptor('image')
-                formData.append('image', file, file.name)
-                const fileResponse = await API.uploadAvatar(
-                    formData,
-                    loginResponse.data.id,
-                )
-
-                if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-                    setApiError(fileResponse.data.message)
-                    setShowError(true)
-                } else if (
-                    fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
-                ) {
-                    setApiError(fileResponse.data.message)
-                    setShowError(true)
-                    
-                } else {
-                    */
-                //Dobi userja z avatar sliko
-                const userResponse = await API.fetchUser()
-                if (
-                    userResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
-                ) {
-                    setApiError(userResponse.data.message)
-                    setShowError(true)
-                } else {
-                    authStore.login(userResponse.data)
-                    navigate('/')
-                }
-                //}
-            }
         }
+        else {
+            authStore.login(response.data)
+            navigate('/')
+          }
     })
 
     /*
@@ -285,18 +244,18 @@ const RegisterForm: FC = () => {
                 />
                 <Controller
                     control={control}
-                    name="confirmPassword"
+                    name="confirm_password"
                     render={({ field }) => (
                         <Form.Group className="mb-2 flex flex-col relative">
-                            <FormLabel htmlFor="confirmPassword">Repeat password</FormLabel>
+                            <FormLabel htmlFor="confirm_password">Repeat password</FormLabel>
                             <div className='px-3 py-2 mb-1 w-full'>
                                 <input
                                     {...field}
                                     type={showConfirmPassword ? 'text' : 'password'}
                                     aria-label="Confirm password"
-                                    aria-describedby="confirmPassword"
+                                    aria-describedby="confirm_password"
                                     className={
-                                        errors.confirmPassword
+                                        errors.confirm_password
                                             ? 'form-control is-invalid'
                                             : 'form-control'
                                     }
@@ -317,9 +276,9 @@ const RegisterForm: FC = () => {
                                         {errors.password.message}
                                     </div>
                                 )}
-                                {errors.confirmPassword && (
+                                {errors.confirm_password && (
                                     <div className="invalid-feedback">
-                                        {errors.confirmPassword.message}
+                                        {errors.confirm_password.message}
                                     </div>
                                 )}
                             </div>

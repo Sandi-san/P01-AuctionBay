@@ -21,8 +21,16 @@ export const fetchUsers = async (pageNumber: number) =>
 export const login = async (data: LoginUserFields) =>
   apiRequest<LoginUserFields, UserType>('post', apiRoutes.LOGIN, data)
 
-export const register = async (data: RegisterUserFields) =>
-  apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data)
+export const register = async (data: RegisterUserFields) => {
+  try {
+    const response = await apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data);
+    console.log('Response:', response);
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; // Rethrow the error to be caught by the caller
+  }
+}
 
 export const signout = async () =>
   apiRequest<undefined, void>('post', apiRoutes.SIGNOUT)

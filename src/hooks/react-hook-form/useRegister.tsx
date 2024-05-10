@@ -7,7 +7,7 @@ export interface RegisterUserFields {
   lastName?: string
   email: string
   password: string
-  confirmPassword: string
+  confirm_password: string
 }
 
 export const useRegisterForm = () => {
@@ -21,7 +21,7 @@ export const useRegisterForm = () => {
         'Password must at contain least one number, lower or uppercase letter and must be longer than 6 characters.',
       )
       .required(),
-      confirmPassword: Yup.string()
+      confirm_password: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords do not match')
       .required('Passwords do not match'),
   })
@@ -36,7 +36,7 @@ export const useRegisterForm = () => {
       lastName: '',
       email: '',
       password: '',
-      confirmPassword: '',
+      confirm_password: '',
     },
     mode: 'onSubmit',
     resolver: yupResolver(RegisterSchema),
