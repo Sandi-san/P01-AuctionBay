@@ -18,7 +18,7 @@ export const useRegisterForm = () => {
     password: Yup.string()
       .matches(
         /^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/,
-        'Password must contain least one number, lower or uppercase letter and must be longer than 6 characters.',
+        'Password must at contain least one number, lower or uppercase letter and must be longer than 6 characters.',
       )
       .required(),
       confirmPassword: Yup.string()

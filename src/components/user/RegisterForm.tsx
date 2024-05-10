@@ -16,7 +16,6 @@ import Button from 'react-bootstrap/Button'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import authStore from '../../stores/auth.store'
-import Avatar from 'react-avatar'
 
 const RegisterForm: FC = () => {
     //za toggle show password ko kliknes na eye icon (pass in confirm posebej gumb)
@@ -28,12 +27,14 @@ const RegisterForm: FC = () => {
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
 
+    /*
     const [file, setFile] = useState<File | null>(null)
     const [preview, setPreview] = useState<string | null>(null)
     const [fileError, setFileError] = useState(false)
+*/
 
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
-        if (!file) return
+        //if (!file) return
 
         const response = await API.register(data)
         if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
@@ -58,6 +59,7 @@ const RegisterForm: FC = () => {
                 setApiError(loginResponse.data.message)
                 setShowError(true)
             } else {
+                /*
                 //Upload file
                 const formData = new FormData()
                 //'image' isto kot v backend (modules/controller - FileInterceptor('image')
@@ -75,23 +77,27 @@ const RegisterForm: FC = () => {
                 ) {
                     setApiError(fileResponse.data.message)
                     setShowError(true)
+                    
                 } else {
-                    //Dobi userja z avatar sliko
-                    const userResponse = await API.fetchUser()
-                    if (
-                        userResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
-                    ) {
-                        setApiError(userResponse.data.message)
-                        setShowError(true)
-                    } else {
-                        authStore.login(userResponse.data)
-                        navigate('/')
-                    }
+                    */
+                //Dobi userja z avatar sliko
+                const userResponse = await API.fetchUser()
+                if (
+                    userResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
+                ) {
+                    setApiError(userResponse.data.message)
+                    setShowError(true)
+                } else {
+                    authStore.login(userResponse.data)
+                    navigate('/')
                 }
+                //}
             }
         }
     })
 
+    /*
+    //POZOR: na submit buttonu dodaj onMouseUp={handleFileError}
     const handleFileError = () => {
         // requred file ne obstaja
         if (!file) setFileError(true)
@@ -118,15 +124,17 @@ const RegisterForm: FC = () => {
             setPreview(null)
         }
     }, [file])
+    */
 
     return (
-        <>
+        // centriraj vse elemente verticalno
+        <div className="flex flex-col justify-center h-full">
             {/* Greeting text */}
             <div className="flex flex-col items-center mb-6">
                 <h2 className="text-2xl font-bold mb-2">Hello!</h2>
                 <p className="text-gray-600">Please enter your details</p>
             </div>
-            <Form className="register-form p-2" onSubmit={onSubmit}>
+            <Form className="register-form m-2" onSubmit={onSubmit}>
                 {/* TODO: UPORABI PRI EDIT PROFILE form group za avatar sliko */}
                 {/* <Form.Group className="d-flex flex-column justify-content-center align-items-center">
                     <FormLabel htmlFor="avatar" id="avatar-p">
@@ -147,7 +155,7 @@ const RegisterForm: FC = () => {
                         </div>
                     )}
                 </Form.Group> */}
-                <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="flex flex-wrap -mx-3 mb-2">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <Controller
                             control={control}
@@ -155,7 +163,7 @@ const RegisterForm: FC = () => {
                             render={({ field }) => (
                                 <Form.Group className="flex flex-col">
                                     <FormLabel htmlFor="firstName">First name</FormLabel>
-                                    <div className='px-3 py-2 mb-1 w-full'>
+                                    <div className='px-2 py-1 mb-1 w-full'>
                                         <input
                                             {...field}
                                             type="text"
@@ -177,14 +185,14 @@ const RegisterForm: FC = () => {
                             )}
                         />
                     </div>
-                    <div className="w-full md:w-1/2 px-3">
+                    <div className="w-full md:w-1/2 px-2">
                         <Controller
                             control={control}
                             name="lastName"
                             render={({ field }) => (
                                 <Form.Group className="flex flex-col">
                                     <FormLabel htmlFor="lastName">Last name</FormLabel>
-                                    <div className='px-3 py-2 mb-1 w-full'>
+                                    <div className='px-2 py-1 mb-1 w-full'>
                                         <input
                                             {...field}
                                             type="text"
@@ -212,14 +220,14 @@ const RegisterForm: FC = () => {
                     control={control}
                     name="email"
                     render={({ field }) => (
-                        <Form.Group className="mb-3 flex flex-col">
-                            <FormLabel htmlFor="email">Email</FormLabel>
-                            <div className='px-3 py-2 mb-1 w-full'>
+                        <Form.Group className="mb-2 flex flex-col">
+                            <FormLabel htmlFor="email">E-mail</FormLabel>
+                            <div className='px-2 py-1 mb-1 w-full'>
                                 <input
                                     {...field}
                                     type="email"
                                     placeholder="example@gmail.com"
-                                    aria-label="Email"
+                                    aria-label="E-mail"
                                     aria-describedby="email"
                                     className={
                                         errors.email
@@ -240,9 +248,9 @@ const RegisterForm: FC = () => {
                     control={control}
                     name="password"
                     render={({ field }) => (
-                        <Form.Group className="mb-3 flex flex-col relative">
+                        <Form.Group className="mb-2 flex flex-col relative">
                             <FormLabel htmlFor="password">Password</FormLabel>
-                            <div className='px-3 py-2 mb-1 w-full'>
+                            <div className='px-2 py-1 mb-1 w-full'>
                                 <input
                                     {...field}
                                     type={showPassword ? 'text' : 'password'}
@@ -279,7 +287,7 @@ const RegisterForm: FC = () => {
                     control={control}
                     name="confirmPassword"
                     render={({ field }) => (
-                        <Form.Group className="mb-3 flex flex-col relative">
+                        <Form.Group className="mb-2 flex flex-col relative">
                             <FormLabel htmlFor="confirmPassword">Repeat password</FormLabel>
                             <div className='px-3 py-2 mb-1 w-full'>
                                 <input
@@ -318,12 +326,12 @@ const RegisterForm: FC = () => {
                         </Form.Group>
                     )}
                 />
-                <Button className="bg-customYellow py-2 px-4 rounded-xl w-full" type="submit" onMouseUp={handleFileError}>
+                <Button className="bg-customYellow py-2 px-4 rounded-xl w-full" type="submit">
                     Sign up
                 </Button>
             </Form >
             {showError && (
-                <ToastContainer className="p-3" position="top-end">
+                <ToastContainer className="p-2" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>
                         <Toast.Header>
                             <strong className="me-auto text-red-500">Error</strong>
@@ -333,7 +341,7 @@ const RegisterForm: FC = () => {
                 </ToastContainer>
             )
             }
-        </>
+        </div>
     )
 }
 export default observer(RegisterForm)
