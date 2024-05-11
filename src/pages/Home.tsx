@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Header from '../components/ui/Header'
 import Layout from '../components/ui/Layout'
 import { FC } from 'react'
+import { Button } from 'react-bootstrap'
 
 const Home: FC = () => {
   return (
@@ -11,7 +12,11 @@ const Home: FC = () => {
           <h1 className="text-6xl font-bold mb-4">E-auctions made easy!</h1>
           <p className="text-lg text-center mb-8">Simple way for selling your unused products, or<br>
           </br>getting a deal on product you want!</p>
-          <Link to="/auctions" className="bg-customYellow py-2 px-4 rounded-lg">Start bidding</Link>
+          <Link to="/auctions">
+            <Button className="bg-customYellow custom-button w-full hover:bg-customYellow-dark">
+              Start bidding
+            </Button>
+          </Link>
           <img src="/images/landing_page_preview.png" alt="Static Image" className="mt-auto" />
         </div>
       </Layout>

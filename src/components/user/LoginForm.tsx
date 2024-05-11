@@ -125,7 +125,7 @@ const LoginForm: FC = () => {
             </Form.Group>
           )}
         />
-        <Button className="bg-customYellow py-2 px-4 rounded-xl w-full" type="submit">
+        <Button className="bg-customYellow custom-button w-full hover:bg-customYellow-dark" type="submit">
           Login
         </Button>
       </Form>

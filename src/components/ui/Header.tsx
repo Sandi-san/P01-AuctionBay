@@ -4,7 +4,6 @@ import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
 import ProfilePopUp from '../ui/ProfilePopUp'
-import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css';
 
 const Header: FC = () => {
@@ -65,7 +64,7 @@ const Header: FC = () => {
 
     return (
         <>
-            <header className="flex justify-between items-center px-4 py-2 text-white">
+            <header className="flex justify-between items-center px-6 py-4 text-white">
                 {/* ce je user prijavljen, display Buttons */}
                 {authStore.user ? (
                     // div z logo, zraven z Buttoni, da so vsi na levi strani (items-start)
@@ -129,9 +128,8 @@ const Header: FC = () => {
                                     </button>
                                     {/* User settings profile popup  */}
                                     {showPopup && (
-                                        <div className='bg-black' ref={popupRef}
+                                        <div className='settings-popup' ref={popupRef}
                                             style={{
-                                                position: 'absolute', top: '0', right: '0',
                                                 height: `${popupDimensions.height}px`,
                                             }}>
                                             <ProfilePopUp />
@@ -150,9 +148,9 @@ const Header: FC = () => {
                             </Link>
                         </div>
                         <div className="flex items-center">
-                            <Link to="/login" className="text-black font-bold mr-4">Log in</Link>
+                            <Link to="/login" className="text-black font-bold mr-2">Log in</Link>
                             <span className="text-black">or</span>
-                            <Link to="/signup" className="ml-4 bg-black px-4 py-2 rounded-md">Sign up</Link>
+                            <Link to="/signup" className="ml-2 bg-black px-4 py-2 rounded-2xl">Sign up</Link>
                         </div>
                     </>
                 )}

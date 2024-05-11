@@ -7,7 +7,10 @@ module.exports = {
     extend: {
       colors: {
         // custom barva za gumbe
-        customYellow: '#F4FF47'
+        customYellow: {
+          DEFAULT: '#F4FF47',
+          dark: '#c0d624',
+        },
       },
       boxShadow: {
         // custom shadow gradient za grid Card-ov
