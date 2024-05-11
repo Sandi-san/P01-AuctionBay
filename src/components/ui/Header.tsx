@@ -1,11 +1,61 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
+import ProfilePopUp from '../ui/ProfilePopUp'
+import Popup from 'reactjs-popup'
+import 'reactjs-popup/dist/index.css';
 
 const Header: FC = () => {
-    //za preverjanje na kateri strani smo (spremninjanje button stilov)
+    //za User settings popup
+    //ali je Popup odprt ali ne
+    const [showPopup, setShowPopup] = useState(false);
+    //dimenzije popupa (za pravilne dimenzije parenta)
+    const [popupDimensions, setPopupDimensions] = useState({ width: 0, height: 0 });
+    //referenca na Popup element
+    const popupRef = useRef<HTMLDivElement | null>(null);
+    //referenca na Button element ki odpre Popup
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    
+    //effect, ki je na strani
+    useEffect(() => {
+        //click kjerkoli na screenu
+        const handleClick = (event: MouseEvent) => {
+            // setButtonClicked(false)
+
+            //check ce je click v buttonu, ki odpre Popup (potrebno za pravilni toggle)
+            if (buttonRef.current && event.target instanceof Node && buttonRef.current.contains(event.target)) {
+                console.log("Clicked on button")
+                //potrebni koncat izvajanje funk, da se toggle pravilno obnasa
+                return
+            }
+            //check ce je click v Popup formu (ko je ze odprt)
+            else if (popupRef.current && event.target instanceof Node && popupRef.current.contains(event.target)) {
+                console.log("Click in")
+                const { width, height } = popupRef.current.getBoundingClientRect();
+                setPopupDimensions({ width, height });
+                return;
+            }
+            else {
+                //click izven Popup
+                setShowPopup(false);
+            }
+        };
+        //dodaj listener ko se nalozi page
+        document.addEventListener('mousedown', handleClick);
+        return () => {
+            //odstrani listener ko se page zapre
+            document.removeEventListener('mousedown', handleClick);
+        };
+    }, []);
+
+    const togglePopup = () => {
+        console.log(`Visibility status: ${showPopup}`)
+        setShowPopup(!showPopup);
+    };
+
+    //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
     const location = useLocation();
     const currentPage = location.pathname;
 
@@ -63,10 +113,11 @@ const Header: FC = () => {
                             </Link>
                             {/* desni button, preveri vnesenega userja (null-safety) */}
                             {authStore.user && (
-                                <Link to="/edit_profile">
-                                    <button className="rounded-full bg-white">
+                                //container za User settings popup
+                                <div className='relative'>
+                                    {/* ko kliknes button, odpri popup */}
+                                    <button ref={buttonRef} onClick={togglePopup} className="rounded-full bg-white">
                                         <img
-                                            // ce user ima avatar, display, ce nima, uporabi staticno sliko
                                             src={authStore.user.avatar || '/images/unknown_user.png'}
                                             alt={
                                                 authStore.user?.first_name || authStore.user?.last_name
@@ -76,7 +127,17 @@ const Header: FC = () => {
                                             className="h-12 w-12"
                                         />
                                     </button>
-                                </Link>
+                                    {/* User settings profile popup  */}
+                                    {showPopup && (
+                                        <div className='bg-black' ref={popupRef}
+                                            style={{
+                                                position: 'absolute', top: '0', right: '0',
+                                                height: `${popupDimensions.height}px`,
+                                            }}>
+                                            <ProfilePopUp />
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
                     </>

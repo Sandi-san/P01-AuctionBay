@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const PopupForm = () => {
+const ProfilePopUp = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const togglePopup = () => {
@@ -10,7 +10,7 @@ const PopupForm = () => {
 
     return (
 
-        <div className="absolute top-0 right-0 mt-12 w-64 bg-white rounded-lg shadow-md p-4">
+        <div className="mt-12 w-64 bg-white rounded-lg shadow-md p-4">
             {/* Profile settings link */}
             <div className="flex items-center mb-4">
                 <svg
@@ -45,3 +45,4 @@ const PopupForm = () => {
         </div>
     )
 }
+export default ProfilePopUp
