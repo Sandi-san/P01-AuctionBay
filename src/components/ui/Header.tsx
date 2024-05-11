@@ -50,8 +50,8 @@ const Header: FC = () => {
     }, []);
 
     const togglePopup = () => {
-        console.log(`Visibility status: ${showPopup}`)
         setShowPopup(!showPopup);
+        console.log(`Visibility status: ${showPopup}`)
     };
 
     //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
