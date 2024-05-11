@@ -28,9 +28,11 @@ const LoginForm: FC = () => {
 
   const onSubmit = handleSubmit(async (data: LoginUserFields) => {
     const response = await API.login(data)
-    
-        //TODO vsi status code ki lahko tu dobis
-    if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
+
+    //TODO vsi status code ki lahko tu dobis
+    if (response.data?.statusCode === StatusCode.UNAUTHORIZED ||
+      response.data?.statusCode === StatusCode.NOT_FOUND ||
+      response.data?.statusCode === StatusCode.FORBIDDEN) {
       setApiError(response.data.message)
       setShowError(true)
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
