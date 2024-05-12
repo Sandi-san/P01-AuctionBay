@@ -1,6 +1,6 @@
 import { UserType } from '../models/auth'
 
-const user_prefix = 'user'
+const user_prefix = 'access_token'
 
 const userStorage = {
   getUser: (): UserType => {

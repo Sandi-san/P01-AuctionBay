@@ -1,10 +1,12 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
 import ProfilePopUp from '../ui/ProfilePopUp'
 import 'reactjs-popup/dist/index.css';
+import * as API from '../../api/Api'
+import { StatusCode } from '../../constants/errorConstants'
 
 const Header: FC = () => {
     //za User settings popup
@@ -16,9 +18,39 @@ const Header: FC = () => {
     const popupRef = useRef<HTMLDivElement | null>(null);
     //referenca na Button element ki odpre Popup
     const buttonRef = useRef<HTMLButtonElement>(null);
-    
+
+    const navigate = useNavigate()
+
+    //dobi user iz DB glede localni access_token
+    const [user, setUser] = useState({
+        id: null,
+        createdAt: null,
+        updatedAt: null,
+        firstName: null,
+        lastName: null,
+        email: null,
+        image: null,
+    });
+
     //effect, ki je na strani
     useEffect(() => {
+        //dobi User data glede localni access_token
+        const getUserData = async () => {
+            // Fetch user data from API
+            const userData = await API.fetchUser();
+            console.log('User Data:', userData);
+
+            // Check if userData is not undefined
+            if (userData !== undefined) {
+                setUser(userData);
+            } else {
+                authStore.signout();
+            }
+        };
+
+        getUserData(); // Call fetchUser when the component mounts
+
+
         //click kjerkoli na screenu
         const handleClick = (event: MouseEvent) => {
             // setButtonClicked(false)
@@ -41,6 +73,8 @@ const Header: FC = () => {
                 setShowPopup(false);
             }
         };
+
+
         //dodaj listener ko se nalozi page
         document.addEventListener('mousedown', handleClick);
         return () => {
@@ -52,6 +86,31 @@ const Header: FC = () => {
     const togglePopup = () => {
         setShowPopup(!showPopup);
         console.log(`Visibility status: ${showPopup}`)
+    };
+
+    //signout funkcionalnost kjer nastavimo user (v tem fileu) na null
+    const signout = async () => {
+        const response = await API.signout()
+        if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
+            setApiError(response.data.message)
+            setShowError(true)
+        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+            setApiError(response.data.message)
+            setShowError(true)
+        } else {
+            console.log("signout")
+            authStore.signout()
+            setUser({
+                id: null,
+                createdAt: null,
+                updatedAt: null,
+                firstName: null,
+                lastName: null,
+                email: null,
+                image: null,
+            })
+            navigate('/')
+        }
     };
 
     //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
@@ -66,7 +125,7 @@ const Header: FC = () => {
         <>
             <header className="flex justify-between items-center px-6 py-4 text-white">
                 {/* ce je user prijavljen, display Buttons */}
-                {authStore.user ? (
+                {user?.firstName ? (
                     // div z logo, zraven z Buttoni, da so vsi na levi strani (items-start)
                     <>
                         <div className="flex items-center">
@@ -117,10 +176,10 @@ const Header: FC = () => {
                                     {/* ko kliknes button, odpri popup */}
                                     <button ref={buttonRef} onClick={togglePopup} className="rounded-full bg-white">
                                         <img
-                                            src={authStore.user.avatar || '/images/unknown_user.png'}
+                                            src={authStore.user.image || '/images/unknown_user.png'}
                                             alt={
-                                                authStore.user?.first_name || authStore.user?.last_name
-                                                    ? `${authStore.user?.first_name} ${authStore.user?.last_name}`
+                                                authStore.user?.firstName || authStore.user?.lastName
+                                                    ? `${authStore.user?.firstName} ${authStore.user?.lastName}`
                                                     : authStore.user?.email
                                             }
                                             className="h-12 w-12"
@@ -132,7 +191,7 @@ const Header: FC = () => {
                                             style={{
                                                 height: `${popupDimensions.height}px`,
                                             }}>
-                                            <ProfilePopUp />
+                                            <ProfilePopUp user={user} signout={signout} />
                                         </div>
                                     )}
                                 </div>

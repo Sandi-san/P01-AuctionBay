@@ -8,8 +8,31 @@ import {
   UpdateUserFields,
 } from '../hooks/react-hook-form/useCreateUpdateUser'
 
-export const fetchUser = async () =>
-  apiRequest<undefined, UserType>('get', apiRoutes.FETCH_USER)
+export const fetchUser = async () => {
+  //dobi access token (local storage)
+  const accessToken = localStorage.getItem('access_token');
+  //parsaj access token iz JSON (dobi samo vsebini)
+  let parsedAccessToken;
+  if (accessToken) {
+    const parsedToken = JSON.parse(accessToken);
+    if (parsedToken && parsedToken.access_token) {
+      parsedAccessToken = parsedToken.access_token;
+    }
+  }
+
+  //poslji /me request za dobitev userja z access_tokenom
+  console.log(`Access Token: ${parsedAccessToken}`)
+  const response = await apiRequest<undefined, UserType>('get', apiRoutes.FETCH_USER, undefined, { headers: { Authorization: `Bearer ${parsedAccessToken}` } })
+
+  //poglej ce response vsebuje data
+  if (response && response.data) {
+    console.log('Response:', response.data);
+    return response.data; //vrni data
+  } else {
+    console.error('No user data found in response');
+    return null; // return null ce user data is ni available
+  }
+}
 
 //paginatedUsers
 export const fetchUsers = async (pageNumber: number) =>
@@ -24,7 +47,7 @@ export const login = async (data: LoginUserFields) =>
 export const register = async (data: RegisterUserFields) => {
   try {
     const response = await apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data);
-    console.log('Response:', response);
+    console.log('API Response:', response);
     return response;
   } catch (error) {
     console.error('Error:', error);

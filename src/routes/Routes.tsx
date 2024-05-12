@@ -25,19 +25,7 @@ const Auctions = lazy(() => import('../pages/Auctions'))
 const ProfileAuctions = lazy(() => import('../pages/Profile/Auctions'))
 const ProfileBidding = lazy(() => import('../pages/Profile/Bidding'))
 const ProfileWon = lazy(() => import('../pages/Profile/Won'))
-/*
-const Dashboard = lazy(() => import('pages/Dashboard'))
-const DashboardUsers = lazy(() => import('pages/Dashboard/Users'))
-const DashboardUsersAdd = lazy(() => import('pages/Dashboard/Users/Add'))
-const DashboardUsersEdit = lazy(() => import('pages/Dashboard/Users/Edit'))
-const DashboardRoles = lazy(() => import('pages/Dashboard/Roles'))
-const DashboardRolesAdd = lazy(() => import('pages/Dashboard/Roles/Add'))
-const DashboardRolesEdit = lazy(() => import('pages/Dashboard/Roles/Edit'))
-const DashboardProducts = lazy(() => import('pages/Dashboard/Products'))
-const DashboardProductsAdd = lazy(() => import('pages/Dashboard/Products/Add'))
-const DashboardProductsEdit = lazy(() => import('pages/Dashboard/Products/Edit'))
-const DashboardOrders = lazy(() => import('pages/Dashboard/Orders'))
-*/
+
 // Restricted routes
 const Login = lazy(() => import('../pages/Login'))
 const Register = lazy(() => import('../pages/Register'))
@@ -108,7 +96,21 @@ export const AppRoutes: AppRoute[] = [
   },
 ]
 
+
+//delete user aka access_token ko se stran zapre
+export const deleteAccessToken = () => {
+  localStorage.removeItem('user');
+};
+
+//event listener ko se stran zapre
+export const setupSessionManagement = () => {
+  window.addEventListener('beforeunload', deleteAccessToken);
+};
+
 const Routes: FC = () => {
+  //manager za trenutni session
+  setupSessionManagement();
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Switch>

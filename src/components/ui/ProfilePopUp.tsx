@@ -10,7 +10,20 @@ import ToastContainer from 'react-bootstrap/ToastContainer'
 import { Button } from 'react-bootstrap';
 import ProfileSettings from './ProfileSettings';
 
-const ProfilePopUp = () => {
+interface Props {
+  user: {
+    id: number | null;
+    createdAt: string | null;
+    updatedAt: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+    image: string | null;
+  };
+  signout: () => Promise<void>;
+}
+
+const ProfilePopUp: FC<Props> = ({ user, signout }) => {
     //za error prikazovanje (Toast)
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
@@ -23,21 +36,6 @@ const ProfilePopUp = () => {
         console.log(`Showed Profile: ${showPopup}`)
         setShowPopup(!showPopup);
     };
-
-    const signout = async () => {
-        const response = await API.signout()
-        if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-            setApiError(response.data.message)
-            setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-            setApiError(response.data.message)
-            setShowError(true)
-        } else {
-            console.log("signout")
-            authStore.signout()
-            navigate('/')
-        }
-    }
 
     return (
         <>
