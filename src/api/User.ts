@@ -68,12 +68,33 @@ export const uploadAvatar = async (formData: FormData, id: string) =>
 export const createUser = async (data: CreateUserFields) =>
   apiRequest<CreateUserFields, void>('post', apiRoutes.USERS_PREFIX, data)
 
-export const updateUser = async (data: UpdateUserFields, id: string) =>
+export const updateUser = async (data: UpdateUserFields) =>
   apiRequest<UpdateUserFields, void>(
     'patch',
-    `${apiRoutes.USERS_PREFIX}/${id}`,
+    `${apiRoutes.UPDATE_USER}`,
     data,
   )
+
+export const updateUserPassword = async (data: UpdateUserFields) =>
+  apiRequest<UpdateUserFields, void>(
+    'patch',
+    `${apiRoutes.UPDATE_USER_PASSWORD}`,
+    data,
+  )
+
+export const updateUserImage = async (data: UpdateUserFields) =>
+  apiRequest<UpdateUserFields, void>(
+    'patch',
+    `${apiRoutes.UPDATE_USER_IMAGE}`,
+    data,
+  )
+
+// export const updateUser = async (data: UpdateUserFields, id: string) =>
+//   apiRequest<UpdateUserFields, void>(
+//     'patch',
+//     `${apiRoutes.USERS_PREFIX}/${id}`,
+//     data,
+//   )
 
 export const deleteUser = async (id: string) =>
   apiRequest<string, UserType>('delete', `${apiRoutes.USERS_PREFIX}/${id}`)

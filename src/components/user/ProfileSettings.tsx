@@ -5,25 +5,46 @@ import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
 import { Controller } from 'react-hook-form'
-import { RegisterUserFields, useRegisterForm } from '../../hooks/react-hook-form/useRegister'
+import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hook-form/useCreateUpdateUser'
 import { StatusCode } from '../../constants/errorConstants'
 import * as API from '../../api/Api'
+import { UpdateUserType } from '../../models/auth'
 
 //shrani item v Props
 interface Props {
-    closePopup: MouseEventHandler<HTMLButtonElement>;
+    user: {
+        id: number | undefined;
+        createdAt: string | undefined;
+        updatedAt: string | undefined;
+        firstName: string | undefined;
+        lastName: string | undefined;
+        email: string | undefined;
+        image: string | undefined;
+    }
+
+    closePopup: MouseEventHandler<HTMLButtonElement>
+    openPopupPassword: MouseEventHandler<HTMLButtonElement>
+    openPopupImage: MouseEventHandler<HTMLButtonElement>
 }
 
-const ProfileSettings: FC<Props> = ({ closePopup }) => {
+const ProfileSettings: FC<Props> = (
+    { user, closePopup, openPopupPassword, openPopupImage }) => {
     const navigate = useNavigate()
-    const { handleSubmit, errors, control } = useRegisterForm()
+    const { firstName, lastName, email } = user;
+    const defaultValues: UpdateUserType = {
+        id: 0,
+        firstName,
+        lastName,
+        email,
+    }
+    const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
 
-    const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
+    const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
         //if (!file) return
 
-        const response = await API.register(data)
+        const response = await API.updateUser(data)
         console.log(response);
 
         //TODO vsi status code ki lahko tu dobis
@@ -41,6 +62,26 @@ const ProfileSettings: FC<Props> = ({ closePopup }) => {
             navigate('/')
         }
     })
+
+    //popup za Password form
+    const [showPopupPassword, setShowPopupPassword] = useState(false);
+    //popup za Password image
+    const [showPopupImage, setShowPopupImage] = useState(false);
+
+    const togglePopupPassword: React.MouseEventHandler<HTMLButtonElement> = (event?) => {
+        if (event) {
+            console.log(`Toggle Popup Password`)
+            event.preventDefault()
+            closePopup(event)
+            openPopupPassword(event)
+        }
+    };
+
+    const togglePopupImage = () => {
+        setShowPopupImage(!showPopupImage);
+        console.log(`Showed Password: ${showPopupImage}`)
+    };
+
 
     //TODO: dobi vrednosti userja iz baze /me
     //in izpisi v formi
@@ -163,10 +204,11 @@ const ProfileSettings: FC<Props> = ({ closePopup }) => {
                 />
             </Form>
             <div className='flex flex-col items-start'>
-                <Button className="text-black mb-4">
+                {/* executei 2 funkciji v 1 onClick (odpri novi form, zapri tega) */}
+                <Button onClick={togglePopupPassword} className="text-black mb-4">
                     <span className="text-black">Change password</span>
                 </Button>
-                <Button className="text-black mb-4">
+                <Button onClick={togglePopupImage} className="text-black mb-4">
                     <span className="text-black">Change profile picture</span>
                 </Button>
             </div>
@@ -179,6 +221,26 @@ const ProfileSettings: FC<Props> = ({ closePopup }) => {
                     Save changes
                 </Button>
             </div>
+            {showError && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowError(false)} show={showError}>
+                        <Toast.Header>
+                            <strong className="me-auto text-red-500">Error</strong>
+                        </Toast.Header>
+                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
+            )}
+            {showError && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowError(false)} show={showError}>
+                        <Toast.Header>
+                            <strong className="me-auto text-red-500">Error</strong>
+                        </Toast.Header>
+                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
+            )}
         </div>
     )
 }

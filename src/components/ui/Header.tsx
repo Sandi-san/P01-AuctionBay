@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
-import ProfilePopUp from '../ui/ProfilePopUp'
+import ProfilePopUp from '../user/ProfilePopUp'
 import 'reactjs-popup/dist/index.css';
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
@@ -23,13 +23,13 @@ const Header: FC = () => {
 
     //dobi user iz DB glede localni access_token
     const [user, setUser] = useState({
-        id: null,
-        createdAt: null,
-        updatedAt: null,
-        firstName: null,
-        lastName: null,
-        email: null,
-        image: null,
+        id: undefined,
+        createdAt: undefined,
+        updatedAt: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        email: undefined,
+        image: undefined,
     });
 
     //effect, ki je na strani
@@ -39,12 +39,15 @@ const Header: FC = () => {
             // Fetch user data from API
             const userData = await API.fetchUser();
             console.log('User Data:', userData);
-
+            
             // Check if userData is not undefined
             if (userData !== undefined) {
+                //ce userData vrnil unauthorized, izbrisi localni access_token
+                if (userData.statusCode === StatusCode.UNAUTHORIZED) {
+                    console.log('Status');
+                    authStore.signout();
+                } 
                 setUser(userData);
-            } else {
-                authStore.signout();
             }
         };
 
@@ -101,13 +104,13 @@ const Header: FC = () => {
             console.log("signout")
             authStore.signout()
             setUser({
-                id: null,
-                createdAt: null,
-                updatedAt: null,
-                firstName: null,
-                lastName: null,
-                email: null,
-                image: null,
+                id: undefined,
+                createdAt: undefined,
+                updatedAt: undefined,
+                firstName: undefined,
+                lastName: undefined,
+                email: undefined,
+                image: undefined,
             })
             navigate('/')
         }

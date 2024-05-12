@@ -1,85 +1,89 @@
-// import { yupResolver } from '@hookform/resolvers/yup'
-// import { UserType } from 'models/auth'
-// import { useForm } from 'react-hook-form'
-// import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { UpdateUserType } from '../../models/auth'
+import { useForm } from 'react-hook-form'
+import * as Yup from 'yup'
 
 export interface CreateUserFields {
-  first_name?: string
-  last_name?: string
+  firstName?: string
+  lastName?: string
   email: string
   password: string
   confirm_password: string
-  role_id: string
 }
 
 export interface UpdateUserFields {
-  first_name?: string
-  last_name?: string
+  firstName?: string
+  lastName?: string
   email: string
+  old_password?: string
   password?: string
   confirm_password?: string
-  role_id: string
 }
 
-// //za update
-// interface Props {
-//   defaultValues?: UserType
-// }
+//za update
+interface Props {
+  defaultValues?: UpdateUserType
+}
 
-// export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
-//   const CreateUserSchema = Yup.object().shape({
-//     first_name: Yup.string().notRequired(),
-//     last_name: Yup.string().notRequired(),
-//     email: Yup.string().email().required('Please enter a valid email'),
-//     password: Yup.string()
-//       .matches(
-//         /^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/,
-//         'Password must contain least one number, lower or uppercase letter and must be longer than 6 characters.',
-//       )
-//       .required(),
-//     confirm_password: Yup.string()
-//       .oneOf([Yup.ref('password'), null], 'Passwords do not match')
-//       .required('Passwords do not match'),
-//     role_id: Yup.string().required('Role field is required'),
-//   })
+export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
+  const CreateUserSchema = Yup.object().shape({
+    firstName: Yup.string().notRequired(),
+    lastName: Yup.string().notRequired(),
+    email: Yup.string().email().required('Please enter a valid email'),
+    old_password: Yup.string()
+      .matches(
+        /^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/,
+        'Password must contain least one number, lower or uppercase letter and must be longer than 6 characters.',
+      )
+      .required(),
+    password: Yup.string()
+      .matches(
+        /^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/,
+        'Password must contain least one number, lower or uppercase letter and must be longer than 6 characters.',
+      )
+      .required(),
+    confirm_password: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords do not match')
+      .required('Passwords do not match'),
+  })
 
-//   const UpdateUserSchema = Yup.object().shape({
-//     first_name: Yup.string().notRequired(),
-//     last_name: Yup.string().notRequired(),
-//     email: Yup.string().email().required('Please enter a valid email'),
-//     password: Yup.string().notRequired(),
-//     confirm_password: Yup.string()
-//       .oneOf([Yup.ref('password'), null], 'Passwords do not match')
-//       .notRequired(),
-//     role_id: Yup.string().notRequired(),
-//   })
+  const UpdateUserSchema = Yup.object().shape({
+    firstName: Yup.string().notRequired(),
+    lastName: Yup.string().notRequired(),
+    email: Yup.string().email().required('Please enter a valid email'),
+    old_password: Yup.string().notRequired(),
+    password: Yup.string().notRequired(),
+    confirm_password: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords do not match')
+      .notRequired(),
+  })
 
-//   const {
-//     handleSubmit,
-//     formState: { errors },
-//     control,
-//   } = useForm({
-//     defaultValues: {
-//       first_name: '',
-//       last_name: '',
-//       email: '',
-//       password: '',
-//       confirm_password: '',
-//       role_id: '',
-//       ...defaultValues,
-//     },
-//     mode: 'onSubmit',
-//     // ce so defaultValues, update, sicer create
-//     resolver: defaultValues
-//       ? yupResolver(UpdateUserSchema)
-//       : yupResolver(CreateUserSchema),
-//   })
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      old_password: '',
+      password: '',
+      confirm_password: '',
+      ...defaultValues,
+    },
+    mode: 'onSubmit',
+    // ce so defaultValues, update, sicer create
+    resolver: defaultValues
+      ? yupResolver(UpdateUserSchema)
+      : yupResolver(CreateUserSchema),
+  })
 
-//   return {
-//     handleSubmit,
-//     errors,
-//     control,
-//   }
-// }
+  return {
+    handleSubmit,
+    errors,
+    control,
+  }
+}
 
-// export type CreateUpdateUserForm = ReturnType<typeof useCreateUpdateUserForm>
+export type CreateUpdateUserForm = ReturnType<typeof useCreateUpdateUserForm>
