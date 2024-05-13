@@ -9,6 +9,7 @@ import ProfilePassword from './ProfilePassword';
 import ProfileImage from './ProfileImage';
 
 interface Props {
+    //passaj user (iz setUser) da lahko accesas variable ki vrni /me iz BE
     user: {
         id: number | undefined;
         createdAt: string | undefined;
@@ -18,10 +19,13 @@ interface Props {
         email: string | undefined;
         image: string | undefined;
     }
+    //passaj parent funkcijo, s katero se signoutas
     signout: () => Promise<void>
+    //passaj funkcijo, ki ponovno pridobi (refresha) info od userja iz BE (/me)
+    refreshUserData: () => Promise<void>
 }
 
-const ProfilePopUp: FC<Props> = ({ user, signout }) => {
+const ProfilePopUp: FC<Props> = ({ user, signout, refreshUserData }) => {
     //za error prikazovanje (Toast)
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
@@ -33,16 +37,18 @@ const ProfilePopUp: FC<Props> = ({ user, signout }) => {
     const [showPopupImage, setShowPopupImage] = useState(false);
 
     const togglePopupSettings = () => {
+        //ko znova odpremo Profile popup, znova fetchaj userja (parent funkc)
+        refreshUserData()
         setShowPopupSettings(!showPopupSettings);
-        console.log(`Showed Settings: ${showPopupSettings}`)
+        // console.log(`Showed Settings: ${showPopupSettings}`)
     };
     const togglePopupPassword = () => {
         setShowPopupPassword(!showPopupPassword);
-        console.log(`Showed Password: ${showPopupPassword}`)
+        // console.log(`Showed Password: ${showPopupPassword}`)
     };
     const togglePopupImage = () => {
         setShowPopupImage(!showPopupImage);
-        console.log(`Showed Image: ${showPopupImage}`)
+        // console.log(`Showed Image: ${showPopupImage}`)
     };
 
     return (
@@ -77,7 +83,8 @@ const ProfilePopUp: FC<Props> = ({ user, signout }) => {
                         <div className="bg-white rounded-lg p-4">
                             <ProfilePassword
                                 user={user}
-                                closePopup={togglePopupPassword} />
+                                closePopup={togglePopupPassword}
+                            />
                         </div>
                     </div>
                 )}
@@ -88,7 +95,8 @@ const ProfilePopUp: FC<Props> = ({ user, signout }) => {
                         <div className="bg-white rounded-lg p-4">
                             <ProfileImage
                                 user={user}
-                                closePopup={togglePopupImage} />
+                                closePopup={togglePopupImage}
+                            />
                         </div>
                     </div>
                 )}

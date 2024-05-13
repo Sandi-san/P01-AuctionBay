@@ -32,25 +32,26 @@ const Header: FC = () => {
         image: undefined,
     });
 
+    //dobi User data glede localni access_token
+    const getUserData = async () => {
+        // Fetch user data from API
+        const userData = await API.fetchUser()
+        console.log('Fetching User Data:', userData)
+
+        // Check if userData is not undefined
+        if (userData !== undefined) {
+            //ce userData vrnil unauthorized, izbrisi localni access_token
+            if (userData.statusCode === StatusCode.UNAUTHORIZED) {
+                authStore.signout()
+            }
+            else {
+                setUser(userData)
+            }
+        }
+    }
+
     //effect, ki je na strani
     useEffect(() => {
-        //dobi User data glede localni access_token
-        const getUserData = async () => {
-            // Fetch user data from API
-            const userData = await API.fetchUser();
-            console.log('User Data:', userData);
-            
-            // Check if userData is not undefined
-            if (userData !== undefined) {
-                //ce userData vrnil unauthorized, izbrisi localni access_token
-                if (userData.statusCode === StatusCode.UNAUTHORIZED) {
-                    console.log('Status');
-                    authStore.signout();
-                } 
-                setUser(userData);
-            }
-        };
-
         getUserData(); // Call fetchUser when the component mounts
 
 
@@ -66,7 +67,6 @@ const Header: FC = () => {
             }
             //check ce je click v Popup formu (ko je ze odprt)
             else if (popupRef.current && event.target instanceof Node && popupRef.current.contains(event.target)) {
-                console.log("Click in")
                 const { width, height } = popupRef.current.getBoundingClientRect();
                 setPopupDimensions({ width, height });
                 return;
@@ -88,7 +88,7 @@ const Header: FC = () => {
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
-        console.log(`Visibility status: ${showPopup}`)
+        //console.log(`Visibility status: ${showPopup}`)
     };
 
     //signout funkcionalnost kjer nastavimo user (v tem fileu) na null
@@ -101,7 +101,7 @@ const Header: FC = () => {
             setApiError(response.data.message)
             setShowError(true)
         } else {
-            console.log("signout")
+            console.log("Signing out")
             authStore.signout()
             setUser({
                 id: undefined,
@@ -194,7 +194,7 @@ const Header: FC = () => {
                                             style={{
                                                 height: `${popupDimensions.height}px`,
                                             }}>
-                                            <ProfilePopUp user={user} signout={signout} />
+                                            <ProfilePopUp user={user} signout={signout} refreshUserData={getUserData} />
                                         </div>
                                     )}
                                 </div>

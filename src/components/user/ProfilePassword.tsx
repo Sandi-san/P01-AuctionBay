@@ -22,17 +22,16 @@ interface Props {
         image: string | undefined;
     }
 
-    closePopup: MouseEventHandler<HTMLButtonElement>;
+    //zapri (ta) Profile popup
+    closePopup: MouseEventHandler<HTMLButtonElement>
 }
 
 const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
     const navigate = useNavigate()
-    const { firstName, lastName, email } = user;
+    const { id, email } = user;
     const defaultValues: UpdateUserType = {
-        id: 0,
-        firstName,
-        lastName,
-        email,
+        id,
+        email, //OBVEZEN email sicer sploh ne klice onSubmit??
     }
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
@@ -59,7 +58,6 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
             setShowError(true)
         }
         else {
-            authStore.login(response.data)
             navigate('/')
         }
     })
@@ -201,21 +199,13 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
                         className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
                         Cancel
                     </Button>
-                    <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
+                    <Button
+                        type="submit"
+                        className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" >
                         Save changes
                     </Button>
                 </div>
             </Form>
-            {showError && (
-                <ToastContainer className="p-3" position="top-end">
-                    <Toast onClose={() => setShowError(false)} show={showError}>
-                        <Toast.Header>
-                            <strong className="me-auto text-red-500">Error</strong>
-                        </Toast.Header>
-                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            )}
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>

@@ -21,18 +21,20 @@ interface Props {
         email: string | undefined;
         image: string | undefined;
     }
-
+    //zapri (ta) Profile popup
     closePopup: MouseEventHandler<HTMLButtonElement>
+    //odpri Password formo
     openPopupPassword: MouseEventHandler<HTMLButtonElement>
+    //odpri Image formo
     openPopupImage: MouseEventHandler<HTMLButtonElement>
 }
 
 const ProfileSettings: FC<Props> = (
     { user, closePopup, openPopupPassword, openPopupImage }) => {
     const navigate = useNavigate()
-    const { firstName, lastName, email } = user;
+    const { id, firstName, lastName, email } = user;
     const defaultValues: UpdateUserType = {
-        id: 0,
+        id,
         firstName,
         lastName,
         email,
@@ -42,10 +44,10 @@ const ProfileSettings: FC<Props> = (
     const [showError, setShowError] = useState(false)
 
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
-        //if (!file) return
-
+        console.log(user.id)
+        
         const response = await API.updateUser(data)
-        console.log(response);
+        console.log(response)
 
         //TODO vsi status code ki lahko tu dobis
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
@@ -58,14 +60,12 @@ const ProfileSettings: FC<Props> = (
             setShowError(true)
         }
         else {
-            authStore.login(response.data)
             navigate('/')
         }
     })
 
     const togglePopupPassword: React.MouseEventHandler<HTMLButtonElement> = (event?) => {
         if (event) {
-            console.log(`Toggle Popup Password`)
             event.preventDefault()
             closePopup(event)
             openPopupPassword(event)
@@ -74,7 +74,6 @@ const ProfileSettings: FC<Props> = (
 
     const togglePopupImage: React.MouseEventHandler<HTMLButtonElement> = (event?) => {
         if (event) {
-            console.log(`Toggle Popup Image`)
             event.preventDefault()
             closePopup(event)
             openPopupImage(event)
@@ -195,21 +194,13 @@ const ProfileSettings: FC<Props> = (
                         className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
                         Cancel
                     </Button>
-                    <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
+                    <Button
+                        type="submit"
+                        className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark">
                         Save changes
                     </Button>
                 </div>
             </Form>
-            {showError && (
-                <ToastContainer className="p-3" position="top-end">
-                    <Toast onClose={() => setShowError(false)} show={showError}>
-                        <Toast.Header>
-                            <strong className="me-auto text-red-500">Error</strong>
-                        </Toast.Header>
-                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            )}
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>

@@ -23,28 +23,93 @@ interface Props {
         image: string | undefined;
     }
 
-    closePopup: MouseEventHandler<HTMLButtonElement>;
+    //zapri (ta) Profile popup
+    closePopup: MouseEventHandler<HTMLButtonElement>
 }
 
 const ProfileImage: FC<Props> = ({ user, closePopup }) => {
     const navigate = useNavigate()
-    const { id, image } = user;
+    const { id, email, image } = user;
     const defaultValues: UpdateUserType = {
-        id: 0,
+        id,
+        email, //OBVEZEN email sicer sploh ne klice onSubmit??
         image,
     }
-
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
 
-    const [file, setFile] = useState<File | null>(null)
     const [preview, setPreview] = useState<string | null>(null)
+    const [file, setFile] = useState<File | null>(null)
     const [fileError, setFileError] = useState(false)
 
-    const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
-        if (!file) return
 
+    // da lahko uporabljas Custom Button za defaultni Choose file
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const handleButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    // const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
+    //         if (!file) {
+    //             handleFileError()
+    //             return
+    //         }
+    //         console.log('SUBMIT WORKS')
+    // const response = await API.updateUser(data, defaultValues?.id as string)
+    // if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
+    //     setApiError(response.data.message)
+    //     setShowError(true)
+    // } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+    //     setApiError(response.data.message)
+    //     setShowError(true)
+    // } else {
+    //     if (!file) {
+    //         //dobi updated user
+    //         if (defaultValues?.isActiveUser) {
+    //             authStore.login(response.data)
+    //         }
+    //         navigate(`${routes.DASHBOARD_PREFIX}/users`)
+    //         return
+    //     }
+    //     //Update file
+    //     const formData = new FormData()
+    //     //'avatar' isto kot v backend (modules/controller - FileInterceptor('avatar')
+    //     formData.append('avatar', file, file.name)
+    //     const fileResponse = await API.uploadAvatar(formData, response.data.id)
+
+    //     if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
+    //         setApiError(fileResponse.data.message)
+    //         setShowError(true)
+    //     } else if (
+    //         fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
+    //     ) {
+    //         setApiError(fileResponse.data.message)
+    //         setShowError(true)
+    //     } else {
+    //         if (defaultValues?.isActiveUser) {
+    //             //Dobi userja z avatar sliko
+    //             const userResponse = await API.fetchUser()
+    //             if (
+    //                 userResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
+    //             ) {
+    //                 setApiError(userResponse.data.message)
+    //                 setShowError(true)
+    //             } else {
+    //                 authStore.login(userResponse.data)
+    //             }
+    //         }
+    //         navigate(`/`)
+    //     }
+    // }
+    // })
+
+    const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
+        if (!file) {
+            handleFileError()
+            return
+        }
+        console.log(`File: ${file.name}`);
         const response = await API.updateUserImage(data)
         console.log(response);
 
@@ -59,32 +124,11 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
             setShowError(true)
         }
         else {
-            authStore.login(response.data)
             navigate('/')
         }
     })
 
-    //da lahko uporabljas Custom Button za defaultni Choose file
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const handleButtonClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleFileError = () => {
-        // requred file ne obstaja
-        if (!file) setFileError(true)
-        else setFileError(false)
-    }
-
-    const handleFileChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        console.log("Calling change")
-        if (target.files) {
-            const profileFile = target.files[0]
-            setFile(profileFile)
-        }
-    }
-
-    //pozeni vsakic ko se 'file' spremeni
+    //pozeni vsakic ko se 'file' spremeni (za spremembo Avatar img)
     useEffect(() => {
         if (file) {
             const reader = new FileReader()
@@ -98,24 +142,41 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
         }
     }, [file])
 
+
+    const handleFileError = () => {
+        // requred file ne obstaja
+        if (!file) setFileError(true)
+        else setFileError(false)
+    }
+
+    //slika se je spremenila, spremeni file var
+    const handleFileChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        if (target.files) {
+            const profileFile = target.files[0]
+            setFile(profileFile)
+        }
+    }
+
     return (
         <div className="text-black bg-white rounded-lg w-[540px]">
             {/* Greeting text */}
             <div className="mb-6">
-                <p className="text-2xl font-bold mb-2">Change profile picture</p>
+                <p className="text-2xl font-bold mb-2">Change password</p>
             </div>
             <Form className="m-2" onSubmit={onSubmit}>
                 {/* Choose file funkcionalnost dodaj custom buttonu */}
                 <div className="p-4 flex items-center justify-center">
                     <label htmlFor="avatar" className="cursor-pointer">
-                        <Avatar round src={preview as string} alt="Avatar" />
+                        <Avatar round
+                            src={
+                                preview
+                                    ? preview
+                                    : defaultValues &&
+                                    `images/unknown_user.png`
+                            }
+                            alt="Avatar" />
                     </label>
                 </div>
-                {fileError && (
-                    <div className="invalid-feedback">
-                        Field avatar is required
-                    </div>
-                )}
                 {/* Custom Choose file button  */}
                 <div className="m-4 flex items-center justify-center">
                     <button className="text-gray-900 border border-black bg-white custom-button"
@@ -123,6 +184,11 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
                         Upload new picture
                     </button>
                 </div>
+                {fileError && (
+                    <div className="invalid-feedback">
+                        Image is required
+                    </div>
+                )}
 
                 {/* Skrij default Choose File button ampak ohrani delovanje */}
                 <input
@@ -143,22 +209,11 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
                         className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
                         Cancel
                     </Button>
-                    <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark"
-                        type="submit" onMouseUp={handleFileError}>
+                    <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
                         Save changes
                     </Button>
                 </div>
             </Form>
-            {showError && (
-                <ToastContainer className="p-3" position="top-end">
-                    <Toast onClose={() => setShowError(false)} show={showError}>
-                        <Toast.Header>
-                            <strong className="me-auto text-red-500">Error</strong>
-                        </Toast.Header>
-                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            )}
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>

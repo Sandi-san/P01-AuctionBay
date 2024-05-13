@@ -28,8 +28,6 @@ const RegisterForm: FC = () => {
     const [showError, setShowError] = useState(false)
 
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
-        //if (!file) return
-
         const response = await API.register(data)        
         console.log(response);
 

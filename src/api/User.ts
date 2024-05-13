@@ -8,8 +8,7 @@ import {
   UpdateUserFields,
 } from '../hooks/react-hook-form/useCreateUpdateUser'
 
-export const fetchUser = async () => {
-  //dobi access token (local storage)
+const getAccessToken = () => {
   const accessToken = localStorage.getItem('access_token');
   //parsaj access token iz JSON (dobi samo vsebini)
   let parsedAccessToken;
@@ -17,16 +16,25 @@ export const fetchUser = async () => {
     const parsedToken = JSON.parse(accessToken);
     if (parsedToken && parsedToken.access_token) {
       parsedAccessToken = parsedToken.access_token;
+      return parsedAccessToken
     }
   }
+  return null
+}
 
-  //poslji /me request za dobitev userja z access_tokenom
-  console.log(`Access Token: ${parsedAccessToken}`)
-  const response = await apiRequest<undefined, UserType>('get', apiRoutes.FETCH_USER, undefined, { headers: { Authorization: `Bearer ${parsedAccessToken}` } })
+export const fetchUser = async () => {
+  //dobi access token (local storage)
+  const accessToken = getAccessToken()
+
+  const response = await apiRequest<undefined, UserType>(
+    'get',
+    apiRoutes.FETCH_USER,
+    undefined,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
 
   //poglej ce response vsebuje data
   if (response && response.data) {
-    console.log('Response:', response.data);
     return response.data; //vrni data
   } else {
     console.error('No user data found in response');
@@ -47,7 +55,6 @@ export const login = async (data: LoginUserFields) =>
 export const register = async (data: RegisterUserFields) => {
   try {
     const response = await apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data);
-    console.log('API Response:', response);
     return response;
   } catch (error) {
     console.error('Error:', error);
@@ -68,26 +75,34 @@ export const uploadAvatar = async (formData: FormData, id: string) =>
 export const createUser = async (data: CreateUserFields) =>
   apiRequest<CreateUserFields, void>('post', apiRoutes.USERS_PREFIX, data)
 
-export const updateUser = async (data: UpdateUserFields) =>
-  apiRequest<UpdateUserFields, void>(
+export const updateUser = async (data: UpdateUserFields) => {
+  console.log('Update user data:', JSON.stringify(data));
+  const accessToken = getAccessToken()
+  return apiRequest<UpdateUserFields, void>(
     'patch',
     `${apiRoutes.UPDATE_USER}`,
     data,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
   )
+}
 
-export const updateUserPassword = async (data: UpdateUserFields) =>
-  apiRequest<UpdateUserFields, void>(
+export const updateUserPassword = async (data: UpdateUserFields) => {
+  console.log('Update password data:', JSON.stringify(data))
+  return apiRequest<UpdateUserFields, void>(
     'patch',
     `${apiRoutes.UPDATE_USER_PASSWORD}`,
     data,
   )
+}
 
-export const updateUserImage = async (data: UpdateUserFields) =>
-  apiRequest<UpdateUserFields, void>(
-    'patch',
+export const updateUserImage = async (data: UpdateUserFields) => {
+  console.log('Update image data:', JSON.stringify(data));
+  return apiRequest<UpdateUserFields, void>(
+    'post',
     `${apiRoutes.UPDATE_USER_IMAGE}`,
     data,
   )
+}
 
 // export const updateUser = async (data: UpdateUserFields, id: string) =>
 //   apiRequest<UpdateUserFields, void>(

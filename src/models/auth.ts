@@ -6,7 +6,7 @@ export type UserType = {
   image?: string
 }
 export type UpdateUserType = {
-  id: number
+  id?: number
   firstName?: string
   lastName?: string
   email?: string

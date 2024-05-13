@@ -99,7 +99,7 @@ export const AppRoutes: AppRoute[] = [
 
 //delete user aka access_token ko se stran zapre
 export const deleteAccessToken = () => {
-  localStorage.removeItem('user');
+  localStorage.removeItem('access_token');
 };
 
 //event listener ko se stran zapre
