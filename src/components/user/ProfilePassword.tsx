@@ -25,7 +25,7 @@ interface Props {
     closePopup: MouseEventHandler<HTMLButtonElement>;
 }
 
-const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
+const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
     const navigate = useNavigate()
     const { firstName, lastName, email } = user;
     const defaultValues: UpdateUserType = {
@@ -45,8 +45,6 @@ const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
 
 
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
-        //if (!file) return
-
         const response = await API.updateUserPassword(data)
         console.log(response);
 
@@ -70,44 +68,24 @@ const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
     //in izpisi v formi
 
     return (
-        <div className="text-black bg-white rounded-lg">
+        <div className="text-black bg-white rounded-lg w-[540px]">
             {/* Greeting text */}
             <div className="mb-6">
-                <p className="text-2xl font-bold mb-2">Profile settings</p>
+                <p className="text-2xl font-bold mb-2">Change password</p>
             </div>
-            <Form className="register-form m-2" onSubmit={onSubmit}>
-                {/* TODO: UPORABI PRI EDIT PROFILE form group za avatar sliko */}
-                {/* <Form.Group className="d-flex flex-column justify-content-center align-items-center">
-                    <FormLabel htmlFor="avatar" id="avatar-p">
-                        <Avatar round src={preview as string} alt="Avatar" />
-                    </FormLabel>
-                    <input
-                        onChange={handleFileChange}
-                        id="avatar"
-                        name="avatar"
-                        type="file"
-                        aria-label="Avatar"
-                        aria-describedby="avatar"
-                        className="d-none"
-                    />
-                    {fileError && (
-                        <div className="d-block invalid-feedback text-red-500 mb-2 text-center">
-                            Field avatar is required
-                        </div>
-                    )}
-                </Form.Group> */}
+            <Form className="m-2" onSubmit={onSubmit}>
                 <Controller
                     control={control}
                     name="old_password"
                     render={({ field }) => (
                         <Form.Group className="mb-2 flex flex-col relative">
-                            <FormLabel htmlFor="old_password">Old Password</FormLabel>
+                            <FormLabel htmlFor="old_password">Current password</FormLabel>
                             <div className='px-2 py-1 mb-1 w-full'>
                                 <input
                                     {...field}
                                     type={showOldPassword ? 'text' : 'password'}
                                     placeholder="******"
-                                    aria-label="Old Password"
+                                    aria-label="Current password"
                                     aria-describedby="old_password"
                                     className={
                                         errors.password
@@ -140,13 +118,13 @@ const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
                     name="password"
                     render={({ field }) => (
                         <Form.Group className="mb-2 flex flex-col relative">
-                            <FormLabel htmlFor="password">Password</FormLabel>
+                            <FormLabel htmlFor="password">New password</FormLabel>
                             <div className='px-2 py-1 mb-1 w-full'>
                                 <input
                                     {...field}
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="******"
-                                    aria-label="Password"
+                                    aria-label="New password"
                                     aria-describedby="password"
                                     className={
                                         errors.password
@@ -179,12 +157,12 @@ const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
                     name="confirm_password"
                     render={({ field }) => (
                         <Form.Group className="mb-2 flex flex-col relative">
-                            <FormLabel htmlFor="confirm_password">Repeat password</FormLabel>
+                            <FormLabel htmlFor="confirm_password">Repeat new password</FormLabel>
                             <div className='px-3 py-2 mb-1 w-full'>
                                 <input
                                     {...field}
                                     type={showConfirmPassword ? 'text' : 'password'}
-                                    aria-label="Confirm password"
+                                    aria-label="Repeat new password"
                                     aria-describedby="confirm_password"
                                     className={
                                         errors.confirm_password
@@ -217,16 +195,17 @@ const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
                         </Form.Group>
                     )}
                 />
+
+                <div className='flex justify-end'>
+                    <Button onClick={closePopup}
+                        className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
+                        Cancel
+                    </Button>
+                    <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
+                        Save changes
+                    </Button>
+                </div>
             </Form>
-            <div className='flex justify-end'>
-                <Button onClick={closePopup}
-                    className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
-                    Cancel
-                </Button>
-                <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
-                    Save changes
-                </Button>
-            </div>
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>
@@ -250,4 +229,4 @@ const ProfileSettings: FC<Props> = ({ user, closePopup }) => {
         </div>
     )
 }
-export default ProfileSettings
+export default ProfilePassword

@@ -1,15 +1,12 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { FC, useState } from 'react'
 import 'reactjs-popup/dist/index.css';
-import * as API from '../../api/Api'
-import { StatusCode } from '../../constants/errorConstants'
-import authStore from '../../stores/auth.store'
 import { useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import { Button } from 'react-bootstrap';
 import ProfileSettings from './ProfileSettings';
 import ProfilePassword from './ProfilePassword';
+import ProfileImage from './ProfileImage';
 
 interface Props {
     user: {
@@ -78,9 +75,20 @@ const ProfilePopUp: FC<Props> = ({ user, signout }) => {
                 {showPopupPassword && (
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
                         <div className="bg-white rounded-lg p-4">
-                            <ProfilePassword 
-                            user={user} 
-                            closePopup={togglePopupPassword} />
+                            <ProfilePassword
+                                user={user}
+                                closePopup={togglePopupPassword} />
+                        </div>
+                    </div>
+                )}
+
+                {/* Popup Widget Image */}
+                {showPopupImage && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+                        <div className="bg-white rounded-lg p-4">
+                            <ProfileImage
+                                user={user}
+                                closePopup={togglePopupImage} />
                         </div>
                     </div>
                 )}

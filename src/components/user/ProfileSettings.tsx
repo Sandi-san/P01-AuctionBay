@@ -63,11 +63,6 @@ const ProfileSettings: FC<Props> = (
         }
     })
 
-    //popup za Password form
-    const [showPopupPassword, setShowPopupPassword] = useState(false);
-    //popup za Password image
-    const [showPopupImage, setShowPopupImage] = useState(false);
-
     const togglePopupPassword: React.MouseEventHandler<HTMLButtonElement> = (event?) => {
         if (event) {
             console.log(`Toggle Popup Password`)
@@ -77,9 +72,13 @@ const ProfileSettings: FC<Props> = (
         }
     };
 
-    const togglePopupImage = () => {
-        setShowPopupImage(!showPopupImage);
-        console.log(`Showed Password: ${showPopupImage}`)
+    const togglePopupImage: React.MouseEventHandler<HTMLButtonElement> = (event?) => {
+        if (event) {
+            console.log(`Toggle Popup Image`)
+            event.preventDefault()
+            closePopup(event)
+            openPopupImage(event)
+        }
     };
 
 
@@ -87,32 +86,12 @@ const ProfileSettings: FC<Props> = (
     //in izpisi v formi
 
     return (
-        <div className="text-black bg-white rounded-lg">
+        <div className="text-black bg-white rounded-lg w-[540px]">
             {/* Greeting text */}
             <div className="mb-6">
                 <p className="text-2xl font-bold mb-2">Profile settings</p>
             </div>
-            <Form className="register-form m-2" onSubmit={onSubmit}>
-                {/* TODO: UPORABI PRI EDIT PROFILE form group za avatar sliko */}
-                {/* <Form.Group className="d-flex flex-column justify-content-center align-items-center">
-                    <FormLabel htmlFor="avatar" id="avatar-p">
-                        <Avatar round src={preview as string} alt="Avatar" />
-                    </FormLabel>
-                    <input
-                        onChange={handleFileChange}
-                        id="avatar"
-                        name="avatar"
-                        type="file"
-                        aria-label="Avatar"
-                        aria-describedby="avatar"
-                        className="d-none"
-                    />
-                    {fileError && (
-                        <div className="d-block invalid-feedback text-red-500 mb-2 text-center">
-                            Field avatar is required
-                        </div>
-                    )}
-                </Form.Group> */}
+            <Form className="m-2" onSubmit={onSubmit}>
                 <div className="flex flex-wrap -mx-3 mb-2">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <Controller
@@ -173,7 +152,6 @@ const ProfileSettings: FC<Props> = (
                         />
                     </div>
                 </div>
-                {/* iz useRegister form */}
                 <Controller
                     control={control}
                     name="email"
@@ -202,25 +180,26 @@ const ProfileSettings: FC<Props> = (
                         </Form.Group>
                     )}
                 />
+
+                <div className='flex flex-col items-start'>
+                    {/* ko kliknes button, v parentu sporoci da se je odprl popup */}
+                    <Button onClick={togglePopupPassword} className="text-black mb-4">
+                        <span className="text-black">Change password</span>
+                    </Button>
+                    <Button onClick={togglePopupImage} className="text-black mb-4">
+                        <span className="text-black">Change profile picture</span>
+                    </Button>
+                </div>
+                <div className='flex justify-end'>
+                    <Button onClick={closePopup}
+                        className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
+                        Cancel
+                    </Button>
+                    <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
+                        Save changes
+                    </Button>
+                </div>
             </Form>
-            <div className='flex flex-col items-start'>
-                {/* executei 2 funkciji v 1 onClick (odpri novi form, zapri tega) */}
-                <Button onClick={togglePopupPassword} className="text-black mb-4">
-                    <span className="text-black">Change password</span>
-                </Button>
-                <Button onClick={togglePopupImage} className="text-black mb-4">
-                    <span className="text-black">Change profile picture</span>
-                </Button>
-            </div>
-            <div className='flex justify-end'>
-                <Button onClick={closePopup}
-                    className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
-                    Cancel
-                </Button>
-                <Button className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark" type="submit">
-                    Save changes
-                </Button>
-            </div>
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>

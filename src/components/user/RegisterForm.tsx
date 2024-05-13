@@ -27,12 +27,6 @@ const RegisterForm: FC = () => {
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
 
-    /*
-    const [file, setFile] = useState<File | null>(null)
-    const [preview, setPreview] = useState<string | null>(null)
-    const [fileError, setFileError] = useState(false)
-*/
-
     const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
         //if (!file) return
 
@@ -55,36 +49,6 @@ const RegisterForm: FC = () => {
           }
     })
 
-    /*
-    //POZOR: na submit buttonu dodaj onMouseUp={handleFileError}
-    const handleFileError = () => {
-        // requred file ne obstaja
-        if (!file) setFileError(true)
-        else setFileError(false)
-    }
-
-    const handleFileChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        if (target.files) {
-            const profileFile = target.files[0]
-            setFile(profileFile)
-        }
-    }
-
-    //pozeni vsakic ko se 'file' spremeni
-    useEffect(() => {
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setPreview(reader.result as string)
-                setFileError(false)
-            }
-            reader.readAsDataURL(file)
-        } else {
-            setPreview(null)
-        }
-    }, [file])
-    */
-
     return (
         // centriraj vse elemente verticalno
         <div className="flex flex-col justify-center h-full">
@@ -93,27 +57,7 @@ const RegisterForm: FC = () => {
                 <h2 className="text-2xl font-bold mb-2">Hello!</h2>
                 <p className="text-gray-600">Please enter your details</p>
             </div>
-            <Form className="register-form m-2" onSubmit={onSubmit}>
-                {/* TODO: UPORABI PRI EDIT PROFILE form group za avatar sliko */}
-                {/* <Form.Group className="d-flex flex-column justify-content-center align-items-center">
-                    <FormLabel htmlFor="avatar" id="avatar-p">
-                        <Avatar round src={preview as string} alt="Avatar" />
-                    </FormLabel>
-                    <input
-                        onChange={handleFileChange}
-                        id="avatar"
-                        name="avatar"
-                        type="file"
-                        aria-label="Avatar"
-                        aria-describedby="avatar"
-                        className="d-none"
-                    />
-                    {fileError && (
-                        <div className="d-block invalid-feedback text-red-500 mb-2 text-center">
-                            Field avatar is required
-                        </div>
-                    )}
-                </Form.Group> */}
+            <Form className="m-2" onSubmit={onSubmit}>
                 <div className="flex flex-wrap -mx-3 mb-2">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <Controller
