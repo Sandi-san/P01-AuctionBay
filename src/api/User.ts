@@ -30,6 +30,7 @@ export const fetchUser = async () => {
     'get',
     apiRoutes.FETCH_USER,
     undefined,
+    //POZOR: treba poslati Authorization za access token
     { headers: { Authorization: `Bearer ${accessToken}` } }
   )
 
@@ -76,7 +77,7 @@ export const createUser = async (data: CreateUserFields) =>
   apiRequest<CreateUserFields, void>('post', apiRoutes.USERS_PREFIX, data)
 
 export const updateUser = async (data: UpdateUserFields) => {
-  console.log('Update user data:', JSON.stringify(data));
+  console.log('Update user data:', JSON.stringify(data))
   const accessToken = getAccessToken()
   return apiRequest<UpdateUserFields, void>(
     'patch',
@@ -88,19 +89,24 @@ export const updateUser = async (data: UpdateUserFields) => {
 
 export const updateUserPassword = async (data: UpdateUserFields) => {
   console.log('Update password data:', JSON.stringify(data))
+  const accessToken = getAccessToken()
   return apiRequest<UpdateUserFields, void>(
     'patch',
     `${apiRoutes.UPDATE_USER_PASSWORD}`,
     data,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
   )
 }
 
-export const updateUserImage = async (data: UpdateUserFields) => {
-  console.log('Update image data:', JSON.stringify(data));
-  return apiRequest<UpdateUserFields, void>(
+export const updateUserImage = async (formData: FormData) => {
+  console.log('Update image data:', JSON.stringify(formData))
+  const accessToken = getAccessToken()
+  return apiRequest<FormData, void>(
     'post',
     `${apiRoutes.UPDATE_USER_IMAGE}`,
-    data,
+    formData,
+    //POZOR: poslati treba tudi Content-Type
+    { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' } }
   )
 }
 

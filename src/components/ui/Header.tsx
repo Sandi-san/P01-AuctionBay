@@ -4,22 +4,26 @@ import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
 import ProfilePopUp from '../user/ProfilePopUp'
-import 'reactjs-popup/dist/index.css';
+import 'reactjs-popup/dist/index.css'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
+import Avatar from 'react-avatar'
 
 const Header: FC = () => {
     //za User settings popup
     //ali je Popup odprt ali ne
-    const [showPopup, setShowPopup] = useState(false);
+    const [showPopup, setShowPopup] = useState(false)
     //dimenzije popupa (za pravilne dimenzije parenta)
-    const [popupDimensions, setPopupDimensions] = useState({ width: 0, height: 0 });
+    const [popupDimensions, setPopupDimensions] = useState({ width: 0, height: 0 })
     //referenca na Popup element
-    const popupRef = useRef<HTMLDivElement | null>(null);
+    const popupRef = useRef<HTMLDivElement | null>(null)
     //referenca na Button element ki odpre Popup
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null)
 
     const navigate = useNavigate()
+
+    //za sliko
+    const [preview, setPreview] = useState<string | null>(null)
 
     //dobi user iz DB glede localni access_token
     const [user, setUser] = useState({
@@ -30,7 +34,7 @@ const Header: FC = () => {
         lastName: undefined,
         email: undefined,
         image: undefined,
-    });
+    })
 
     //dobi User data glede localni access_token
     const getUserData = async () => {
@@ -46,14 +50,44 @@ const Header: FC = () => {
             }
             else {
                 setUser(userData)
+
+                //spreminjanje User image z userData
+                //ker se lahko zgodi da se User ne posodobi predenj se klice ta koda
+                if (userData && userData.image) {
+                    try {
+                        //image name shranjen v defaultValues.image, poglej ce obstaja na BE
+                        const response = await fetch(`${process.env.REACT_APP_API_URL}/files/${userData.image}`)
+                        //ce response 200-OK, nastavi sliko
+                        if (response.ok) {
+                            setPreview(response.url)
+                        }
+                        //sicer nastavi sliko unknown user
+                        else {
+                            console.error('Image not found:', response.statusText)
+                            setPreview('images/unknown_user.png')
+                        }
+                    } catch (error) {
+                        console.error('Error checking image:', error)
+                        setPreview('images/unknown_user.png')
+                    }
+                }
+                else {
+                    setPreview('images/unknown_user.png')
+                }
             }
         }
+
     }
 
     //effect, ki je na strani
     useEffect(() => {
-        getUserData(); // Call fetchUser when the component mounts
-
+        const fetchData = async () => {
+            // dobi userja ob zagonu komponente
+            await getUserData()
+        }
+        
+        //fetchData function ter pocakaj da se getUserData izvede
+        fetchData()
 
         //click kjerkoli na screenu
         const handleClick = (event: MouseEvent) => {
@@ -67,29 +101,29 @@ const Header: FC = () => {
             }
             //check ce je click v Popup formu (ko je ze odprt)
             else if (popupRef.current && event.target instanceof Node && popupRef.current.contains(event.target)) {
-                const { width, height } = popupRef.current.getBoundingClientRect();
-                setPopupDimensions({ width, height });
-                return;
+                const { width, height } = popupRef.current.getBoundingClientRect()
+                setPopupDimensions({ width, height })
+                return
             }
             else {
                 //click izven Popup
-                setShowPopup(false);
+                setShowPopup(false)
             }
-        };
+        }
 
 
         //dodaj listener ko se nalozi page
-        document.addEventListener('mousedown', handleClick);
+        document.addEventListener('mousedown', handleClick)
         return () => {
             //odstrani listener ko se page zapre
-            document.removeEventListener('mousedown', handleClick);
-        };
-    }, []);
+            document.removeEventListener('mousedown', handleClick)
+        }
+    }, [])
 
     const togglePopup = () => {
-        setShowPopup(!showPopup);
+        setShowPopup(!showPopup)
         //console.log(`Visibility status: ${showPopup}`)
-    };
+    }
 
     //signout funkcionalnost kjer nastavimo user (v tem fileu) na null
     const signout = async () => {
@@ -114,11 +148,11 @@ const Header: FC = () => {
             })
             navigate('/')
         }
-    };
+    }
 
     //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
-    const location = useLocation();
-    const currentPage = location.pathname;
+    const location = useLocation()
+    const currentPage = location.pathname
 
     //za error prikazovanje (Toast)
     const [apiError, setApiError] = useState('')
@@ -177,16 +211,18 @@ const Header: FC = () => {
                                 //container za User settings popup
                                 <div className='relative'>
                                     {/* ko kliknes button, odpri popup */}
-                                    <button ref={buttonRef} onClick={togglePopup} className="rounded-full bg-white">
-                                        <img
-                                            src={authStore.user.image || '/images/unknown_user.png'}
-                                            alt={
-                                                authStore.user?.firstName || authStore.user?.lastName
-                                                    ? `${authStore.user?.firstName} ${authStore.user?.lastName}`
-                                                    : authStore.user?.email
+                                    <button ref={buttonRef} onClick={togglePopup} className="mb-1 rounded-full bg-white">
+                                        <Avatar
+                                            size='48'
+                                            round
+                                            src={
+                                                preview as string
+                                                // preview
+                                                //   ? preview
+                                                //   : defaultValues &&
+                                                //     `${process.env.REACT_APP_API_URL}/files/${defaultValues.image}`
                                             }
-                                            className="h-12 w-12"
-                                        />
+                                            alt="Image" />
                                     </button>
                                     {/* User settings profile popup  */}
                                     {showPopup && (

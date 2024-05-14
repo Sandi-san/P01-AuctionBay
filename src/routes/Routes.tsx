@@ -99,17 +99,17 @@ export const AppRoutes: AppRoute[] = [
 
 //delete user aka access_token ko se stran zapre
 export const deleteAccessToken = () => {
-  localStorage.removeItem('access_token');
-};
+  localStorage.removeItem('access_token')
+}
 
 //event listener ko se stran zapre
 export const setupSessionManagement = () => {
-  window.addEventListener('beforeunload', deleteAccessToken);
-};
+  window.addEventListener('beforeunload', deleteAccessToken)
+}
 
 const Routes: FC = () => {
   //manager za trenutni session
-  setupSessionManagement();
+  // setupSessionManagement()
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
