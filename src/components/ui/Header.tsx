@@ -9,6 +9,7 @@ import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import Avatar from 'react-avatar'
 import AddAuction from '../auction/AddAuction'
+import EditAuction from '../auction/EditAuction'
 
 const Header: FC = () => {
     //za User settings popup
@@ -257,7 +258,7 @@ const Header: FC = () => {
                                             <ProfilePopUp user={user} signout={signout} refreshUserData={getUserData} />
                                         </div>
                                     )}
-                                    {/* Popup Widget User Settings */}
+                                    {/* Popup Widget Add Auction */}
                                     {showAddAuction && (
                                         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
                                             <div className="bg-white rounded-lg p-4">

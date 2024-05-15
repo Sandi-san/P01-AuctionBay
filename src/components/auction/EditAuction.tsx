@@ -6,7 +6,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer'
 import { Controller } from 'react-hook-form'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
-import { CreateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
+import { CreateAuctionFields, UpdateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
 import { AuctionType } from '../../models/auction'
 
 //shrani item v Props
@@ -24,7 +24,7 @@ interface Props {
     closePopup: MouseEventHandler<HTMLButtonElement>
 }
 
-const AddAuction: FC<Props> = ({ user, closePopup }) => {
+const EditAuction: FC<Props> = ({ user, closePopup }) => {
     const defaultValues: AuctionType = {
         id: 0,
         title: '',
@@ -41,10 +41,10 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
     const [showSuccess, setShowSuccess] = useState(false)
     const navigate = useNavigate()
 
-    const onSubmit = handleSubmit(async (data: CreateAuctionFields) => {
-        // console.log(user.id)
-        // console.log(data)
-        const response = await API.createAuction(data)
+    const onSubmit = handleSubmit(async (data: UpdateAuctionFields) => {
+        // TODO: ACTUAL ID
+        const id = 26   //POZOR: DOBI ID IZ CARD AUCTIONA
+        const response = await API.updateAuction(id,data)
         console.log(response)
 
         //TODO vsi status code ki lahko tu dobis
@@ -122,7 +122,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
         <div className="text-black bg-white rounded-lg w-[540px]">
             {/* Greeting text */}
             <div className="mb-6">
-                <p className="text-2xl font-bold">Add auction</p>
+                <p className="text-2xl font-bold">Edit auction</p>
             </div>
             <Form className="m-2" onSubmit={onSubmit}>
                 {/* Slika */}
@@ -198,7 +198,6 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                             <div className='px-2 py-1 mb-1 w-full'>
                                 <textarea
                                     {...field}
-                                    // type="textarea"
                                     rows={4}
                                     placeholder="Write description here..."
                                     aria-label="Description"
@@ -218,97 +217,55 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                         </Form.Group>
                     )}
                 />
-                <div className="flex flex-wrap -mx-3 mb-2">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <Controller
-                            control={control}
-                            name="currentPrice"
-                            render={({ field }) => (
-                                <Form.Group className="mb-2 flex flex-col relative">
-                                    <FormLabel htmlFor="currentPrice">Starting price</FormLabel>
-                                    <div className='px-2 py-1 mb-1 w-full'>
-                                        <input
-                                            {...field}
-                                            type="number"
-                                            placeholder="Price"
-                                            aria-label="Starting price"
-                                            aria-describedby="currentPrice"
-                                            className={
-                                                errors.currentPrice
-                                                    ? 'form-control is-invalid'
-                                                    : 'form-control'
-                                            }
-                                        />
-                                        {/* Ikonca v input formu: Currency*/}
-                                        <span className="absolute right-0 p-3 mr-2 text-gray-500">
-                                            <svg className="bi bi-currency-euro" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936q-.002-.165.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.6 6.6 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z" />
-                                            </svg>
-                                        </span>
-                                        {errors.currentPrice && (
-                                            <div className="invalid-feedback">
-                                                {errors.currentPrice.message}
-                                            </div>
-                                        )}
+                <Controller
+                    control={control}
+                    name="duration"
+                    render={({ field }) => (
+                        <Form.Group className="mb-2 flex flex-col relative">
+                            <FormLabel htmlFor="duration">End date</FormLabel>
+                            <div className='px-2 py-1 mb-1 w-full'>
+                                <input
+                                    {...field}
+                                    type="date"
+                                    placeholder="dd.mm.yyyy"
+                                    aria-label="End date"
+                                    aria-describedby="duration"
+                                    className={
+                                        errors.duration
+                                            ? 'form-control is-invalid appearance-none'
+                                            : 'form-control appearance-none'
+                                    }
+                                    //input ne more dobit Date, zato pretvori Date v string
+                                    value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
+                                />
+                                {/* Ikonca v input formu: Clock*/}
+                                <span className="absolute right-0 p-3 mr-2 text-gray-500">
+                                    <svg
+                                        className='bi bi-clock-history'
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z" />
+                                        <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
+                                        <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
+                                    </svg>
+                                </span>
+                                {errors.duration && (
+                                    <div className="invalid-feedback">
+                                        {errors.duration.message}
                                     </div>
-                                </Form.Group>
-                            )}
-                        />
-                    </div>
-                    <div className="w-full md:w-1/2 px-2">
-                        <Controller
-                            control={control}
-                            name="duration"
-                            render={({ field }) => (
-                                <Form.Group className="mb-2 flex flex-col relative">
-                                    <FormLabel htmlFor="duration">End date</FormLabel>
-                                    <div className='px-2 py-1 mb-1 w-full'>
-                                        <input
-                                            {...field}
-                                            type="date"
-                                            placeholder="dd.mm.yyyy"
-                                            aria-label="End date"
-                                            aria-describedby="duration"
-                                            className={
-                                                errors.duration
-                                                    ? 'form-control is-invalid appearance-none'
-                                                    : 'form-control appearance-none'
-                                            }
-                                            //input ne more dobit Date, zato pretvori Date v string
-                                            value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
-                                        />
-                                        {/* Ikonca v input formu: Clock*/}
-                                        <span className="absolute right-0 p-3 mr-2 text-gray-500">
-                                            <svg
-                                                className='bi bi-clock-history'
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z" />
-                                                <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
-                                                <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
-                                            </svg>
-                                        </span>
-
-
-                                        {errors.duration && (
-                                            <div className="invalid-feedback">
-                                                {errors.duration.message}
-                                            </div>
-                                        )}
-                                    </div>
-                                </Form.Group>
-                            )}
-                        />
-                    </div>
-                </div>
+                                )}
+                            </div>
+                        </Form.Group>
+                    )}
+                />
                 <div className='flex justify-end'>
                     <Button onClick={closePopup}
                         className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
-                        Cancel
+                        Discard changes
                     </Button>
                     <Button
                         type="submit"
-                        className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark">
-                        Save changes
+                        className="mr-4 bg-black custom-button text-white">
+                        Edit auction
                     </Button>
                 </div>
             </Form>
@@ -336,4 +293,4 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
         </div>
     )
 }
-export default AddAuction
+export default EditAuction

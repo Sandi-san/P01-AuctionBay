@@ -64,12 +64,13 @@ export const createAuction = async (data: CreateAuctionFields) => {
   )
 }
 
-export const updateAuction = async (data: UpdateAuctionFields) => {
+export const updateAuction = async (id: number, data: UpdateAuctionFields) => {
   console.log('Update auction data:', JSON.stringify(data))
+
   const accessToken = getAccessToken()
   return apiRequest<UpdateAuctionFields, void>(
     'patch',
-    `${apiRoutes.USER_AUCTION_PREFIX}`,
+    `${apiRoutes.USER_AUCTION_PREFIX}/${id}`,
     data,
     { headers: { Authorization: `Bearer ${accessToken}` } }
   )
@@ -78,6 +79,7 @@ export const updateAuction = async (data: UpdateAuctionFields) => {
 //slika se posilja posebej
 export const uploadAuctionImage = async (id: number, formData: FormData) => {
   console.log('Auction image:', JSON.stringify(formData))
+  
   const accessToken = getAccessToken()
   return apiRequest<FormData, void>(
     'post', 
