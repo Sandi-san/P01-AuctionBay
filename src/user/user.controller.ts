@@ -108,12 +108,15 @@ export class UserController {
     //SPREMENI FILE (SLIKO) OD AUCTIONA
     //mora biti posebej, ker ne mores istocasno poslat dto in file v frontendu
     @HttpCode(HttpStatus.OK)
-    @Patch('auction/:id/upload-image')
+    @Post('auction/:id/upload-image')
     @UseInterceptors(FileInterceptor('image', saveImageToStorage))
     async uploadAuctionImage(
         @Param('id') id: string,
         @UploadedFile() file: Express.Multer.File
     ): Promise<Auction> {
+        console.log("Id:",id)
+        console.log("File:",file)
+
         //parsaj string iz url v int
         const auctionId = parseInt(id, 10)
         if (isNaN(auctionId)) {

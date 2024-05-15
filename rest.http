@@ -89,7 +89,7 @@ Authorization: {{token}}
 }
 
 ### POST /me/auction/:id/upload-image
-POST http://localhost:8080/me/auction/13/upload-image HTTP/1.1
+POST http://localhost:8080/me/auction/21/upload-image HTTP/1.1
 #### Test with Postman: Body: key: 'image' (File), value: 'test_image.png' (dont forget to Authenticate)
 
 ### GET /me/auction/:id

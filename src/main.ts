@@ -7,6 +7,12 @@ import * as express from 'express'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    //react = port 3000
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  })
+  
   //za class-validation (whitelist=odstrani var ki niso pricakovani v definiranem dto)
   app.useGlobalPipes(new ValidationPipe({whitelist:true}))
   
