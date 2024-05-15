@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwiaWF0IjoxNzE0MTI1MDkyLCJleHAiOjE3MTQxMjU5OTJ9.EEVfMmIhgGT-fzwXCFbYOe0tI4EuRwD0Vvk-bayUyWM
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJlbWFpbCI6Imp1cmVAZ21haWwuY29tIiwiaWF0IjoxNzE1Nzc1NDE4LCJleHAiOjE3MTU3NzYzMTh9.Xcp2jkO-kOLdjOfL-B2O6dOK1wCq4Un2D4x-1_xZISE
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
@@ -87,6 +87,10 @@ Authorization: {{token}}
 	"image": "new_image.png",
 	"userId": 0
 }
+
+### POST /me/auction/:id/upload-image
+POST http://localhost:8080/me/auction/13/upload-image HTTP/1.1
+#### Test with Postman: Body: key: 'image' (File), value: 'test_image.png' (dont forget to Authenticate)
 
 ### GET /me/auction/:id
 PATCH http://localhost:8080/me/auction/13 HTTP/1.1

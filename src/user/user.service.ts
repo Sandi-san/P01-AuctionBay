@@ -32,7 +32,11 @@ export class UserService {
         id: number,
         updateUserDto: UpdateUserDto
     ): Promise<User> {
-        
+        //confirm_password vrne error, ker ni v Prismi DB, je pa v frontendu
+        delete updateUserDto.confirm_password
+        delete updateUserDto.old_password
+        delete updateUserDto.password
+
         try {
             //spremeni vrednosti userja in posodobi bazo
             const updatedUser = await this.prisma.user.update({
@@ -41,10 +45,9 @@ export class UserService {
                     ...updateUserDto,
                     //ce slucajno dobil password v dto, odstrani 
                     //password se NE sme spreminjat v update(), samo v changePassword()
-                    password: undefined
+                    password: undefined,
                 }
             })
-            delete updatedUser.password
             return updatedUser
         } catch (error) {
             //preveri ce se je pojavil v prisma clientu
@@ -58,7 +61,7 @@ export class UserService {
             } else {
                 //ni email alredy taken error, vrni prvotnega
                 console.log(error)
-                throw new BadRequestException('Something went wrong while creating new user!')
+                throw new BadRequestException('Something went wrong while updating user!')
             }
         }
     }
@@ -77,10 +80,18 @@ export class UserService {
         if (!user) throw new NotFoundException(`User with id \'${id}\' does not exist!`)
 
         //destructiraj posamezne var iz dto
-        const { password, confirm_password } = updateUserDto
+        const { old_password, password, confirm_password } = updateUserDto
 
         //preveri ce user dodal oba passworda
         if (password && confirm_password) {
+            //preveri ce user dodal stari password (glej frontend formo)
+            if (!old_password)
+                throw new BadRequestException('Please input old password!')
+
+            const pwMatchOld = await argon.verify(user.password, old_password)
+            if (!pwMatchOld)
+                throw new BadRequestException('Old password is incorrect!')
+
             //passworda sta razlicna
             if (password !== confirm_password)
                 throw new BadRequestException('Passwords do not match!')
@@ -147,17 +158,27 @@ export class UserService {
         return this.auctionService.update(auctionId, dto)
     }
 
+    //SPREMENI SLIKO AUCTIONA
+    async uploadAuctionImage(
+        auctionId: number,
+        image: string
+    ): Promise<Auction> {
+        console.log({ auctionId, image })
+        //klici auction update, vendar samo z sliko
+        return this.auctionService.updateAuctionImage(auctionId, image)
+    }
+
     //DOBI VSE BIDE KI JE USER USTVARIL
     async getUserBids(
         userId: number
     ): Promise<Bid[]> {
-        return this.bidService.getAllForUser(userId,true)
+        return this.bidService.getAllForUser(userId, true)
     }
 
     //DOBI VSE BIDE S KATERIMI JE USER ZMAGAL
     async getUserBidsWon(
         userId: number
     ): Promise<Bid[]> {
-        return this.bidService.getAllForUser(userId,false)
+        return this.bidService.getAllForUser(userId, false)
     }
 }

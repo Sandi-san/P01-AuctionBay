@@ -12,6 +12,10 @@ export class UpdateUserDto {
   @IsEmail()
   email?: string
 
+  @IsOptional()
+  @IsString()
+  old_password?: string
+
   @ValidateIf((o) => typeof o.password === 'string' && o.password.length > 0)
   @IsOptional()
   @IsString()
