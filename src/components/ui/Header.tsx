@@ -52,13 +52,18 @@ const Header: FC = () => {
         if (userData !== undefined) {
             //ce userData vrnil unauthorized, izbrisi localni access_token
             if (userData.statusCode === StatusCode.UNAUTHORIZED) {
-                authStore.signout()
-                //ce si ze na main pageu, force refreshaj stran
-                if (location.pathname === '/')
+                //ce si ze na main pageu IN obstaja access_token, force refreshaj stran
+                if (location.pathname === '/'
+                    && window.localStorage.getItem(`access_token`)
+                ) {
+                    authStore.signout()
                     navigate('/', { state: window.location.reload() })
+                }
                 //vrni na main page
-                else
+                else {
+                    authStore.signout()
                     navigate('/')
+                }
             }
             else {
                 setUser(userData)

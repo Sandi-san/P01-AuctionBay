@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useState } from 'react'
+import { FC, MouseEventHandler, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
@@ -32,7 +32,9 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
         status: '',
         currentPrice: 0,
         duration: new Date(Date.now()),
+        userId: 0,
     }
+    // const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({ defaultValues })
     const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
@@ -40,27 +42,48 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
     const navigate = useNavigate()
 
     const onSubmit = handleSubmit(async (data: CreateAuctionFields) => {
-        console.log(user.id)
-        console.log(data)
 
-        const response: any = "TODO"
-        // const response = await API.updateUser(data)
-        console.log(response)
+        try {
+            const formData = new FormData()
 
-        //TODO vsi status code ki lahko tu dobis
-        if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
-            response.data?.statusCode === StatusCode.FORBIDDEN
-        ) {
-            setApiError(response.data.message)
-            setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-            setApiError(response.data.message)
-            setShowError(true)
-        }
-        else {
-            setShowError(false)
-            setShowSuccess(true)
-            navigate('/')
+            // formData.append('title', data.title)
+            // formData.append('description', data.description) // Ensure description is not null
+            // formData.append('currentPrice', data.currentPrice.toString())
+            // formData.append('status', data.status)
+            // formData.append('duration', data.duration.toISOString()) // Convert Date to string
+            // formData.append('userId', user.id)
+
+            if (image) {
+                formData.append('image', image, image.name)
+                console.log(`Image in addAuction: ${image}`)
+            }
+            console.log(user.id)
+            console.log(data)
+            const response = await API.createAuction(data)
+            // const response = await API.createAuction(data)
+            console.log(response)
+
+            //TODO vsi status code ki lahko tu dobis
+            if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+                response.data?.statusCode === StatusCode.FORBIDDEN ||
+                response.data?.statusCode === StatusCode.UNAUTHORIZED
+            ) {
+                setApiError(response.data.message)
+                setShowSuccess(false)
+                setShowError(true)
+            } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+                setApiError(response.data.message)
+                setShowSuccess(false)
+                setShowError(true)
+            }
+            else {
+                setShowError(false)
+                setShowSuccess(true)
+                navigate('/')
+            }
+        } catch (error) {
+            // Handle error
+            console.error('Error:', error)
         }
     })
 
@@ -209,7 +232,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                                     : 'form-control'
                                             }
                                         />
-                                        {/* Ikonca v input formu*/}
+                                        {/* Ikonca v input formu: Currency*/}
                                         <span className="absolute right-0 p-3 mr-2 text-gray-500">
                                             <svg className="bi bi-currency-euro" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                                 <path d="M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936q-.002-.165.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.6 6.6 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z" />
@@ -230,7 +253,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                             control={control}
                             name="duration"
                             render={({ field }) => (
-                                <Form.Group className="mb-2 flex flex-col input-group">
+                                <Form.Group className="mb-2 flex flex-col relative">
                                     <FormLabel htmlFor="duration">End date</FormLabel>
                                     <div className='px-2 py-1 mb-1 w-full'>
                                         <input
@@ -246,8 +269,19 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                             }
                                             //input ne more dobit Date, zato pretvori Date v string
                                             value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
-
                                         />
+                                        {/* Ikonca v input formu: Currency*/}
+                                        <span className="absolute right-0 p-3 mr-2 text-gray-500">
+                                            <svg
+                                                className='bi bi-clock-history'
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z" />
+                                                <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
+                                                <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
+                                            </svg>
+                                        </span>
+
+
                                         {errors.duration && (
                                             <div className="invalid-feedback">
                                                 {errors.duration.message}
@@ -258,7 +292,6 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                             )}
                         />
                     </div>
-
                 </div>
                 <div className='flex justify-end'>
                     <Button onClick={closePopup}
@@ -271,7 +304,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                         Save changes
                     </Button>
                 </div>
-            </Form >
+            </Form>
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>

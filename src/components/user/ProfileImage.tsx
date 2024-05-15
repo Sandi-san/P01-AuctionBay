@@ -72,9 +72,11 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
             response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
             setApiError(response.data.message)
+            setShowSuccess(false)
             setShowError(true)
         } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
             setApiError(response.data.message)
+            setShowSuccess(false)
             setShowError(true)
         }
         else {

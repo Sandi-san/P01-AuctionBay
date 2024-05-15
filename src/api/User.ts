@@ -9,13 +9,13 @@ import {
 } from '../hooks/react-hook-form/useCreateUpdateUser'
 
 const getAccessToken = () => {
-  const accessToken = localStorage.getItem('access_token');
+  const accessToken = localStorage.getItem('access_token')
   //parsaj access token iz JSON (dobi samo vsebini)
-  let parsedAccessToken;
+  let parsedAccessToken
   if (accessToken) {
-    const parsedToken = JSON.parse(accessToken);
+    const parsedToken = JSON.parse(accessToken)
     if (parsedToken && parsedToken.access_token) {
-      parsedAccessToken = parsedToken.access_token;
+      parsedAccessToken = parsedToken.access_token
       return parsedAccessToken
     }
   }
@@ -36,45 +36,35 @@ export const fetchUser = async () => {
 
   //poglej ce response vsebuje data
   if (response && response.data) {
-    return response.data; //vrni data
+    return response.data //vrni data
   } else {
-    console.error('No user data found in response');
-    return null; // return null ce user data is ni available
+    console.error('No user data found in response')
+    return null // return null ce user data is ni available
   }
 }
 
 //paginatedUsers
-export const fetchUsers = async (pageNumber: number) =>
-  apiRequest<number, UserType[]>(
-    'get',
-    `${apiRoutes.FETCH_USERS}?page=${pageNumber}`,
-  )
+// export const fetchUsers = async (pageNumber: number) =>
+//   apiRequest<number, UserType[]>(
+//     'get',
+//     `${apiRoutes.FETCH_USERS}?page=${pageNumber}`,
+//   )
 
 export const login = async (data: LoginUserFields) =>
   apiRequest<LoginUserFields, UserType>('post', apiRoutes.LOGIN, data)
 
 export const register = async (data: RegisterUserFields) => {
   try {
-    const response = await apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data);
-    return response;
+    const response = await apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data)
+    return response
   } catch (error) {
-    console.error('Error:', error);
-    throw error; // Rethrow the error to be caught by the caller
+    console.error('Error:', error)
+    throw error // Rethrow the error to be caught by the caller
   }
 }
 
 export const signout = async () =>
   apiRequest<undefined, void>('post', apiRoutes.SIGNOUT)
-
-export const uploadAvatar = async (formData: FormData, id: string) =>
-  apiRequest<FormData, void>(
-    'post',
-    `${apiRoutes.UPLOAD_AVATAR_IMAGE}/${id}`,
-    formData,
-  )
-
-export const createUser = async (data: CreateUserFields) =>
-  apiRequest<CreateUserFields, void>('post', apiRoutes.USERS_PREFIX, data)
 
 export const updateUser = async (data: UpdateUserFields) => {
   console.log('Update user data:', JSON.stringify(data))
@@ -110,12 +100,5 @@ export const updateUserImage = async (formData: FormData) => {
   )
 }
 
-// export const updateUser = async (data: UpdateUserFields, id: string) =>
-//   apiRequest<UpdateUserFields, void>(
-//     'patch',
-//     `${apiRoutes.USERS_PREFIX}/${id}`,
-//     data,
-//   )
-
-export const deleteUser = async (id: string) =>
-  apiRequest<string, UserType>('delete', `${apiRoutes.USERS_PREFIX}/${id}`)
+// export const deleteUser = async (id: string) =>
+//   apiRequest<string, UserType>('delete', `${apiRoutes.FETCH_USER}/${id}`)

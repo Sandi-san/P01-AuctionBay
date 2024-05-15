@@ -10,6 +10,7 @@ export interface CreateAuctionFields {
   status: string
   duration: Date
   image?: string
+  userId: number
 }
 
 export interface UpdateAuctionFields {
@@ -19,6 +20,7 @@ export interface UpdateAuctionFields {
   status?: string
   duration: Date
   image?: string
+  // userId: number
 }
 
 //za update
@@ -27,12 +29,22 @@ interface Props {
 }
 
 export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
-  const CreateUpdateAuctionSchema = Yup.object().shape({
+  const CreateAuctionSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
     description: Yup.string().notRequired(),
     currentPrice: Yup.number().required('Price is required'),
     status: Yup.string().required('Status is required'),
     duration: Yup.date().required('Duration is required'),
+    image: Yup.string().notRequired(),
+    userId: Yup.number().required(),
+  })
+
+  const UpdateAuctionSchema = Yup.object().shape({
+    title: Yup.string().required('Title is required'),
+    description: Yup.string().notRequired(),
+    currentPrice: Yup.number().notRequired(),
+    status: Yup.string().notRequired(),
+    duration: Yup.date().notRequired(),
     image: Yup.string().notRequired(),
   })
 
@@ -48,17 +60,21 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
       status: 'In progress',
       duration: new Date(Date.now()),
       image: '',
+      userId: 0,
       ...defaultValues,
     },
     mode: 'onSubmit',
-    resolver: yupResolver(CreateUpdateAuctionSchema),
+    // ce so defaultValues, update, sicer create
+    resolver: defaultValues
+      ? yupResolver(UpdateAuctionSchema)
+      : yupResolver(CreateAuctionSchema),
   })
 
-  return {
-    handleSubmit,
-    errors,
-    control,
-  }
+return {
+  handleSubmit,
+  errors,
+  control,
+}
 }
 
 export type CreateUpdateAuctionSchema = ReturnType<

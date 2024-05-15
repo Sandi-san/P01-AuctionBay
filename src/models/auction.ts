@@ -6,4 +6,5 @@ export type AuctionType = {
   status: string
   duration: Date
   image?: string
+  userId: number
 }
