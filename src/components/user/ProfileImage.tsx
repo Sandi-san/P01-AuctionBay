@@ -38,6 +38,7 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
+    const [showSuccess, setShowSuccess] = useState(false)
 
     //ua sliko
     const [preview, setPreview] = useState<string | null>(null)
@@ -77,6 +78,8 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
             setShowError(true)
         }
         else {
+            setShowError(false)
+            setShowSuccess(true)
             navigate('/')
         }
     })
@@ -200,6 +203,15 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
                             <strong className="me-auto text-red-500">Error</strong>
                         </Toast.Header>
                         <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
+            )}
+            {showSuccess && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
+                        <Toast.Header>
+                            <strong className="me-auto text-green-500">Success</strong>
+                        </Toast.Header>
                     </Toast>
                 </ToastContainer>
             )}

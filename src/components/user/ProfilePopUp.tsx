@@ -1,23 +1,23 @@
 import { FC, useState } from 'react'
-import 'reactjs-popup/dist/index.css';
+import 'reactjs-popup/dist/index.css'
 import { useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
-import { Button } from 'react-bootstrap';
-import ProfileSettings from './ProfileSettings';
-import ProfilePassword from './ProfilePassword';
-import ProfileImage from './ProfileImage';
+import { Button } from 'react-bootstrap'
+import ProfileSettings from './ProfileSettings'
+import ProfilePassword from './ProfilePassword'
+import ProfileImage from './ProfileImage'
 
 interface Props {
     //passaj user (iz setUser) da lahko accesas variable ki vrni /me iz BE
     user: {
-        id: number | undefined;
-        createdAt: string | undefined;
-        updatedAt: string | undefined;
-        firstName: string | undefined;
-        lastName: string | undefined;
-        email: string | undefined;
-        image: string | undefined;
+        id: number | undefined
+        createdAt: string | undefined
+        updatedAt: string | undefined
+        firstName: string | undefined
+        lastName: string | undefined
+        email: string | undefined
+        image: string | undefined
     }
     //passaj parent funkcijo, s katero se signoutas
     signout: () => Promise<void>
@@ -32,24 +32,24 @@ const ProfilePopUp: FC<Props> = ({ user, signout, refreshUserData }) => {
     const navigate = useNavigate()
 
     //za vse tri Popup forme (Settings, Password, Avatar)
-    const [showPopupSettings, setShowPopupSettings] = useState(false);
-    const [showPopupPassword, setShowPopupPassword] = useState(false);
-    const [showPopupImage, setShowPopupImage] = useState(false);
+    const [showPopupSettings, setShowPopupSettings] = useState(false)
+    const [showPopupPassword, setShowPopupPassword] = useState(false)
+    const [showPopupImage, setShowPopupImage] = useState(false)
 
     const togglePopupSettings = () => {
         //ko znova odpremo Profile popup, znova fetchaj userja (parent funkc)
         refreshUserData()
-        setShowPopupSettings(!showPopupSettings);
+        setShowPopupSettings(!showPopupSettings)
         // console.log(`Showed Settings: ${showPopupSettings}`)
-    };
+    }
     const togglePopupPassword = () => {
-        setShowPopupPassword(!showPopupPassword);
+        setShowPopupPassword(!showPopupPassword)
         // console.log(`Showed Password: ${showPopupPassword}`)
-    };
+    }
     const togglePopupImage = () => {
-        setShowPopupImage(!showPopupImage);
+        setShowPopupImage(!showPopupImage)
         // console.log(`Showed Image: ${showPopupImage}`)
-    };
+    }
 
     return (
         <>

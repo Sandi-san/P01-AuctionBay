@@ -36,6 +36,7 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
+    const [showSuccess, setShowSuccess] = useState(false)
 
     //za toggle show password ko kliknes na eye icon (pass in confirm posebej gumb)
     const [showPassword, setShowPassword] = useState(false);
@@ -58,6 +59,8 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
             setShowError(true)
         }
         else {
+            setShowError(false)
+            setShowSuccess(true)
             navigate('/')
         }
     })
@@ -216,6 +219,16 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
                     </Toast>
                 </ToastContainer>
             )}
+            {showSuccess && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
+                        <Toast.Header>
+                            <strong className="me-auto text-green-500">Success</strong>
+                        </Toast.Header>
+                    </Toast>
+                </ToastContainer>
+            )}
+
         </div>
     )
 }

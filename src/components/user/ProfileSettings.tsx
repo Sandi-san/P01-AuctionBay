@@ -1,9 +1,8 @@
 import { FC, MouseEventHandler, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
-import authStore from '../../stores/auth.store'
 import { Controller } from 'react-hook-form'
 import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hook-form/useCreateUpdateUser'
 import { StatusCode } from '../../constants/errorConstants'
@@ -13,13 +12,13 @@ import { UpdateUserType } from '../../models/auth'
 //shrani item v Props
 interface Props {
     user: {
-        id: number | undefined;
-        createdAt: string | undefined;
-        updatedAt: string | undefined;
-        firstName: string | undefined;
-        lastName: string | undefined;
-        email: string | undefined;
-        image: string | undefined;
+        id: number | undefined
+        createdAt: string | undefined
+        updatedAt: string | undefined
+        firstName: string | undefined
+        lastName: string | undefined
+        email: string | undefined
+        image: string | undefined
     }
     //zapri (ta) Profile popup
     closePopup: MouseEventHandler<HTMLButtonElement>
@@ -31,8 +30,7 @@ interface Props {
 
 const ProfileSettings: FC<Props> = (
     { user, closePopup, openPopupPassword, openPopupImage }) => {
-    const navigate = useNavigate()
-    const { id, firstName, lastName, email } = user;
+    const { id, firstName, lastName, email } = user
     const defaultValues: UpdateUserType = {
         id,
         firstName,
@@ -42,10 +40,12 @@ const ProfileSettings: FC<Props> = (
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
+    const [showSuccess, setShowSuccess] = useState(false)
+    const navigate = useNavigate()
 
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
         console.log(user.id)
-        
+
         const response = await API.updateUser(data)
         console.log(response)
 
@@ -60,6 +60,8 @@ const ProfileSettings: FC<Props> = (
             setShowError(true)
         }
         else {
+            setShowError(false)
+            setShowSuccess(true)
             navigate('/')
         }
     })
@@ -70,7 +72,7 @@ const ProfileSettings: FC<Props> = (
             closePopup(event)
             openPopupPassword(event)
         }
-    };
+    }
 
     const togglePopupImage: React.MouseEventHandler<HTMLButtonElement> = (event?) => {
         if (event) {
@@ -78,11 +80,7 @@ const ProfileSettings: FC<Props> = (
             closePopup(event)
             openPopupImage(event)
         }
-    };
-
-
-    //TODO: dobi vrednosti userja iz baze /me
-    //in izpisi v formi
+    }
 
     return (
         <div className="text-black bg-white rounded-lg w-[540px]">
@@ -208,6 +206,15 @@ const ProfileSettings: FC<Props> = (
                             <strong className="me-auto text-red-500">Error</strong>
                         </Toast.Header>
                         <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
+            )}
+            {showSuccess && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
+                        <Toast.Header>
+                            <strong className="me-auto text-green-500">Success</strong>
+                        </Toast.Header>
                     </Toast>
                 </ToastContainer>
             )}

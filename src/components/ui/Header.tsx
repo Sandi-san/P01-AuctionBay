@@ -8,19 +8,25 @@ import 'reactjs-popup/dist/index.css'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import Avatar from 'react-avatar'
+import AddAuction from '../auction/AddAuction'
 
 const Header: FC = () => {
     //za User settings popup
     //ali je Popup odprt ali ne
     const [showPopup, setShowPopup] = useState(false)
     //dimenzije popupa (za pravilne dimenzije parenta)
-    const [popupDimensions, setPopupDimensions] = useState({ width: 0, height: 0 })
+    const [popupDimensions, setPopupDimensions] = useState({ height: 0 })
     //referenca na Popup element
     const popupRef = useRef<HTMLDivElement | null>(null)
     //referenca na Button element ki odpre Popup
     const buttonRef = useRef<HTMLButtonElement>(null)
 
     const navigate = useNavigate()
+    //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
+    const location = useLocation()
+    const currentPage = location.pathname
+
+    const [showAddAuction, setShowAddAuction] = useState(false)
 
     //za sliko
     const [preview, setPreview] = useState<string | null>(null)
@@ -47,6 +53,12 @@ const Header: FC = () => {
             //ce userData vrnil unauthorized, izbrisi localni access_token
             if (userData.statusCode === StatusCode.UNAUTHORIZED) {
                 authStore.signout()
+                //ce si ze na main pageu, force refreshaj stran
+                if (location.pathname === '/')
+                    navigate('/', { state: window.location.reload() })
+                //vrni na main page
+                else
+                    navigate('/')
             }
             else {
                 setUser(userData)
@@ -85,7 +97,7 @@ const Header: FC = () => {
             // dobi userja ob zagonu komponente
             await getUserData()
         }
-        
+
         //fetchData function ter pocakaj da se getUserData izvede
         fetchData()
 
@@ -101,8 +113,8 @@ const Header: FC = () => {
             }
             //check ce je click v Popup formu (ko je ze odprt)
             else if (popupRef.current && event.target instanceof Node && popupRef.current.contains(event.target)) {
-                const { width, height } = popupRef.current.getBoundingClientRect()
-                setPopupDimensions({ width, height })
+                const height = popupRef.current.getBoundingClientRect()
+                setPopupDimensions(height)
                 return
             }
             else {
@@ -150,13 +162,16 @@ const Header: FC = () => {
         }
     }
 
-    //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
-    const location = useLocation()
-    const currentPage = location.pathname
-
     //za error prikazovanje (Toast)
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
+
+    //za odpri/zapri new Auction popup
+    const togglePopupAuction = () => {
+        getUserData()
+        setShowAddAuction(!showAddAuction)
+        // console.log(`Auction Settings: ${showAddAuction}`)
+    }
 
     return (
         <>
@@ -200,12 +215,20 @@ const Header: FC = () => {
                         {/* Buttoni na desni strani */}
                         <div className="flex items-end bg-white rounded-full pt-1 pl-1 pr-1">
                             {/* levi button */}
-                            <Link to="/new_auction">
+                            {/* <Link to="/new_auction">
                                 <button className="rounded-full bg-white mr-2">
                                     <img src="/images/new.png" alt="Add new auction"
                                         className="h-12 w-12" />
                                 </button>
-                            </Link>
+                            </Link> */}
+                            {/* ko kliknes button, odpri popup */}
+                            <button onClick={togglePopupAuction} className="mb-1 mr-1 rounded-full bg-white">
+                                <Avatar
+                                    size='48'
+                                    round
+                                    src={'/images/new.png'}
+                                    alt="Image" />
+                            </button>
                             {/* desni button, preveri vnesenega userja (null-safety) */}
                             {authStore.user && (
                                 //container za User settings popup
@@ -217,10 +240,6 @@ const Header: FC = () => {
                                             round
                                             src={
                                                 preview as string
-                                                // preview
-                                                //   ? preview
-                                                //   : defaultValues &&
-                                                //     `${process.env.REACT_APP_API_URL}/files/${defaultValues.image}`
                                             }
                                             alt="Image" />
                                     </button>
@@ -231,6 +250,17 @@ const Header: FC = () => {
                                                 height: `${popupDimensions.height}px`,
                                             }}>
                                             <ProfilePopUp user={user} signout={signout} refreshUserData={getUserData} />
+                                        </div>
+                                    )}
+                                    {/* Popup Widget User Settings */}
+                                    {showAddAuction && (
+                                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+                                            <div className="bg-white rounded-lg p-4">
+                                                <AddAuction
+                                                    user={user}
+                                                    closePopup={togglePopupAuction}
+                                                />
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -267,99 +297,4 @@ const Header: FC = () => {
     )
 
 }
-/*
-import {StatusCode} from 'constants/errorConstants'
-            import Toast from 'react-bootstrap/Toast'
-            import ToastContainer from 'react-bootstrap/ToastContainer'
-            import {useNavigate} from 'react-router-dom'
-
-            import * as API from 'api/Api'
-            import useMediaQuery from 'hooks/useMediaQuery'
-            import authStore from 'stores/auth.store'
-            import {routes} from 'constants/routesConstants'
-            import Avatar from 'react-avatar'
-            import Button from 'react-bootstrap/Button'
-
-const Header: FC = () => {
-    //custom hook iz /hooks
-    const {isMobile} = useMediaQuery(768)
-            const navigate = useNavigate()
-
-            const [apiError, setApiError] = useState('')
-            const [showError, setShowError] = useState(false)
-
-    const signout = async () => {
-        const response = await API.signout()
-            if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-                setApiError(response.data.message)
-            setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-                setApiError(response.data.message)
-            setShowError(true)
-        } else {
-                authStore.signout()
-            navigate('/')
-        }
-    }
-
-            return (
-            <>
-                <div className="topbar d-flex flex-grow-1 justify-content-end align-items-center bg-dark px-3 py-2">
-                    <div>
-                        <Link
-                            className="btn btn-dark text-decoration-none text-light me-3"
-                            to={`${routes.DASHBOARD_PREFIX}/users/edit`}
-                            state={{
-                                id: authStore.user?.id,
-                                first_name: authStore.user?.first_name,
-                                last_name: authStore.user?.last_name,
-                                email: authStore.user?.email,
-                                role_id: authStore.user?.role?.id,
-                                avatar: authStore.user?.avatar,
-                                isActiveUser: true,
-                            }}
-                        >
-                            <Avatar
-                                className="topbar__avatar"
-                                round
-                                src={`${process.env.REACT_APP_API_URL}/files/${authStore.user?.avatar}`}
-                                alt={
-                                    authStore.user?.first_name || authStore.user?.last_name
-                                        ? `${authStore.user?.first_name} ${authStore.user?.last_name}`
-                                        : authStore.user?.email
-                                }
-                            />
-                        </Link>
-
-                        <Button className="btn-dark me-3" onClick={signout}>
-                            Sign out
-                        </Button>
-                        <Link className="btn btn-dark" to={routes.HOME}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-house-door-fill"
-                                viewBox="0 0 16 16"
-                            >
-                                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
-                            </svg>
-                        </Link>
-                    </div>
-                </div>
-                {showError && (
-                    <ToastContainer className="p-3" position="top-end">
-                        <Toast onClose={() => setShowError(false)} show={showError}>
-                            <Toast.Header>
-                                <strong className="me-auto text-red-500">Error</strong>
-                            </Toast.Header>
-                            <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
-                        </Toast>
-                    </ToastContainer>
-                )}
-            </>
-            )
-}
-            */
 export default Header
