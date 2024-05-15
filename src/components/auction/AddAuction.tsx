@@ -43,47 +43,53 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
 
     const onSubmit = handleSubmit(async (data: CreateAuctionFields) => {
 
-        try {
-            const formData = new FormData()
+        console.log(user.id)
+        console.log(data)
+        const response = await API.createAuction(data)
+        console.log(response)
 
-            // formData.append('title', data.title)
-            // formData.append('description', data.description) // Ensure description is not null
-            // formData.append('currentPrice', data.currentPrice.toString())
-            // formData.append('status', data.status)
-            // formData.append('duration', data.duration.toISOString()) // Convert Date to string
-            // formData.append('userId', user.id)
-
+        //TODO vsi status code ki lahko tu dobis
+        if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+            response.data?.statusCode === StatusCode.FORBIDDEN ||
+            response.data?.statusCode === StatusCode.UNAUTHORIZED
+        ) {
+            setApiError(response.data.message)
+            setShowSuccess(false)
+            setShowError(true)
+        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+            setApiError(response.data.message)
+            setShowSuccess(false)
+            setShowError(true)
+        }
+        else {
+            //creation uspel, preglej ce je bil poslan tudi file
             if (image) {
-                formData.append('image', image, image.name)
-                console.log(`Image in addAuction: ${image}`)
-            }
-            console.log(user.id)
-            console.log(data)
-            const response = await API.createAuction(data)
-            // const response = await API.createAuction(data)
-            console.log(response)
-
-            //TODO vsi status code ki lahko tu dobis
-            if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
-                response.data?.statusCode === StatusCode.FORBIDDEN ||
-                response.data?.statusCode === StatusCode.UNAUTHORIZED
-            ) {
-                setApiError(response.data.message)
-                setShowSuccess(false)
-                setShowError(true)
-            } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-                setApiError(response.data.message)
-                setShowSuccess(false)
-                setShowError(true)
+                const formData = new FormData()
+                const fileResponse = await API.uploadAuctionImage(
+                    response.data.id, formData
+                )
+                if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST ||
+                    fileResponse.data?.statusCode === StatusCode.FORBIDDEN
+                ) {
+                    setApiError(fileResponse.data.message)
+                    setShowSuccess(false)
+                    setShowError(true)
+                } else if (fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+                    setApiError(fileResponse.data.message)
+                    setShowSuccess(false)
+                    setShowError(true)
+                }
+                else {
+                    setShowError(false)
+                    setShowSuccess(true)
+                    navigate('/')
+                }
             }
             else {
                 setShowError(false)
                 setShowSuccess(true)
                 navigate('/')
             }
-        } catch (error) {
-            // Handle error
-            console.error('Error:', error)
         }
     })
 
@@ -125,6 +131,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                         <>
                             <div className="relative">
                                 <img
+                                    id="image"
                                     src={imagePreview} alt="Uploaded"
                                     // className="w-auto max-w-[524px] h-[200px]" />
                                     className="w-full h-full object-cover" />

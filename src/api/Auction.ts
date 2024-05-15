@@ -23,7 +23,7 @@ export const fetchAuction = async () => {
 
   const response = await apiRequest<undefined, AuctionType>(
     'get',
-    apiRoutes.FETCH_AUCTION,
+    apiRoutes.AUCTION_PREFIX,
     undefined,
     //POZOR: treba poslati Authorization za access token
     { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -58,23 +58,9 @@ export const createAuction = async (data: CreateAuctionFields) => {
   const accessToken = getAccessToken()
   return apiRequest<CreateAuctionFields, void>(
     'post', 
-    apiRoutes.CREATE_AUCTION, 
+    apiRoutes.USER_AUCTION_PREFIX, 
     data,
     { headers: { Authorization: `Bearer ${accessToken}` } }
-  )
-}
-
-export const uploadImage = async (formData: FormData) => {
-  console.log(`Image: ${formData.get('image')}`)
-  console.log('Create auction image:', JSON.stringify(formData))
-
-  const accessToken = getAccessToken()
-  return apiRequest<FormData, void>(
-    'post', 
-    apiRoutes.CREATE_AUCTION, 
-    formData,
-    //POZOR: poslati treba tudi Content-Type
-    { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' } }
   )
 }
 
@@ -83,9 +69,22 @@ export const updateAuction = async (data: UpdateAuctionFields) => {
   const accessToken = getAccessToken()
   return apiRequest<UpdateAuctionFields, void>(
     'patch',
-    `${apiRoutes.UPDATE_AUCTION}`,
+    `${apiRoutes.USER_AUCTION_PREFIX}`,
     data,
     { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+}
+
+//slika se posilja posebej
+export const uploadAuctionImage = async (id: number, formData: FormData) => {
+  console.log('Auction image:', JSON.stringify(formData))
+  const accessToken = getAccessToken()
+  return apiRequest<FormData, void>(
+    'post', 
+    `${apiRoutes.USER_AUCTION_PREFIX}/${id}/${apiRoutes.UPLOAD_AUCTION_IMAGE}`, 
+    formData,
+    //POZOR: poslati treba tudi Content-Type
+    { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' } }
   )
 }
 
