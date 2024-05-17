@@ -7,18 +7,11 @@ import { Button } from 'react-bootstrap'
 import ProfileSettings from './ProfileSettings'
 import ProfilePassword from './ProfilePassword'
 import ProfileImage from './ProfileImage'
+import { UserType } from '../../models/auth'
 
 interface Props {
     //passaj user (iz setUser) da lahko accesas variable ki vrni /me iz BE
-    user: {
-        id: number | undefined
-        createdAt: string | undefined
-        updatedAt: string | undefined
-        firstName: string | undefined
-        lastName: string | undefined
-        email: string | undefined
-        image: string | undefined
-    }
+    user: UserType | null
     //passaj parent funkcijo, s katero se signoutas
     signout: () => Promise<void>
     //passaj funkcijo, ki ponovno pridobi (refresha) info od userja iz BE (/me)

@@ -1,17 +1,14 @@
-
 import { FC, ReactNode, useEffect, useRef, useState } from 'react'
-import Header from './Header'
-import { UserType } from '../../models/auth'
-import { StatusCode } from '../../constants/errorConstants'
-import * as API from '../../api/Api'
-import authStore from '../../stores/auth.store'
+import Header from '../components/ui/Header'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { UserType } from '../models/auth'
+import { StatusCode } from '../constants/errorConstants'
+import authStore from '../stores/auth.store'
+import * as API from '../api/Api'
+import Auctions from './Auctions'
+import Loading from '../components/ui/Loading'
 
-interface Props {
-  children: ReactNode | ReactNode[]
-}
-
-const Layout: FC<Props> = ({ children }) => {
+const AuctionsIndex: FC = () => {
 
   const headerRef = useRef<HTMLDivElement>(null)
   const [headerHeight, setHeaderHeight] = useState<number>(0)
@@ -108,6 +105,7 @@ const Layout: FC<Props> = ({ children }) => {
     fetchData()
   }, [])
 
+
   return (
     <>
       <Header
@@ -116,10 +114,13 @@ const Layout: FC<Props> = ({ children }) => {
         refreshUserData={getUserData}
         signout={signout}
       />
-      {children}
-      {/* <Footer /> */}
+      {headerHeight > 0 ? (
+        <Auctions headerHeight={headerHeight} user={user} />
+      ) : (
+        <Loading />
+      )}
     </>
   )
 }
 
-export default Layout
+export default AuctionsIndex

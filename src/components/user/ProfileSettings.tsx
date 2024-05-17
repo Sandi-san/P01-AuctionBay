@@ -7,19 +7,11 @@ import { Controller } from 'react-hook-form'
 import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hook-form/useCreateUpdateUser'
 import { StatusCode } from '../../constants/errorConstants'
 import * as API from '../../api/Api'
-import { UpdateUserType } from '../../models/auth'
+import { UpdateUserType, UserType } from '../../models/auth'
 
 //shrani item v Props
 interface Props {
-    user: {
-        id: number | undefined
-        createdAt: string | undefined
-        updatedAt: string | undefined
-        firstName: string | undefined
-        lastName: string | undefined
-        email: string | undefined
-        image: string | undefined
-    }
+    user: UserType | null
     //zapri (ta) Profile popup
     closePopup: MouseEventHandler<HTMLButtonElement>
     //odpri Password formo
@@ -30,7 +22,7 @@ interface Props {
 
 const ProfileSettings: FC<Props> = (
     { user, closePopup, openPopupPassword, openPopupImage }) => {
-    const { id, firstName, lastName, email } = user
+    const { id, firstName, lastName, email } = user!
     const defaultValues: UpdateUserType = {
         id,
         firstName,
@@ -44,7 +36,7 @@ const ProfileSettings: FC<Props> = (
     const navigate = useNavigate()
 
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
-        console.log(user.id)
+        console.log(user?.id)
 
         const response = await API.updateUser(data)
         console.log(response)

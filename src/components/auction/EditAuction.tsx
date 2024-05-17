@@ -1,12 +1,12 @@
-import { FC, MouseEventHandler, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { FC, MouseEventHandler, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import { Controller } from 'react-hook-form'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
-import { CreateAuctionFields, UpdateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
+import { UpdateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
 import { AuctionType } from '../../models/auction'
 
 //shrani item v Props
@@ -42,7 +42,7 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
     const navigate = useNavigate()
 
     const onSubmit = handleSubmit(async (data: UpdateAuctionFields) => {
-        // TODO: ACTUAL ID
+        // TODO: AUCTION ID, PRICE, STATUS!
         const id = 26   //POZOR: DOBI ID IZ CARD AUCTIONA
         const response = await API.updateAuction(id,data)
         console.log(response)

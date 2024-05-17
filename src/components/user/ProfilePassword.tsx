@@ -8,27 +8,18 @@ import { Controller } from 'react-hook-form'
 import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hook-form/useCreateUpdateUser'
 import { StatusCode } from '../../constants/errorConstants'
 import * as API from '../../api/Api'
-import { UpdateUserType } from '../../models/auth'
+import { UpdateUserType, UserType } from '../../models/auth'
 
 //shrani item v Props
 interface Props {
-    user: {
-        id: number | undefined;
-        createdAt: string | undefined;
-        updatedAt: string | undefined;
-        firstName: string | undefined;
-        lastName: string | undefined;
-        email: string | undefined;
-        image: string | undefined;
-    }
-
+    user: UserType | null
     //zapri (ta) Profile popup
     closePopup: MouseEventHandler<HTMLButtonElement>
 }
 
 const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
     const navigate = useNavigate()
-    const { id, email } = user;
+    const { id, email } = user!
     const defaultValues: UpdateUserType = {
         id,
         email, //OBVEZEN email sicer sploh ne klice onSubmit??

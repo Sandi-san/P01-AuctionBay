@@ -5,13 +5,19 @@ import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
 import ProfilePopUp from '../user/ProfilePopUp'
 import 'reactjs-popup/dist/index.css'
-import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import Avatar from 'react-avatar'
 import AddAuction from '../auction/AddAuction'
-import EditAuction from '../auction/EditAuction'
+import { UserType } from '../../models/auth'
 
-const Header: FC = () => {
+interface Props {
+    setRef: (ref: HTMLDivElement | null) => void
+    user: UserType | null // Receive user variable as prop
+    refreshUserData: () => Promise<void>
+    signout: () => Promise<void> // Receive signout function as prop
+}
+
+const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
     //za User settings popup
     //ali je Popup odprt ali ne
     const [showPopup, setShowPopup] = useState(false)
@@ -22,91 +28,19 @@ const Header: FC = () => {
     //referenca na Button element ki odpre Popup
     const buttonRef = useRef<HTMLButtonElement>(null)
 
-    const navigate = useNavigate()
+    //referenca na header (za velikost Widgeta)
+    const headerRef = useRef<HTMLDivElement>(null)
+
     //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
     const location = useLocation()
-    const currentPage = location.pathname
 
     const [showAddAuction, setShowAddAuction] = useState(false)
 
     //za sliko
     const [preview, setPreview] = useState<string | null>(null)
 
-    //dobi user iz DB glede localni access_token
-    const [user, setUser] = useState({
-        id: undefined,
-        createdAt: undefined,
-        updatedAt: undefined,
-        firstName: undefined,
-        lastName: undefined,
-        email: undefined,
-        image: undefined,
-    })
-
-    //dobi User data glede localni access_token
-    const getUserData = async () => {
-        // Fetch user data from API
-        const userData = await API.fetchUser()
-        console.log('Fetching User Data:', userData)
-
-        // Check if userData is not undefined
-        if (userData !== undefined) {
-            //ce userData vrnil unauthorized, izbrisi localni access_token
-            if (userData.statusCode === StatusCode.UNAUTHORIZED) {
-                //ce si ze na main pageu IN obstaja access_token, force refreshaj stran
-                if (location.pathname === '/'
-                    && window.localStorage.getItem(`access_token`)
-                ) {
-                    authStore.signout()
-                    navigate('/', { state: window.location.reload() })
-                }
-                //vrni na main page
-                else {
-                    authStore.signout()
-                    navigate('/')
-                }
-            }
-            else {
-                setUser(userData)
-
-                //spreminjanje User image z userData
-                //ker se lahko zgodi da se User ne posodobi predenj se klice ta koda
-                if (userData && userData.image) {
-                    try {
-                        //image name shranjen v defaultValues.image, poglej ce obstaja na BE
-                        const response = await fetch(`${process.env.REACT_APP_API_URL}/files/${userData.image}`)
-                        //ce response 200-OK, nastavi sliko
-                        if (response.ok) {
-                            setPreview(response.url)
-                        }
-                        //sicer nastavi sliko unknown user
-                        else {
-                            console.error('Image not found:', response.statusText)
-                            setPreview('images/unknown_user.png')
-                        }
-                    } catch (error) {
-                        console.error('Error checking image:', error)
-                        setPreview('images/unknown_user.png')
-                    }
-                }
-                else {
-                    setPreview('images/unknown_user.png')
-                }
-            }
-        }
-
-    }
-
-    //effect, ki je na strani
+    //effect, ko se stran nalozi
     useEffect(() => {
-        const fetchData = async () => {
-            // dobi userja ob zagonu komponente
-            await getUserData()
-        }
-
-        //fetchData function ter pocakaj da se getUserData izvede
-        fetchData()
-
         //click kjerkoli na screenu
         const handleClick = (event: MouseEvent) => {
             // setButtonClicked(false)
@@ -129,7 +63,6 @@ const Header: FC = () => {
             }
         }
 
-
         //dodaj listener ko se nalozi page
         document.addEventListener('mousedown', handleClick)
         return () => {
@@ -138,34 +71,48 @@ const Header: FC = () => {
         }
     }, [])
 
+    //effect, ko se user spremeni
+    useEffect(() => {
+        const fetchData = async () => {
+            console.log("USER IMAGE: ",user?.image)
+            //spreminjanje User image z userData
+            //ker se lahko zgodi da se User ne posodobi predenj se klice ta koda
+            if (user && user.image) {
+                try {
+                    //image name shranjen v defaultValues.image, poglej ce obstaja na BE
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/files/${user.image}`)
+                    //ce response 200-OK, nastavi sliko
+                    if (response.ok) {
+                        setPreview(response.url)
+                    }
+                    //sicer nastavi sliko unknown user
+                    else {
+                        console.error('Image not found:', response.statusText)
+                        setPreview('images/unknown_user.png')
+                    }
+                } catch (error) {
+                    console.error('Error checking image:', error)
+                    setPreview('images/unknown_user.png')
+                }
+            }
+            else {
+                setPreview('images/unknown_user.png')
+            }
+
+        }
+        //fetchData function ter pocakaj da se getUserData izvede (glej Layout)
+        fetchData()
+    }, [user])
+
+    //effect ko se referenca na header spremeni
+    useEffect(() => {
+        setRef(headerRef.current)
+    }, [setRef])
+
+
     const togglePopup = () => {
         setShowPopup(!showPopup)
         //console.log(`Visibility status: ${showPopup}`)
-    }
-
-    //signout funkcionalnost kjer nastavimo user (v tem fileu) na null
-    const signout = async () => {
-        const response = await API.signout()
-        if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-            setApiError(response.data.message)
-            setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-            setApiError(response.data.message)
-            setShowError(true)
-        } else {
-            console.log("Signing out")
-            authStore.signout()
-            setUser({
-                id: undefined,
-                createdAt: undefined,
-                updatedAt: undefined,
-                firstName: undefined,
-                lastName: undefined,
-                email: undefined,
-                image: undefined,
-            })
-            navigate('/')
-        }
     }
 
     //za error prikazovanje (Toast)
@@ -174,14 +121,14 @@ const Header: FC = () => {
 
     //za odpri/zapri new Auction popup
     const togglePopupAuction = () => {
-        getUserData()
+        refreshUserData()
         setShowAddAuction(!showAddAuction)
         // console.log(`Auction Settings: ${showAddAuction}`)
     }
 
     return (
         <>
-            <header className="flex justify-between items-center px-6 py-4 text-white">
+            <header ref={headerRef} className="flex justify-between items-center px-6 py-4 text-white">
                 {/* ce je user prijavljen, display Buttons */}
                 {user?.firstName ? (
                     // div z logo, zraven z Buttoni, da so vsi na levi strani (items-start)
@@ -196,7 +143,7 @@ const Header: FC = () => {
                                 <Link to="/auctions"
                                     // spremeni still glede na current page
                                     className={`rounded-full p-3 mr-2 
-                                    ${currentPage === '/auctions'
+                                    ${location.pathname === '/auctions'
                                             ? 'bg-black text-white'
                                             : 'bg-white text-black'}`}>
                                     {/* svg ikonca zraven teksta */}
@@ -207,7 +154,7 @@ const Header: FC = () => {
                                 </Link>
                                 <Link to="/profile"
                                     className={`rounded-full p-3 
-                                            ${currentPage === '/profile'
+                                            ${location.pathname === '/profile'
                                             ? 'bg-black text-white'
                                             : 'bg-white text-black'}`}>
                                     {/* svg ikonca zraven teksta */}
@@ -255,7 +202,7 @@ const Header: FC = () => {
                                             style={{
                                                 height: `${popupDimensions.height}px`,
                                             }}>
-                                            <ProfilePopUp user={user} signout={signout} refreshUserData={getUserData} />
+                                            <ProfilePopUp user={user} signout={signout} refreshUserData={refreshUserData} />
                                         </div>
                                     )}
                                     {/* Popup Widget Add Auction */}

@@ -39,11 +39,11 @@ export const fetchAuction = async () => {
 }
 
 //paginatedAuctions
-// export const fetchAuctions = async (pageNumber: number) =>
-//   apiRequest<number, AuctionType[]>(
-//     'get',
-//     `${apiRoutes.FETCH_AUCTIONS}?page=${pageNumber}`,
-//   )
+export const fetchAuctions = async (pageNumber: number) =>
+  apiRequest<number, AuctionType[]>(
+    'get',
+    `${apiRoutes.AUCTION_PREFIX}?page=${pageNumber}`,
+  )
 
 // export const uploadImage = async (formData: FormData, id: string) =>
 //   apiRequest<FormData, void>(

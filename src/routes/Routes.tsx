@@ -3,6 +3,9 @@ import { Route, RouteProps, Routes as Switch } from 'react-router-dom'
 
 import PrivateRoute from './PrivateRoute'
 import RestrictedRoute from './RestrictedRoute'
+import Loading from '../components/ui/Loading'
+import Layout from '../components/ui/Layout'
+import AuctionsIndex from '../pages/AuctionsIndex'
 
 export enum RouteType {
   PUBLIC,
@@ -34,8 +37,6 @@ const Password = lazy(() => import('../pages/Password'))
 // Error routes
 const Page404 = lazy(() => import('../pages/Page404'))
 
-
-//TODO: add routes here
 export const AppRoutes: AppRoute[] = [
   // Restricted Routes
   {
@@ -80,7 +81,14 @@ export const AppRoutes: AppRoute[] = [
   {
     type: RouteType.PUBLIC,
     path: '/auctions',
-    children: <Auctions />,
+    children: <AuctionsIndex />,
+    // children: <Auctions headerHeight={0} user={null} />,
+    // children: (
+    //   <Layout>
+    //     {/* <Auctions headerHeight={0} user={null} /> */}
+    //     <Auctions />
+    //   </Layout>
+    // ),
   },
   {
     type: RouteType.PUBLIC,
@@ -96,26 +104,12 @@ export const AppRoutes: AppRoute[] = [
   },
 ]
 
-
-//delete user aka access_token ko se stran zapre
-export const deleteAccessToken = () => {
-  localStorage.removeItem('access_token')
-}
-
-//event listener ko se stran zapre
-export const setupSessionManagement = () => {
-  window.addEventListener('beforeunload', deleteAccessToken)
-}
-
 const Routes: FC = () => {
-  //manager za trenutni session
-  // setupSessionManagement()
-
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <Switch>
         {AppRoutes.map((r) => {
-          const { type } = r
+          const { type } = r;
           if (type === RouteType.PRIVATE) {
             return (
               <Route
@@ -123,7 +117,7 @@ const Routes: FC = () => {
                 path={`${r.path}`}
                 element={<PrivateRoute>{r.children}</PrivateRoute>}
               />
-            )
+            );
           }
           if (type === RouteType.RESTRICTED) {
             return (
@@ -132,12 +126,12 @@ const Routes: FC = () => {
                 path={`${r.path}`}
                 element={<RestrictedRoute>{r.children}</RestrictedRoute>}
               />
-            )
+            );
           }
 
           return (
             <Route key={`${r.path}`} path={`${r.path}`} element={r.children} />
-          )
+          );
         })}
         <Route path="*" element={<Page404 />} />
       </Switch>

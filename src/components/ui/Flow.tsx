@@ -1,75 +1,84 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
-import Card from './Card';
-import Loading from './Loading';
-//import { fetchItemsFromBackend } from 'backend-api'; // TODO: Import backend API function
+import { FC, ReactNode, useEffect, useState } from 'react'
+import Card from './Card'
+import Loading from './Loading'
+import { AuctionType } from '../../models/auction'
+//import { fetchItemsFromBackend } from 'backend-api' // TODO: Import backend API function
 
 interface Item {
-    name: string;
-    price: number;
-    image: string;
-    status: string;
-    date: string;
+    name: string
+    price: number
+    image: string
+    status: string
+    date: string
 }
 
 const Flow: FC = () => {
     //itemi (Auctioni) ki jih dobis iz db za prikaz
-    const [items, setItems] = useState<Item[]>([]);
+    const [items, setItems] = useState<AuctionType[]>([])
 
     //page se se nalaga?
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true)
 
     //dobi data iz api ko se komponenta nalozi
     useEffect(() => {
         const fetchData = async () => {
             try {
                 //klic API class, ki dobi 4 trenutne auctione iz baze
-                // const data = await TODO();
+                // const data = await TODO()
 
 
                 //SAMO Z TEMPLATE PODATKI
                 //cakaj nekaj casa da se lahko izvede funkcija predenj renderiras page 
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 100))
 
-                const data: Item[] = [
+                const data: AuctionType[] = [
                     {
-                        name: "Item 1",
-                        price: 10,
+                        id: 1,
+                        title: "Item 1",
+                        currentPrice: 10,
                         image: "images/landing_page_preview.png",
                         status: "In progress",
-                        date: "59m"
+                        duration: new Date(Date.now()),
+                        userId: 0
                     },
                     {
-                        name: "Item 2",
-                        price: 20,
+                        id: 1,
+                        title: "Item 1",
+                        currentPrice: 10,
                         image: "images/landing_page_preview.png",
                         status: "In progress",
-                        date: "1h"
+                        duration: new Date(Date.now()),
+                        userId: 0
                     },
                     {
-                        name: "Item 3",
-                        price: 30,
-                        image: "images/test.png",
+                        id: 1,
+                        title: "Item 1",
+                        currentPrice: 10,
+                        image: "images/landing_page_preview.png",
                         status: "In progress",
-                        date: "7h"
+                        duration: new Date(Date.now()),
+                        userId: 0
                     },
                     {
-                        name: "Item 4",
-                        price: 40,
-                        image: "images/new.png",
+                        id: 1,
+                        title: "Item 1",
+                        currentPrice: 10,
+                        image: "images/landing_page_preview.png",
                         status: "In progress",
-                        date: "12h"
+                        duration: new Date(Date.now()),
+                        userId: 0
                     }
-                ];
+                ]
 
-                setItems(data);
+                setItems(data)
             } catch (error) {
-                console.error('Error fetching items:', error);
+                console.error('Error fetching items:', error)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
-        fetchData();
-    }, []); //funkcijo zazeni le ob zacetku
+        }
+        fetchData()
+    }, []) //funkcijo zazeni le ob zacetku
 
     //ce se se page loada
     if (loading) {
@@ -102,7 +111,7 @@ const Flow: FC = () => {
                 </div>
             </div>
         </>
-    );
-};
+    )
+}
 
-export default Flow;
+export default Flow

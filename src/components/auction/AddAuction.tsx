@@ -1,5 +1,5 @@
-import { FC, MouseEventHandler, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { FC, MouseEventHandler, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
@@ -8,18 +8,11 @@ import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import { CreateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
 import { AuctionType } from '../../models/auction'
+import { UserType } from '../../models/auth'
 
 //shrani item v Props
 interface Props {
-    user: {
-        id: number | undefined
-        createdAt: string | undefined
-        updatedAt: string | undefined
-        firstName: string | undefined
-        lastName: string | undefined
-        email: string | undefined
-        image: string | undefined
-    }
+    user: UserType | null
     //zapri (ta) Profile popup
     closePopup: MouseEventHandler<HTMLButtonElement>
 }
@@ -40,6 +33,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
     const [showError, setShowError] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const navigate = useNavigate()
+    const location = useLocation()
 
     const onSubmit = handleSubmit(async (data: CreateAuctionFields) => {
         // console.log(user.id)
@@ -82,13 +76,22 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                 else {
                     setShowError(false)
                     setShowSuccess(true)
-                    navigate('/')
+                    //ce si z v isti lokaciji, force refresh (da se podatki posodobijo)
+                    if (location.pathname === '/auctions')
+                        navigate('/auctions', { state: window.location.reload() })
+                    else
+                        navigate('/auctions')
                 }
             }
             else {
                 setShowError(false)
                 setShowSuccess(true)
-                navigate('/')
+                //ce si z v isti lokaciji, force refresh (da se podatki posodobijo)
+                if (location.pathname === '/auctions')
+                    navigate('/auctions', { state: window.location.reload() })
+                else
+                    navigate('/auctions')
+
             }
         }
     })
