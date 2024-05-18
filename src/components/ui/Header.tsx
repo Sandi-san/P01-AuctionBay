@@ -74,7 +74,8 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
     //effect, ko se user spremeni
     useEffect(() => {
         const fetchData = async () => {
-            console.log("USER IMAGE: ",user?.image)
+            // console.log("USER IMAGE: ",user?.image)
+            
             //spreminjanje User image z userData
             //ker se lahko zgodi da se User ne posodobi predenj se klice ta koda
             if (user && user.image) {

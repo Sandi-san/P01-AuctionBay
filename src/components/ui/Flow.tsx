@@ -2,88 +2,70 @@ import { FC, ReactNode, useEffect, useState } from 'react'
 import Card from './Card'
 import Loading from './Loading'
 import { AuctionType } from '../../models/auction'
-//import { fetchItemsFromBackend } from 'backend-api' // TODO: Import backend API function
-
-interface Item {
-    name: string
-    price: number
-    image: string
-    status: string
-    date: string
-}
+import { StatusCode } from '../../constants/errorConstants'
+import * as API from '../../api/Api'
+import { useLocation } from 'react-router-dom'
+import { UserType } from '../../models/auth'
 
 const Flow: FC = () => {
+    //za error prikazovanje (Toast)
+    const [apiError, setApiError] = useState('')
+    const [showError, setShowError] = useState(false)
+
     //itemi (Auctioni) ki jih dobis iz db za prikaz
-    const [items, setItems] = useState<AuctionType[]>([])
+    const [auctions, setAuctions] = useState<AuctionType[]>([])
 
     //page se se nalaga?
     const [loading, setLoading] = useState(true)
 
-    //dobi data iz api ko se komponenta nalozi
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                //klic API class, ki dobi 4 trenutne auctione iz baze
-                // const data = await TODO()
+    const location = useLocation()
 
+    const fetchAuctionsData = async () => {
+        try {
+            const pageParam = new URLSearchParams(location.search).get('page')
+            const page = pageParam ? parseInt(pageParam) : 1
+            const response = await API.fetchAuctions(page)
+            console.log(response)
 
-                //SAMO Z TEMPLATE PODATKI
-                //cakaj nekaj casa da se lahko izvede funkcija predenj renderiras page 
-                await new Promise(resolve => setTimeout(resolve, 100))
-
-                const data: AuctionType[] = [
-                    {
-                        id: 1,
-                        title: "Item 1",
-                        currentPrice: 10,
-                        image: "images/landing_page_preview.png",
-                        status: "In progress",
-                        duration: new Date(Date.now()),
-                        userId: 0
-                    },
-                    {
-                        id: 1,
-                        title: "Item 1",
-                        currentPrice: 10,
-                        image: "images/landing_page_preview.png",
-                        status: "In progress",
-                        duration: new Date(Date.now()),
-                        userId: 0
-                    },
-                    {
-                        id: 1,
-                        title: "Item 1",
-                        currentPrice: 10,
-                        image: "images/landing_page_preview.png",
-                        status: "In progress",
-                        duration: new Date(Date.now()),
-                        userId: 0
-                    },
-                    {
-                        id: 1,
-                        title: "Item 1",
-                        currentPrice: 10,
-                        image: "images/landing_page_preview.png",
-                        status: "In progress",
-                        duration: new Date(Date.now()),
-                        userId: 0
-                    }
-                ]
-
-                setItems(data)
-            } catch (error) {
-                console.error('Error fetching items:', error)
-            } finally {
+            //TODO vsi status code ki lahko tu dobis
+            if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+                response.data?.statusCode === StatusCode.FORBIDDEN ||
+                response.data?.statusCode === StatusCode.UNAUTHORIZED
+            ) {
+                setApiError(response.data.message)
+                setShowError(true)
+            } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+                setApiError(response.data.message)
+                setShowError(true)
+            }
+            else {
+                // console.log("Response: ", response.data.data)
+                setAuctions(response.data.data)
                 setLoading(false)
             }
+        } catch (error) {
+            console.error('Error fetching auctions:', error)
+            setShowError(true)
         }
-        fetchData()
+    }
+
+    //dobi data iz api ko se komponenta nalozi
+    useEffect(() => {
+        fetchAuctionsData()
     }, []) //funkcijo zazeni le ob zacetku
 
     //ce se se page loada
     if (loading) {
-        return <Loading/>
+        return <Loading />
     }
+
+    const dummyUser: UserType = {
+        id: 0,
+        firstName: undefined,
+        lastName: undefined,
+        email: '',
+        image: undefined,
+    };
 
     return (
         <>
@@ -93,21 +75,26 @@ const Flow: FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                     {/* izrisi vsak card posebej (da bodo pravilno postavljeni) */}
                     {/* dodaj custom drop shadow gradient, rounded corners kot v Card widgetu, sicer ni pravilni color pri cornerjih */}
-                    <div className="relative overflow-hidden rounded-2xl shadow-gradient">
-                        <Card item={items[0]} />
-                    </div>
-                    {/* Second card */}
-                    <div className="relative overflow-hidden rounded-2xl shadow-gradient">
-                        <Card item={items[1]} />
-                    </div>
-                    {/* Third card */}
-                    <div className="relative overflow-hidden rounded-2xl shadow-gradient">
-                        <Card item={items[2]} />
-                    </div>
-                    {/* Fourth card */}
-                    <div className="relative overflow-hidden rounded-2xl shadow-gradient">
-                        <Card item={items[3]} />
-                    </div>
+                    {auctions[0] && (
+                        <div className="relative overflow-hidden rounded-2xl shadow-gradient">
+                            <Card item={auctions[0]} user={dummyUser} fetchAuctions={fetchAuctionsData} />
+                        </div>
+                    )}
+                    {auctions[1] && (
+                        <div className="relative overflow-hidden rounded-2xl shadow-gradient">
+                            <Card item={auctions[1]} user={dummyUser} fetchAuctions={fetchAuctionsData} />
+                        </div>
+                    )}
+                    {auctions[2] && (
+                        <div className="relative overflow-hidden rounded-2xl shadow-gradient">
+                            <Card item={auctions[2]} user={dummyUser} fetchAuctions={fetchAuctionsData} />
+                        </div>
+                    )}
+                    {auctions[3] && (
+                        <div className="relative overflow-hidden rounded-2xl shadow-gradient">
+                            <Card item={auctions[3]} user={dummyUser} fetchAuctions={fetchAuctionsData} />
+                        </div>
+                    )}
                 </div>
             </div>
         </>

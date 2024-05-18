@@ -24,43 +24,40 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
-  useEffect(() => {
-    console.log("AUCTIONS HEIGHT:", headerHeight)
-    console.log("AUCTIONS USERS:", user)
+  const fetchAuctionsData = async () => {
+    try {
+      const pageParam = new URLSearchParams(location.search).get('page')
+      const page = pageParam ? parseInt(pageParam) : 1
+      const response = await API.fetchAuctions(page)
+      console.log(response)
 
-    const fetchAuctionsData = async () => {
-      try {
-        const pageParam = new URLSearchParams(location.search).get('page')
-        const page = pageParam ? parseInt(pageParam) : 1
-        const response = await API.fetchAuctions(page)
-        console.log(response)
-
-        //TODO vsi status code ki lahko tu dobis
-        if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
-          response.data?.statusCode === StatusCode.FORBIDDEN ||
-          response.data?.statusCode === StatusCode.UNAUTHORIZED
-        ) {
-          setApiError(response.data.message)
-          setShowSuccess(false)
-          setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-          setApiError(response.data.message)
-          setShowSuccess(false)
-          setShowError(true)
-        }
-        else {
-          console.log("Response: ", response.data.data)
-          setAuctions(response.data.data)
-          setCurrentPage(page)
-          console.log("Auctions: ", auctions)
-        }
-      } catch (error) {
-        console.error('Error fetching auctions:', error)
+      //TODO vsi status code ki lahko tu dobis
+      if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+        response.data?.statusCode === StatusCode.FORBIDDEN ||
+        response.data?.statusCode === StatusCode.UNAUTHORIZED
+      ) {
+        setApiError(response.data.message)
+        setShowSuccess(false)
+        setShowError(true)
+      } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+        setApiError(response.data.message)
         setShowSuccess(false)
         setShowError(true)
       }
+      else {
+        console.log("Response: ", response.data.data)
+        setAuctions(response.data.data)
+        setCurrentPage(page)
+        console.log("Auctions: ", auctions)
+      }
+    } catch (error) {
+      console.error('Error fetching auctions:', error)
+      setShowSuccess(false)
+      setShowError(true)
     }
+  }
 
+  useEffect(() => {
     fetchAuctionsData()
   }, [location.search])
 
@@ -77,10 +74,6 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
 
   return (
     <>
-      {/* <div>
-        <p>User:{user?.id}</p>
-        <p>Header:{headerHeight}</p>
-      </div> */}
       {/* da bo div stretchal do konca strani (full page AMPAK odstrani height Headerja) */}
       <div className="flex flex-col" style={{ height: `calc(100vh - ${headerHeight + 1}px)` }}>
         <h1 className="text-2xl font-bold mt-4 ml-4">Auctions</h1>
@@ -88,7 +81,8 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
           <div className="flex flex-wrap p-2 bg-gray-100"> {/* Flex container with wrapping */}
             {auctions.slice(0, 10).map((auction, index) => ( // Render maximum of 10 auctions
               <div key={index} className="m-1"> {/* Each auction with margin */}
-                <Card item={auction} /> {/* Render the Card component for each auction */}
+                <Card item={auction} user={user} 
+                fetchAuctions={fetchAuctionsData}/> {/* Render the Card component for each auction */}
               </div>
             ))}
           </div>

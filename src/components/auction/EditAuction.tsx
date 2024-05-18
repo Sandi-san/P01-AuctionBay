@@ -1,5 +1,5 @@
-import { FC, MouseEventHandler, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FC, MouseEventHandler, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
@@ -8,31 +8,29 @@ import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import { UpdateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
 import { AuctionType } from '../../models/auction'
+import { UserType } from '../../models/auth'
 
 //shrani item v Props
 interface Props {
-    user: {
-        id: number | undefined
-        createdAt: string | undefined
-        updatedAt: string | undefined
-        firstName: string | undefined
-        lastName: string | undefined
-        email: string | undefined
-        image: string | undefined
-    }
+    //dobi info od auctiona
+    auction: AuctionType
     //zapri (ta) Profile popup
     closePopup: MouseEventHandler<HTMLButtonElement>
+    //referenca na fetchAuctions funkcijo v Auctions
+    fetchAuctions: () => Promise<void>
 }
 
-const EditAuction: FC<Props> = ({ user, closePopup }) => {
+const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
+    const { id, title, description, currentPrice, status, duration, image, userId } = auction!
     const defaultValues: AuctionType = {
-        id: 0,
-        title: '',
-        description: '',
-        status: '',
-        currentPrice: 0,
-        duration: new Date(Date.now()),
-        userId: 0,
+        id,
+        title,
+        description,
+        currentPrice,
+        status,
+        duration: new Date(duration), // Convert duration to Date object
+        image,
+        userId,
     }
 
     const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({ defaultValues })
@@ -40,11 +38,16 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
     const [showError, setShowError] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const navigate = useNavigate()
+    const location = useLocation()
 
     const onSubmit = handleSubmit(async (data: UpdateAuctionFields) => {
-        // TODO: AUCTION ID, PRICE, STATUS!
-        const id = 26   //POZOR: DOBI ID IZ CARD AUCTIONA
-        const response = await API.updateAuction(id,data)
+        console.log("SUBMIT DATA:", data)
+        console.log("SUBMIT FILE:", imageFile)
+
+        if(!imageFile && !imagePreview)
+            data.image=""
+
+        const response = await API.updateAuction(id, data)
         console.log(response)
 
         //TODO vsi status code ki lahko tu dobis
@@ -61,10 +64,11 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
             setShowError(true)
         }
         else {
-            //creation uspel, preglej ce je bil poslan tudi file
-            if (image) {
+            //edit uspel, preglej ce je bil poslan tudi file
+            //ce se file ni spremenil, se ne uploada, in v editu ne spremeni
+            if (imageFile) {
                 const formData = new FormData()
-                formData.append('image', image, image.name)
+                formData.append('image', imageFile, imageFile.name)
                 const fileResponse = await API.uploadAuctionImage(
                     response.data.id, formData
                 )
@@ -82,27 +86,27 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
                 else {
                     setShowError(false)
                     setShowSuccess(true)
-                    navigate('/')
+                    fetchAuctions()
                 }
             }
             else {
                 setShowError(false)
                 setShowSuccess(true)
-                navigate('/')
+                fetchAuctions()
             }
         }
     })
 
-    // State variable to store the uploaded image file
-    const [image, setImage] = useState<File | null>(null)
-    // State variable to store the image preview URL
+    //shrani FILE od posodobljene slike
+    const [imageFile, setImageFile] = useState<File | null>(null)
+    //image ki se zacasno prikaze v img elementu
     const [imagePreview, setImagePreview] = useState<string | null>(null)
 
     // Function to handle image upload
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedImage = event.target.files && event.target.files[0]
         if (selectedImage) {
-            setImage(selectedImage)
+            setImageFile(selectedImage)
 
             const reader = new FileReader()
             reader.onloadend = () => {
@@ -114,9 +118,18 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
 
     // Function to handle image removal
     const handleImageRemove = () => {
-        setImage(null)
+        setImageFile(null)
         setImagePreview(null)
     }
+
+    useEffect(() => {
+        //dobi image ob zagonu
+        if (defaultValues.image)
+            setImagePreview(`${process.env.REACT_APP_API_URL}/files/${defaultValues.image}`)
+        // console.log("Data:", defaultValues)
+        // console.log("Image preview:", imagePreview)
+        // console.log("Image file:", imageFile)
+    }, [])
 
     return (
         <div className="text-black bg-white rounded-lg w-[540px]">
@@ -132,16 +145,15 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
                             <div className="relative">
                                 <img
                                     id="image"
-                                    src={imagePreview} alt="Uploaded"
-                                    // className="w-auto max-w-[524px] h-[200px]" />
+                                    // src={`${process.env.REACT_APP_API_URL}/files/${imagePreview}`} alt="Uploaded"
+                                    src={imagePreview} alt="Uploaded"                                    // className="w-auto max-w-[524px] h-[200px]" />
                                     className="w-full h-full object-cover" />
-                                {/* button za odstrani sliko */}
 
                             </div>
+                            {/* button za odstrani sliko */}
                             <button
                                 className="absolute top-0 right-0 bg-black m-2 rounded-full text-white px-3 py-2"
-                                onClick={handleImageRemove}
-                            >
+                                onClick={handleImageRemove}>
                                 <svg className="bi bi-trash h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
@@ -153,8 +165,7 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
                         <label className="cursor-pointer">
                             <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                             <div
-                                className="text-gray-900 border border-black custom-button"
-                            >
+                                className="text-gray-900 border border-black custom-button">
                                 <p className="text-black font-semibold">Add image</p>
                             </div>
                         </label>
@@ -226,8 +237,9 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
                             <div className='px-2 py-1 mb-1 w-full'>
                                 <input
                                     {...field}
-                                    type="date"
-                                    placeholder="dd.mm.yyyy"
+                                    // type="date"
+                                    type="datetime-local"
+                                    placeholder="dd/mm/yyyy --:--"
                                     aria-label="End date"
                                     aria-describedby="duration"
                                     className={
@@ -236,10 +248,10 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
                                             : 'form-control appearance-none'
                                     }
                                     //input ne more dobit Date, zato pretvori Date v string
-                                    value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
+                                    value={field.value instanceof Date ? field.value.toISOString().substring(0, 16) : field.value}
                                 />
                                 {/* Ikonca v input formu: Clock*/}
-                                <span className="absolute right-0 p-3 mr-2 text-gray-500">
+                                {/* <span className="absolute right-0 p-3 mr-2 text-gray-500">
                                     <svg
                                         className='bi bi-clock-history'
                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -247,7 +259,7 @@ const EditAuction: FC<Props> = ({ user, closePopup }) => {
                                         <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
                                         <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
                                     </svg>
-                                </span>
+                                </span> */}
                                 {errors.duration && (
                                     <div className="invalid-feedback">
                                         {errors.duration.message}

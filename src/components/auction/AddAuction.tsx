@@ -138,9 +138,8 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                     src={imagePreview} alt="Uploaded"
                                     // className="w-auto max-w-[524px] h-[200px]" />
                                     className="w-full h-full object-cover" />
-                                {/* button za odstrani sliko */}
-
                             </div>
+                            {/* button ki odstrani sliko */}
                             <button
                                 className="absolute top-0 right-0 bg-black m-2 rounded-full text-white px-3 py-2"
                                 onClick={handleImageRemove}
@@ -268,8 +267,9 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                     <div className='px-2 py-1 mb-1 w-full'>
                                         <input
                                             {...field}
-                                            type="date"
-                                            placeholder="dd.mm.yyyy"
+                                            // type="date"
+                                            type="datetime-local"
+                                            placeholder="dd/mm/yyyy --:--"
                                             aria-label="End date"
                                             aria-describedby="duration"
                                             className={
@@ -281,7 +281,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                             value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
                                         />
                                         {/* Ikonca v input formu: Clock*/}
-                                        <span className="absolute right-0 p-3 mr-2 text-gray-500">
+                                        {/* <span className="absolute right-0 p-3 mr-2 text-gray-500">
                                             <svg
                                                 className='bi bi-clock-history'
                                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -289,9 +289,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                                 <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
                                                 <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
                                             </svg>
-                                        </span>
-
-
+                                        </span> */}
                                         {errors.duration && (
                                             <div className="invalid-feedback">
                                                 {errors.duration.message}

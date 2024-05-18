@@ -97,8 +97,7 @@ const ProfilePopUp: FC<Props> = ({ user, signout, refreshUserData }) => {
                 {/* Logout button */}
                 <button
                     className="text-gray-900 border border-black bg-white custom-button w-full"
-                    onClick={signout}
-                >
+                    onClick={signout}>
                     Logout
                 </button>
             </div>

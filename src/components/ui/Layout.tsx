@@ -12,10 +12,7 @@ interface Props {
 }
 
 const Layout: FC<Props> = ({ children }) => {
-
-  const headerRef = useRef<HTMLDivElement>(null)
   const [headerHeight, setHeaderHeight] = useState<number>(0)
-
   const navigate = useNavigate()
   const location = useLocation()
 
