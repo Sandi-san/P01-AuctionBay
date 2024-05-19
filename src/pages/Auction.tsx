@@ -251,16 +251,8 @@ const Auction: FC = () => {
                     />
                     <Button type="submit" className='bg-customYellow px-4 py-1 rounded-xl '>Place bid</Button>
                   </Form>
-
-                  {/* <span className="mr-2">Bid:
-                    <input type="number" value={bidValue} onChange={handleBidChange}
-                      className="border border-gray-300 w-20 px-2 py-1 ml-2 rounded-xl" />
-                  </span>
-                  <Button onClick={handlePlaceBid} className='bg-customYellow px-4 py-1 rounded-xl '>Place bid</Button> */}
-
                 </div>
               )}
-              
               {showError && (
                 <ToastContainer className="" position="top-end">
                   <Toast onClose={() => setShowError(false)} show={showError}>

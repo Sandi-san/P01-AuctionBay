@@ -2,10 +2,11 @@ import { FC, ReactNode, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
-import authStore from '../../stores/auth.store'
 import { AuctionType } from '../../models/auction'
 import { UserType } from '../../models/auth'
 import EditAuction from '../auction/EditAuction'
+import * as API from '../../api/Api'
+import { StatusCode } from '../../constants/errorConstants'
 
 //shrani item v Props
 interface Props {
@@ -20,6 +21,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     const [showError, setShowError] = useState(false)
 
     const navigate = useNavigate()
+    const location = useLocation()
 
     // destruct props v posamezni var
     const { id, title, currentPrice, image, status, duration, userId } = item
@@ -69,8 +71,25 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     }, [])
 
     //klici delete auction
-    const handleDeleteAuction = () => {
+    const handleDeleteAuction = async () => {
         console.log("Calling delete for id:", id)
+        console.log("User:", user)
+        const response = await API.deleteAuction(id)
+
+        if (response.data?.statusCode === StatusCode.NOT_FOUND) {
+            setApiError(response.data.message)
+            setShowError(true)
+        } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+            console.log("You are not logged in or access token has expired.")
+            navigate(location.pathname, { state: window.location.reload() })
+        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+            setApiError(response.data.message)
+            setShowError(true)
+        }
+        else {
+            console.log("Successfully deleted auction with id: ", id)
+            fetchAuctions()
+        }
     }
 
     //Popup editAuction
