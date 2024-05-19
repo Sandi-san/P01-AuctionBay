@@ -90,5 +90,5 @@ export const uploadAuctionImage = async (id: number, formData: FormData) => {
   )
 }
 
-// export const deleteAuction = async (id: string) =>
-//   apiRequest<string, AuctionType>('delete', `${apiRoutes.USERS_PREFIX}/${id}`)
+export const deleteAuction = async (id: number) =>
+  apiRequest<string, AuctionType>('delete', `${apiRoutes.AUCTION_PREFIX}/${id}`)

@@ -49,10 +49,8 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     }
     //kalkuliraj razliko med trenutnim casom in end date auctiona
     const calculateDate = () => {
-        const timeDuration = new Date(duration.valueOf())
-        const timeNow = new Date(Date.now())
         const timeDifference = (new Date(duration)).valueOf() - (new Date()).valueOf()
-        // console.log(`Times: ${timeDuration}\n ${timeNow}\n ${timeDifference}`)
+        // console.log(`Times: ${timeDifference}`)
 
         if (timeDifference > 0) {
             let timeRemaining = timeDifference / 1000
