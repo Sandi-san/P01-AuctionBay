@@ -60,6 +60,8 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
             //spremeni background timea, ce je manj ko 24h
             if (timeRemaining < 86400)
                 setDateClose(true)
+            else
+                setDateClose(false)
             const time = secondsToTimeString(timeRemaining)
             setTime(time)
         }
@@ -69,6 +71,11 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     useEffect(() => {
         calculateDate()
     }, [])
+
+    //Za ko preklaplas med tabim v Profile
+    useEffect(() => {
+        calculateDate()
+    }, [fetchAuctions])
 
     //klici delete auction
     const handleDeleteAuction = async () => {

@@ -153,9 +153,10 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
                                     </svg>
                                     Auction
                                 </Link>
+                                {/* match = za katerikoli path od /profile/... */}
                                 <Link to="/profile"
                                     className={`rounded-full p-3 
-                                            ${location.pathname === '/profile'
+                                            ${location.pathname.match(/^\/profile(\/|$)/)
                                             ? 'bg-black text-white'
                                             : 'bg-white text-black'}`}>
                                     {/* svg ikonca zraven teksta */}

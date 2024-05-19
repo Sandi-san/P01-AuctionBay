@@ -14,12 +14,13 @@ export enum apiRoutes {
 
   USER_AUCTION_PREFIX = '/me/auction',
   USER_AUCTIONS = '/me/auctions',
-  // CREATE_AUCTION = '/me/auction',
+  USER_AUCTIONS_WON = '/me/auctions/won',
+  USER_AUCTIONS_BIDDING = '/me/auctions/bidding',
+// CREATE_AUCTION = '/me/auction',
   UPLOAD_AUCTION_IMAGE = 'upload-image',
   // UPDATE_AUCTION = '/me/auction/:id',
   USER_BIDS = '/me/bids',
-  USER_BIDS_WON = '/me/bids/won',
-
+  
   //auctions
   AUCTION_PREFIX = '/auctions',
   // FETCH_AUCTION = '/auctions/:id',

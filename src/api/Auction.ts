@@ -45,6 +45,36 @@ export const fetchAuctions = async (pageNumber: number) =>
     `${apiRoutes.AUCTION_PREFIX}?page=${pageNumber}`,
   )
 
+export const fetchUserAuctions = async (pageNumber: number) => {
+  const accessToken = getAccessToken()
+  return apiRequest<number, AuctionType[]>(
+    'get',
+    `${apiRoutes.USER_AUCTIONS}?page=${pageNumber}`,
+    undefined,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+}
+
+export const fetchUserAuctionsWon = async (pageNumber: number) => {
+  const accessToken = getAccessToken()
+  return apiRequest<number, AuctionType[]>(
+    'get',
+    `${apiRoutes.USER_AUCTIONS_WON}?page=${pageNumber}`,
+    undefined,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+}
+
+export const fetchUserAuctionsBidding = async (pageNumber: number) => {
+  const accessToken = getAccessToken()
+  return apiRequest<number, AuctionType[]>(
+    'get',
+    `${apiRoutes.USER_AUCTIONS_BIDDING}?page=${pageNumber}`,
+    undefined,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+}
+
 // export const uploadImage = async (formData: FormData, id: string) =>
 //   apiRequest<FormData, void>(
 //     'post',

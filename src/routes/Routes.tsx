@@ -25,9 +25,7 @@ const Auction = lazy(() => import('../pages/Auction'))
 const Auctions = lazy(() => import('../pages/Auctions'))
 
 // Private routes
-const ProfileAuctions = lazy(() => import('../pages/Profile/Auctions'))
-const ProfileBidding = lazy(() => import('../pages/Profile/Bidding'))
-const ProfileWon = lazy(() => import('../pages/Profile/Won'))
+const ProfileIndex = lazy(() => import('../pages/Profile/ProfileIndex'))
 
 // Restricted routes
 const Login = lazy(() => import('../pages/Login'))
@@ -58,18 +56,8 @@ export const AppRoutes: AppRoute[] = [
   // Private Routes
   {
     type: RouteType.PRIVATE,
-    path: '/profile/auction',
-    children: <ProfileAuctions />,
-  },
-  {
-    type: RouteType.PRIVATE,
-    path: '/profile/bidding',
-    children: <ProfileBidding />,
-  },
-  {
-    type: RouteType.PRIVATE,
-    path: '/profile/won',
-    children: <ProfileWon />,
+    path: '/profile',
+    children: <ProfileIndex />,
   },
 
   // Public Routes
@@ -81,14 +69,7 @@ export const AppRoutes: AppRoute[] = [
   {
     type: RouteType.PUBLIC,
     path: '/auctions',
-    children: <AuctionsIndex />,
-    // children: <Auctions headerHeight={0} user={null} />,
-    // children: (
-    //   <Layout>
-    //     {/* <Auctions headerHeight={0} user={null} /> */}
-    //     <Auctions />
-    //   </Layout>
-    // ),
+    children: <AuctionsIndex />
   },
   {
     type: RouteType.PUBLIC,

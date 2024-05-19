@@ -1,11 +1,11 @@
 import Header from '../components/ui/Header'
 import { FC, useEffect, useRef, useState } from 'react'
-import * as API from '../api/Api'
 import { AuctionType } from '../models/auction'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { StatusCode } from '../constants/errorConstants'
 import Card from '../components/ui/Card'
 import { UserType } from '../models/auth'
+import * as API from '../api/Api'
 
 interface Props {
   headerHeight: number
