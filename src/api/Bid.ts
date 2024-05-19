@@ -1,7 +1,8 @@
 import { apiRoutes } from '../constants/apiConstants'
 import { apiRequest } from './Api'
-import { AuctionType } from '../models/auction'
 import { CreateAuctionFields, UpdateAuctionFields } from '../hooks/react-hook-form/useCreateUpdateAuction'
+import { BidType } from '../models/bid'
+import { CreateBidFields } from '../hooks/react-hook-form/useCreateUpdateBid'
 
 const getAccessToken = () => {
   const accessToken = localStorage.getItem('access_token')
@@ -18,7 +19,7 @@ const getAccessToken = () => {
 }
 
 export const fetchBids = async (auctionId: number) => {
-  const response = await apiRequest<undefined, AuctionType>(
+  const response = await apiRequest<undefined, BidType>(
     'get',
     `${apiRoutes.AUCTION_PREFIX}/${auctionId}/${apiRoutes.FETCH_BIDS}`,
     undefined,
@@ -34,14 +35,13 @@ export const fetchBids = async (auctionId: number) => {
 }
 
 
-
-export const createBid = async (data: CreateAuctionFields) => {
-  console.log('Create auction data:', JSON.stringify(data))
+export const createBid = async (data: CreateBidFields, auctionId: number) => {
+  console.log('Create bid data:', JSON.stringify(data))
 
   const accessToken = getAccessToken()
-  return apiRequest<CreateAuctionFields, void>(
-    'post', 
-    apiRoutes.USER_AUCTION_PREFIX, 
+  return apiRequest<CreateBidFields, void>(
+    'post',
+    `${apiRoutes.AUCTION_PREFIX}/${auctionId}/${apiRoutes.BID_AUCTION}`,
     data,
     { headers: { Authorization: `Bearer ${accessToken}` } }
   )

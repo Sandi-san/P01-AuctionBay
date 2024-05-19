@@ -44,8 +44,8 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
         console.log("SUBMIT DATA:", data)
         console.log("SUBMIT FILE:", imageFile)
 
-        if(!imageFile && !imagePreview)
-            data.image=""
+        if (!imageFile && !imagePreview)
+            data.image = ""
 
         const response = await API.updateAuction(id, data)
         console.log(response)

@@ -4,11 +4,20 @@ import Header from '../components/ui/Header'
 import { StatusCode } from '../constants/errorConstants'
 import authStore from '../stores/auth.store'
 import * as API from '../api/Api'
-import { Button } from 'react-bootstrap'
+import { Button, Form, FormLabel } from 'react-bootstrap'
 import { BidType } from '../models/bid'
 import Avatar from 'react-avatar'
+import { Controller } from 'react-hook-form'
+import { CreateBidFields, useCreateBidForm } from '../hooks/react-hook-form/useCreateUpdateBid'
+import Toast from 'react-bootstrap/Toast'
+import ToastContainer from 'react-bootstrap/ToastContainer'
 
 const Auction: FC = () => {
+  const { handleSubmit, errors, control } = useCreateBidForm()
+  const [apiError, setApiError] = useState('')
+  const [showError, setShowError] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+
   //propi, vendar ji dobis preko navigate()
   const location = useLocation()
   const { item, user } = location.state
@@ -16,6 +25,9 @@ const Auction: FC = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0)
   const navigate = useNavigate()
 
+  //je user logged in?
+  const [userLogged, setUserLogged] = useState<boolean>(false)
+  
   //dobi User data glede localni access_token
   const getUserData = async () => {
     // Fetch user data from API
@@ -26,28 +38,12 @@ const Auction: FC = () => {
     if (userData !== undefined) {
       //ce userData vrnil unauthorized, izbrisi localni access_token
       if (userData.statusCode === StatusCode.UNAUTHORIZED) {
-        //ce si ze na main pageu IN obstaja access_token, force refreshaj stran
-        if (location.pathname === '/'
-          && window.localStorage.getItem(`access_token`)
-        ) {
-          authStore.signout()
-          navigate('/', { state: window.location.reload() })
-        }
-        //vrni na main page
-        else {
-          //ce obstaja access_token, delete in vrni na root
-          //(za ko userju potece access_token ko je nekje v aplikaciji (ki ni PUBLIC))
-          if (authStore.user) {
-            authStore.signout()
-            navigate('/')
-          }
-          //ce ni access_tokena, da lahko obiskuje PUBLIC page 
-          authStore.signout()
-        }
+        authStore.signout()
+        setUserLogged(false)
       }
-      // else {
-      //   setUser(userData)
-      // }
+      else {
+        setUserLogged(true)
+      }
     }
   }
 
@@ -80,28 +76,8 @@ const Auction: FC = () => {
     }
   }
 
-  //stevilo bidov od auctiona
-  const [numBids, setNumBids] = useState(0)
-
-  // useEffect(() => {
-  //   // if (headerRef.current) {
-  //   //     const height = headerRef.current.getBoundingClientRect().height
-  //   //     setHeaderHeight(height)
-  //   //     console.log("HH:",headerHeight)
-  //   // }
-  //   const fetchData = async () => {
-  //     // dobi userja ob zagonu komponente
-  //     await getUserData()
-  //   }
-  //   //fetchData function ter pocakaj da se getUserData izvede
-  //   fetchData()
-  // }, [])
-
   const [time, setTime] = useState('0')
   const [dateClose, setDateClose] = useState(false)
-
-  //za place new bid
-  const [bidValue, setBidValue] = useState(0)
 
   //ostali bidi od aucitona
   const [bids, setBids] = useState<BidType[]>([])
@@ -139,55 +115,47 @@ const Auction: FC = () => {
 
   //kalkuliraj date ob zagonu widgeta
   useEffect(() => {
+    getUserData()
     getBidsData()
     calculateDate()
+    console.log("Item:", item)
+    console.log("User:", user)
   }, [])
 
+  const onSubmit = handleSubmit(async (data: CreateBidFields) => {
+    console.log('Placing bid with value:', data)
+    const response = await API.createBid(data, item.id)
 
-  const handleBidChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = parseInt(event.target.value, 10) // Parse the input value as a number
-    if (!isNaN(inputValue)) {
-      setBidValue(inputValue) // Update the bid value if it's a valid number
-      console.log("Bid:", inputValue)
+    //TODO vsi status code ki lahko tu dobis
+    if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+      response.data?.statusCode === StatusCode.NOT_FOUND) {
+      setApiError(response.data.message)
+      setShowError(true)
+      setShowSuccess(false)
+    } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+      setApiError(response.data.message)
+      setShowError(true)
+      setShowSuccess(false)
     }
-  }
-
-  const handlePlaceBid = () => {
-    // Call a function with the bid value
-    console.log('Placing bid with value:', bidValue)
-  }
+    else{
+      setShowError(false)
+      setShowSuccess(true)
+      getBidsData()
+    }
+  })
 
 
   //dobi Bide od auctiona
   const getBidsData = async () => {
-    // Fetch user data from API
+    // Fetch bid data from API
     const response = await API.fetchBids(item.id)
     console.log('Fetching Bids Data:', response)
 
-    // Check if userData is not undefined
+    // Check if response is not undefined
     if (response !== undefined) {
-      setBids(response)
-      console.log("Bids:", bids)
-      //ce userData vrnil unauthorized, izbrisi localni access_token
-      if (response.statusCode === StatusCode.UNAUTHORIZED) {
-        //ce si ze na main pageu IN obstaja access_token, force refreshaj stran
-        // if (location.pathname === '/'
-        //   && window.localStorage.getItem(`access_token`)
-        // ) {
-        //   authStore.signout()
-        //   navigate('/', { state: window.location.reload() })
-        // }
-        // //vrni na main page
-        // else {
-        //   //ce obstaja access_token, delete in vrni na root
-        //   //(za ko userju potece access_token ko je nekje v aplikaciji (ki ni PUBLIC))
-        //   if (authStore.user) {
-        //     authStore.signout()
-        //     navigate('/')
-        //   }
-        //   //ce ni access_tokena, da lahko obiskuje PUBLIC page 
-        //   authStore.signout()
-        // }
+      if (response.statusCode !== StatusCode.BAD_REQUEST) {
+        setBids(response)
+        console.log("Bids:", bids)
       }
     }
   }
@@ -242,33 +210,94 @@ const Auction: FC = () => {
               <div className="flex flex-col h-6/8 overflow-hidden">
                 <h2 className="text-2xl font-bold p-1">{item.title}</h2>
                 <div className="flex-grow overflow-auto">
-                  <p className="whitespace-pre-wrap">{item.description}</p>
+                  <p className="whitespace-pre-wrap">{item.description}
+                  </p>
                 </div>
               </div>
+
+              {/* ce user ni logged in, ne prikazi bid buttona */}
               {/* Bid button */}
-              <div className="h-1/8 flex items-center justify-end mt-1">
-                <span className="mr-2">Bid:
-                  <input type="number" value={bidValue} onChange={handleBidChange}
-                    className="border border-gray-300 w-20 px-2 py-1 ml-2 rounded-xl" />
-                </span>
-                <Button onClick={handlePlaceBid} className='bg-customYellow px-4 py-1 rounded-xl '>Place bid</Button>
-              </div>
+              {userLogged && (
+                < div className="h-1/8 flex items-center justify-end mt-1">
+                  <Form className="flex" onSubmit={onSubmit}>
+                    {/* iz useLogin form */}
+                    <Controller
+                      control={control}
+                      name="price"
+                      render={({ field }) => (
+                        <Form.Group className="flex">
+                          <FormLabel className='mt-2' htmlFor="price">Bid:</FormLabel>
+                          <div className='mr-2'>
+                            <input
+                              {...field}
+                              type="number"
+                              placeholder="0"
+                              aria-label="Price"
+                              aria-describedby="price"
+                              className={
+                                errors.price
+                                  ? 'form-control-sm is-invalid'
+                                  : 'form-control-sm'
+                              }
+                            />
+                            {/* {errors.price && (
+                            <div className="invalid-feedback">
+                              {errors.price.message}
+                            </div>
+                          )} */}
+                          </div>
+                        </Form.Group>
+                      )}
+                    />
+                    <Button type="submit" className='bg-customYellow px-4 py-1 rounded-xl '>Place bid</Button>
+                  </Form>
+
+                  {/* <span className="mr-2">Bid:
+                    <input type="number" value={bidValue} onChange={handleBidChange}
+                      className="border border-gray-300 w-20 px-2 py-1 ml-2 rounded-xl" />
+                  </span>
+                  <Button onClick={handlePlaceBid} className='bg-customYellow px-4 py-1 rounded-xl '>Place bid</Button> */}
+
+                </div>
+              )}
+              
+              {showError && (
+                <ToastContainer className="" position="top-end">
+                  <Toast onClose={() => setShowError(false)} show={showError}>
+                    <Toast.Header>
+                      <strong className="me-auto text-red-500 text-md">Error</strong>
+                    </Toast.Header>
+                    <Toast.Body className="text-red-500 bg-light text-sm">{apiError}</Toast.Body>
+                  </Toast>
+                </ToastContainer>
+              )}
+              {showSuccess && (
+                <ToastContainer className="" position="top-end">
+                  <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
+                    <Toast.Header>
+                      <strong className="me-auto text-green-500 text-md">Success</strong>
+                    </Toast.Header>
+                  </Toast>
+                </ToastContainer>
+              )}
             </div>
 
             {/* Bidi - SPODAJ (2/3 prostora */}
             <div className="bg-white rounded-xl p-4 flex flex-col h-full">
-              <h2 className="text-xl font-bold mb-2">Bidding history ({numBids})</h2>
+              <h2 className="text-xl font-bold mb-2">Bidding history ({bids.length})</h2>
               <div
-                //ce ni bidov, daj 'No bids' text v sredino, sicer bide na vrh
+                //ce ni bidov, daj 'No bids' text v sredino, sicer daj Bide na vrh
                 className={
                   bids.length === 0
                     ? 'flex-grow overflow-y-auto flex'
                     : 'flex-grow overflow-y-auto'
                 }>
+                {/* iteriraj cez vsak bid in prikazi */}
                 {bids.length > 0 ? (bids.map((bid, index) => (
                   <div key={index} className="flex items-center justify-between border-b border-gray-300 p-2">
-                    <div className="flex items-center">
-                      {/* Avatar */}
+                    {/* levi container */}
+                    <div className="flex items-center pb-1">
+                      {/* Avatar slika */}
                       <div className="w-10 h-10 bg-gray-300 rounded-full mr-4">
                         <Avatar
                           size='48'
@@ -278,20 +307,31 @@ const Auction: FC = () => {
                           }
                           alt="No image" />
                       </div>
-                      {/* User Name or Email */}
+                      {/* Prikazi first in lastname, ce ne obstajata oba, prikazi email */}
                       <div>
-                        <p className="font-semibold">{bid.user.firstName || bid.user.email}</p>
-                        <p className="text-sm text-gray-500">{bid.user.lastName || 'No Last Name'}</p>
+                        <p className="text-md text-gray-800">
+                          {bid.user.firstName || bid.user.lastName
+                            ? `${bid.user.firstName ?? ''} ${bid.user.lastName ?? ''}`
+                            : bid.user.email}
+                        </p>
+
                       </div>
                     </div>
-                    {/* Creation Date */}
-                    <p className="text-sm text-gray-500 mr-2">
-                      {new Date(bid.createdAt).toLocaleTimeString()}
-                      &nbsp;{new Date(bid.createdAt).toLocaleDateString()}</p>
-                    {/* Bid Price */}
-                    <p className="font-semibold">${bid.price}</p>
+                    {/* desni container */}
+                    <div className="flex items-end pb-1">
+                      {/* Creation Date */}
+                      <p className="text-sm text-gray-800 mr-2 text-right mb-2">
+                        {/* prikazi v EU formatu: cas, datum */}
+                        {new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit' }).format(new Date(bid.createdAt))}
+                        &nbsp;
+                        {new Intl.DateTimeFormat('en-GB').format(new Date(bid.createdAt))}
+                      </p>
+                      {/* Bid Price */}
+                      <p className="font-semibold bg-customYellow py-1 px-3 rounded-xl mb-1">{bid.price}€</p>
+                    </div>
                   </div>
                 ))) : (
+                  // tekst v sredini, ko ni se nobenega bida
                   <div className="flex flex-col flex-grow justify-center items-center text-center">
                     <p className="text-lg font-bold">No bids yet!</p>
                     <p className="text-sm text-gray-500 mt-2">Place your bid to have a chance to get this item.</p>

@@ -8,6 +8,14 @@
         @apply border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 w-full
     }
 
+    .form-control-sm {
+        @apply border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 mt-1 ml-2 py-1 px-2 w-20
+    }
+
+    .is-invalid {
+        @apply border border-red-500 rounded-xl focus:border-red-500
+    }
+
     .invalid-feedback {
         @apply text-red-500 text-xs mt-1
     }
