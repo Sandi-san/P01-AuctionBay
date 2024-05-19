@@ -135,6 +135,20 @@ export class UserService {
         return this.auctionService.getAllForUser(userId)
     }
 
+    //DOBI VSE AUCTIONE KJER USER WONNAL
+    async getUserAuctionsWon(
+        userId: number
+    ): Promise<Auction[]> {
+        return this.auctionService.getAllForUserWon(userId)
+    }
+
+    //DOBI VSE AUCTIONE KJER USER BIDDA
+    async getUserAuctionsBidding(
+        userId: number
+    ): Promise<Auction[]> {
+        return this.auctionService.getAllForUserBidding(userId)
+    }
+
     //DOBI EN AUCTION OD USERJA
     async getUserAuction(
         id: number

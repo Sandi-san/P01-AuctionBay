@@ -70,16 +70,6 @@ export class UserController {
         return this.userService.changePassword(user.id, updateUserDto)
     }
 
-
-    //DOBI VSE AUCTIONE OD USERJA
-    @HttpCode(HttpStatus.OK)
-    @Get('auctions')
-    async getAuctions(
-        @GetLoggedUser() user: User,
-    ): Promise<Auction[]> {
-        return this.userService.getUserAuctions(user.id)
-    }
-
     //USTVARI AUCTION
     @HttpCode(HttpStatus.CREATED)
     @Post('auction')
@@ -155,12 +145,30 @@ export class UserController {
         return this.userService.getUserBids(user.id)
     }
 
-    //USTVARI NOV AUCTION
+    //DOBI VSE AUCTIONE OD USERJA
     @HttpCode(HttpStatus.OK)
-    @Get('bids/won')
-    async getBidsWon(
+    @Get('auctions')
+    async getAuctions(
         @GetLoggedUser() user: User,
-    ): Promise<Bid[]> {
-        return this.userService.getUserBidsWon(user.id)
+    ): Promise<Auction[]> {
+        return this.userService.getUserAuctions(user.id)
+    }
+
+    //DOBI VSE WON AUCTIONE OD USERJA
+    @HttpCode(HttpStatus.OK)
+    @Get('auctions/won')
+    async getAuctionsWon(
+        @GetLoggedUser() user: User,
+    ): Promise<Auction[]> {
+        return this.userService.getUserAuctionsWon(user.id)
+    }
+
+    //DOBI VSE AUCTIONE KJER USER BIDDA
+    @HttpCode(HttpStatus.OK)
+    @Get('auctions/bidding')
+    async getAuctionsBidding(
+        @GetLoggedUser() user: User,
+    ): Promise<Auction[]> {
+        return this.userService.getUserAuctionsBidding(user.id)
     }
 }

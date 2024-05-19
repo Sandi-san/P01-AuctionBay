@@ -30,7 +30,7 @@ export class BidService {
         else {
             try {
                 const bids = await this.prisma.bid.findMany({
-                    where: { 
+                    where: {
                         userId,
                         OR: [
                             { status: "Won" },
@@ -52,7 +52,23 @@ export class BidService {
     ): Promise<Bid[]> {
         try {
             const bids = await this.prisma.bid.findMany({
-                where: { auctionId }
+                where: { auctionId },
+                include: {
+                    //vrni tudi USER data
+                    user: {
+                        // vrni samo dolocene elemente
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            email: true,
+                            image: true,
+                        }
+                    }
+                },
+                orderBy: {
+                  createdAt: 'desc', //order by createdAt in descending order
+                }
             })
             return bids
         } catch (error) {
