@@ -14,7 +14,7 @@ export class AuctionController {
     @HttpCode(HttpStatus.OK)
     @Get('')
     async getAll(@Query('page') page: number): Promise<PaginatedResult> {
-        return this.auctionService.paginate(page)
+        return this.auctionService.findAllPaginate(page)
     }
 
     //DOBI AUCTION BY ID

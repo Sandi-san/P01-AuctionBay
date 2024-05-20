@@ -7,6 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon from 'argon2'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateAuctionDto, UpdateAuctionDto } from 'src/auction/dto';
+import { PaginatedResult } from 'src/interfaces/paginated-result.interface';
 
 @Injectable()
 export class UserService {
@@ -130,23 +131,23 @@ export class UserService {
 
     //DOBI VSE POSTANE AUCTIONE OD USERJA
     async getUserAuctions(
-        userId: number
-    ): Promise<Auction[]> {
-        return this.auctionService.getAllForUser(userId)
+        userId: number, page: number
+    ): Promise<PaginatedResult> {
+        return this.auctionService.getAllForUser(userId,page)
     }
 
     //DOBI VSE AUCTIONE KJER USER WONNAL
     async getUserAuctionsWon(
-        userId: number
-    ): Promise<Auction[]> {
-        return this.auctionService.getAllForUserWon(userId)
+        userId: number, page: number
+    ): Promise<PaginatedResult> {
+        return this.auctionService.getAllForUserWon(userId,page)
     }
 
     //DOBI VSE AUCTIONE KJER USER BIDDA
     async getUserAuctionsBidding(
-        userId: number
-    ): Promise<Auction[]> {
-        return this.auctionService.getAllForUserBidding(userId)
+        userId: number, page: number
+    ): Promise<PaginatedResult> {
+        return this.auctionService.getAllForUserBidding(userId,page)
     }
 
     //DOBI EN AUCTION OD USERJA

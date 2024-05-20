@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Auction, Bid, User } from '@prisma/client';
 import { GetLoggedUser } from 'src/auth/decorator';
 import { UserService } from './user.service';
@@ -8,6 +8,7 @@ import { join } from 'path';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { isFileExtensionSafe, removeFile, saveImageToStorage } from 'src/helpers/image-storage.helper';
 import { CreateAuctionDto, UpdateAuctionDto } from 'src/auction/dto';
+import { PaginatedResult } from 'src/interfaces/paginated-result.interface';
 
 //nastavi dostop do route: users/... z UseGuards (restricta VSE route v tem fileu)
 @UseGuards(JwtGuard)
@@ -150,8 +151,9 @@ export class UserController {
     @Get('auctions')
     async getAuctions(
         @GetLoggedUser() user: User,
-    ): Promise<Auction[]> {
-        return this.userService.getUserAuctions(user.id)
+        @Query('page') page: number
+    ): Promise<PaginatedResult> {
+        return this.userService.getUserAuctions(user.id, page)
     }
 
     //DOBI VSE WON AUCTIONE OD USERJA
@@ -159,8 +161,9 @@ export class UserController {
     @Get('auctions/won')
     async getAuctionsWon(
         @GetLoggedUser() user: User,
-    ): Promise<Auction[]> {
-        return this.userService.getUserAuctionsWon(user.id)
+        @Query('page') page: number
+    ): Promise<PaginatedResult> {
+        return this.userService.getUserAuctionsWon(user.id,page)
     }
 
     //DOBI VSE AUCTIONE KJER USER BIDDA
@@ -168,7 +171,8 @@ export class UserController {
     @Get('auctions/bidding')
     async getAuctionsBidding(
         @GetLoggedUser() user: User,
-    ): Promise<Auction[]> {
-        return this.userService.getUserAuctionsBidding(user.id)
+        @Query('page') page: number
+    ): Promise<PaginatedResult> {
+        return this.userService.getUserAuctionsBidding(user.id,page)
     }
 }

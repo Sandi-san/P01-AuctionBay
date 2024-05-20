@@ -31,18 +31,23 @@ export class AuctionService {
 
     //PAGINATE
     //Service za findAll (vseh tabel)
-    async paginate(page = 1, relations = []): Promise<PaginatedResult> {
-        const take = 10 //max stevilo za current display
+    async findAllPaginate(page = 1, relations = []): Promise<PaginatedResult> {
+        const take = 14 //max stevilo za current display
         try {
             const data = await this.prisma.auction.findMany({
                 take,
                 skip: (page - 1) * take,
+                where: {
+                    duration: {
+                        gte: new Date(), // Filter out auctions that have already ended
+                    },
+                },
                 include: {
                     // Include any relations you need
                     // Example: user: true,
                 },
                 orderBy: {
-                    createdAt: 'desc', //order by createdAt in descending order
+                    duration: 'asc', //order by
                 }
             })
 
@@ -101,13 +106,33 @@ export class AuctionService {
 
     //DOBI VSE AUCTIONE OD USERJA
     async getAllForUser(
-        userId: number
-    ): Promise<Auction[]> {
+        userId: number,
+        page = 1,
+        relations = []
+    ): Promise<PaginatedResult> {
+        const take = 14
         try {
             const auctions = await this.prisma.auction.findMany({
-                where: { userId }
-            })
-            return auctions
+                where: { userId },
+                orderBy: {
+                    duration: 'desc',
+                },
+                take: take,
+                skip: (page - 1) * take,
+            });
+
+            const total = await this.prisma.auction.count({
+                where: { userId },
+            });
+
+            return {
+                data: auctions,
+                meta: {
+                    total,
+                    page,
+                    last_page: Math.ceil(total / take),
+                },
+            };
         } catch (error) {
             console.error(error)
             throw new BadRequestException(`Something went wrong while getting auctions from user with id ${userId}!`)
@@ -116,9 +141,12 @@ export class AuctionService {
 
     //DOBI VSE AUCTIONE KJER USER ZMAGAL
     async getAllForUserWon(
-        userId: number
-    ): Promise<Auction[]> {
+        userId: number,
+        page = 1,
+        relations = []
+    ): Promise<PaginatedResult> {
         try {
+            const take = 14
             let auctions = []
 
             //filtriraj auctione z duration ki je ze potekel
@@ -128,27 +156,38 @@ export class AuctionService {
                         lt: new Date()
                     }
                 }
-            });
+            })
 
             //dobi auctione kjer je userId postavil zadnji bid
-            const auctionsWithLatestBidAndUserId = await Promise.all(filteredAuctions.map(async (auction) => {
+            await Promise.all(filteredAuctions.map(async (auction) => {
                 //dobi zadnji bid od auctiona
                 const latestBid = await this.prisma.bid.findFirst({
                     where: {
-                        userId,
-                        auctionId: auction.id,
+                        auctionId: auction.id
                     },
                     orderBy: {
-                        createdAt: 'desc' // Latest bid createdAt
+                        createdAt: 'desc' // Order by latest bid createdAt
                     }
                 });
 
-                if (latestBid) {
+                // check ce je (le zadnji) bid od userja
+                if (latestBid && latestBid.userId === userId) {
                     auctions.push(auction);
                 }
             }));
 
-            return auctions
+            // paginate result
+            const total = auctions.length;
+            const paginatedAuctions = auctions.slice((page - 1) * take, page * take);
+
+            return {
+                data: paginatedAuctions,
+                meta: {
+                    total,
+                    page,
+                    last_page: Math.ceil(total / take),
+                },
+            };
         } catch (error) {
             console.error(error)
             throw new BadRequestException(`Something went wrong while getting auctions from user with id ${userId}!`)
@@ -157,25 +196,53 @@ export class AuctionService {
 
     //DOBI VSE AUCTIONE KJER USER TRENUTNO BIDDA
     async getAllForUserBidding(
-        userId: number
-    ): Promise<Auction[]> {
+        userId: number,
+        page = 1,
+        relations = []
+    ): Promise<PaginatedResult> {
         try {
-            const auctions = await this.prisma.auction.findMany({
+            const take = 14
+
+            // Step 1: Retrieve all auctions with a duration in the future
+            const filteredAuctions = await this.prisma.auction.findMany({
                 where: {
                     duration: {
-                        //auction ima duration v prihodnosti
-                        gt: new Date()
-                    },
-                    Bid: {
-                        some: {
-                            //filtriraj bide glede trenutnega userja (userId)
-                            userId
-                        }
+                        gt: new Date() // Auction duration is in the future
                     }
                 }
-            })
+            });
 
-            return auctions
+            // Step 2: Filter auctions to ensure the latest bid is from the specified userId
+            let auctions = [];
+
+            await Promise.all(filteredAuctions.map(async (auction) => {
+                const latestBid = await this.prisma.bid.findFirst({
+                    where: {
+                        auctionId: auction.id
+                    },
+                    orderBy: {
+                        createdAt: 'desc' // Latest bid
+                    }
+                });
+
+                // Check if the latest bid is from the specified userId
+                if (latestBid && latestBid.userId === userId) {
+                    auctions.push(auction);
+                }
+            }));
+
+            // Step 3: Implement pagination on the filtered results
+            const total = auctions.length;
+            const paginatedAuctions = auctions.slice((page - 1) * take, page * take);
+
+            return {
+                data: paginatedAuctions,
+                meta: {
+                    total,
+                    page,
+                    last_page: Math.ceil(total / take),
+                },
+            };
         } catch (error) {
             console.error(error)
             throw new BadRequestException(`Something went wrong while getting auctions from user with id ${userId}!`)
