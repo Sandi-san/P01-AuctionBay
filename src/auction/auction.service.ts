@@ -39,7 +39,7 @@ export class AuctionService {
                 skip: (page - 1) * take,
                 where: {
                     duration: {
-                        gte: new Date(), // Filter out auctions that have already ended
+                        gt: new Date(), // Filter out auctions that have already ended
                     },
                 },
                 include: {
@@ -51,7 +51,14 @@ export class AuctionService {
                 }
             })
 
-            const total = await this.prisma.auction.count();
+            //countaj te auctione vendar z gt: currentTime filtrom
+            const total = await this.prisma.auction.count({
+                where: {
+                    duration: {
+                        gt: new Date(),
+                    },
+                },
+            });
 
             return {
                 data,
