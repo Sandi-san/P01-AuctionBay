@@ -9,6 +9,7 @@ import { StatusCode } from '../../constants/errorConstants'
 import { CreateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
 import { AuctionType } from '../../models/auction'
 import { UserType } from '../../models/auth'
+import authStore from '../../stores/auth.store'
 
 //shrani item v Props
 interface Props {
@@ -43,12 +44,15 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
 
         //TODO vsi status code ki lahko tu dobis
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
-            response.data?.statusCode === StatusCode.FORBIDDEN ||
-            response.data?.statusCode === StatusCode.UNAUTHORIZED
+            response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
             setApiError(response.data.message)
             setShowSuccess(false)
             setShowError(true)
+        } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+            authStore.signout()
+            console.log("You are not logged in or access token has expired.")
+            navigate(location.pathname, { state: window.location.reload() })
         } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
             setApiError(response.data.message)
             setShowSuccess(false)

@@ -7,6 +7,7 @@ import { UserType } from '../../models/auth'
 import EditAuction from '../auction/EditAuction'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
+import authStore from '../../stores/auth.store'
 
 //shrani item v Props
 interface Props {
@@ -30,6 +31,8 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
 
     //da izrises buttone v auctionu ce je od trenutnega userja
     const isOwner = user?.id === userId
+    //ce je auction duration ze potekel
+    const isOver = new Date(duration) > new Date();
 
     //Popup editAuction
     const [showEditAuction, setShowEditAuction] = useState(false);
@@ -87,6 +90,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
             setApiError(response.data.message)
             setShowError(true)
         } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+            authStore.signout()
             console.log("You are not logged in or access token has expired.")
             navigate(location.pathname, { state: window.location.reload() })
         } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
@@ -143,7 +147,8 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
 
                         {/* Title section */}
                         <div className="flex flex-col items-start mb-2">
-                            <p className="text-lg text-color-primary">{title}</p>
+                            <p className="text-lg text-color-primary">{title}
+                            {isOver}</p>
                         </div>
 
                         {/* Price section */}
@@ -166,7 +171,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                 </div>
 
                 {/* ce auction trenutno vpisanega userja, prikazi delete/edit buttone */}
-                {isOwner && (
+                {isOwner && isOver && (
                     <div className="flex justify-between px-3 pb-1">
                         <button className="text-gray-900 border border-black bg-white custom-button py-1 px-2 rounded-xl"
                             onClick={handleDeleteAuction}>

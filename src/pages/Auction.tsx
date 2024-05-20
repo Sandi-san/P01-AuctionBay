@@ -13,7 +13,7 @@ import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 
 const Auction: FC = () => {
-  const { handleSubmit, errors, control } = useCreateBidForm()
+  const { handleSubmit, errors, control, setValue } = useCreateBidForm()
   const [apiError, setApiError] = useState('')
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -27,7 +27,7 @@ const Auction: FC = () => {
 
   //je user logged in?
   const [userLogged, setUserLogged] = useState<boolean>(false)
-  
+
   //dobi User data glede localni access_token
   const getUserData = async () => {
     // Fetch user data from API
@@ -40,6 +40,7 @@ const Auction: FC = () => {
       if (userData.statusCode === StatusCode.UNAUTHORIZED) {
         authStore.signout()
         setUserLogged(false)
+        console.log("You are not logged in or access token has expired.")
       }
       else {
         setUserLogged(true)
@@ -122,6 +123,10 @@ const Auction: FC = () => {
     console.log("User:", user)
   }, [])
 
+  useEffect(() => {
+    setValue('price', item.currentPrice);
+  }, [setValue, item.currentPrice]);
+
   const onSubmit = handleSubmit(async (data: CreateBidFields) => {
     console.log('Placing bid with value:', data)
     const response = await API.createBid(data, item.id)
@@ -132,12 +137,17 @@ const Auction: FC = () => {
       setApiError(response.data.message)
       setShowError(true)
       setShowSuccess(false)
+    }
+    else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+      setApiError(response.data.message)
+      setShowError(true)
+      setShowSuccess(false)
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       setApiError(response.data.message)
       setShowError(true)
       setShowSuccess(false)
     }
-    else{
+    else {
       setShowError(false)
       setShowSuccess(true)
       getBidsData()
@@ -224,6 +234,7 @@ const Auction: FC = () => {
                     <Controller
                       control={control}
                       name="price"
+                      defaultValue={item.currentPrice} // Set the default value here
                       render={({ field }) => (
                         <Form.Group className="flex">
                           <FormLabel className='mt-2' htmlFor="price">Bid:</FormLabel>

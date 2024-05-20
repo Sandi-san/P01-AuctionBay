@@ -40,6 +40,7 @@ export const useCreateBidForm = () => {
     handleSubmit,
     formState: { errors },
     control,
+    setValue,
   } = useForm({
     defaultValues: {
       price: 0,
@@ -60,6 +61,7 @@ export const useCreateBidForm = () => {
     handleSubmit,
     errors,
     control,
+    setValue,
   }
 }
 

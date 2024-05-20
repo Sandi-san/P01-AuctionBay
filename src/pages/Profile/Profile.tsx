@@ -9,6 +9,7 @@ import { AuctionType } from '../../models/auction'
 import { StatusCode } from '../../constants/errorConstants'
 import Card from '../../components/ui/Card'
 import authStore from '../../stores/auth.store'
+import PaginateButtons from '../../components/ui/PaginateButtons'
 
 interface Props {
   headerHeight: number
@@ -21,6 +22,9 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
   const [auctions, setAuctions] = useState<AuctionType[]>([])
   //current ?page= (za paginated prikaz)
   const [currentPage, setCurrentPage] = useState<number>(1)
+  //total paginated strani (dobis iz db)
+  const [totalPages, setTotalPages] = useState<number>(1)
+
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -56,7 +60,8 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
         setShowError(true)
       } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
         authStore.signout()
-        navigate('/')
+        console.log("You are not logged in or access token has expired.")
+        navigate(location.pathname, { state: window.location.reload() })
       } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
         setApiError(response.data.message)
         setShowSuccess(false)
@@ -64,9 +69,10 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
       }
       else {
         console.log("Response: ", response.data.data)
-        setAuctions(response.data)
+        setAuctions(response.data.data)
         setCurrentPage(page)
-        console.log("Auctions: ", auctions)
+        setTotalPages(response.data.meta.last_page)
+        // console.log("Auctions: ", auctions)
       }
     } catch (error) {
       console.error('Error fetching auctions:', error)
@@ -82,7 +88,7 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
 
   // Pagination logic
   const goToPage = (pageNumber: number) => {
-    navigate(`/auctions?page=${pageNumber}`)
+    navigate(`/profile?page=${pageNumber}`)
   }
 
   const renderContent = () => {
@@ -99,7 +105,7 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
         return (
           <div className="flex flex-col flex-grow justify-center items-center text-center">
             <p className="text-lg font-bold">Nothing here yet!</p>
-            <p className="text-sm text-gray-500 mt-2">When you win auction items,<br/>they will be displayed here.
+            <p className="text-sm text-gray-500 mt-2">When you win auction items,<br />they will be displayed here.
               <br />Go and bid on your favorite items!</p>
           </div>
         )
@@ -125,16 +131,43 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
           &nbsp;!
         </h1>
         {auctions && auctions.length > 0 ? (
-          <div className="flex flex-wrap p-2 bg-gray-100"> {/* Flex container with wrapping */}
-            {auctions.slice(0, 10).map((auction, index) => ( // Render maximum of 10 auctions
-              <div key={index} className="m-1"> {/* Each auction with margin */}
-                <Card item={auction} user={user}
-                  fetchAuctions={fetchAuctionsData} /> {/* Render the Card component for each auction */}
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="flex flex-wrap p-2 bg-gray-100"> {/* Flex container with wrapping */}
+              {auctions.slice(0, 14).map((auction, index) => ( // Render maximum of 10 auctions
+                <div key={index} className="m-1"> {/* Each auction with margin */}
+                  <Card item={auction} user={user}
+                    fetchAuctions={fetchAuctionsData} /> {/* Render the Card component for each auction */}
+                </div>
+              ))}
+            </div>
+
+            <PaginateButtons
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={goToPage}
+            />
+          </>
         ) : (
           renderContent()
+        )}
+        {showError && (
+          <ToastContainer className="" position="top-end">
+            <Toast onClose={() => setShowError(false)} show={showError}>
+              <Toast.Header>
+                <strong className="me-auto text-red-500 text-md">Error</strong>
+              </Toast.Header>
+              <Toast.Body className="text-red-500 bg-light text-sm">{apiError}</Toast.Body>
+            </Toast>
+          </ToastContainer>
+        )}
+        {showSuccess && (
+          <ToastContainer className="" position="top-end">
+            <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
+              <Toast.Header>
+                <strong className="me-auto text-green-500 text-md">Success</strong>
+              </Toast.Header>
+            </Toast>
+          </ToastContainer>
         )}
       </div>
     </>

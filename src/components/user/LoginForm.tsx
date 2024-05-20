@@ -29,11 +29,13 @@ const LoginForm: FC = () => {
     const response = await API.login(data)
 
     //TODO vsi status code ki lahko tu dobis
-    if (response.data?.statusCode === StatusCode.UNAUTHORIZED ||
-      response.data?.statusCode === StatusCode.NOT_FOUND ||
-      response.data?.statusCode === StatusCode.FORBIDDEN) {
+    if (response.data?.statusCode === StatusCode.NOT_FOUND ||
+      response.data?.statusCode === StatusCode.FORBIDDEN
+    ) {
       setApiError(response.data.message)
       setShowError(true)
+    } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+      console.log("You are not logged in or access token has expired.")
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       setApiError(response.data.message)
       setShowError(true)
