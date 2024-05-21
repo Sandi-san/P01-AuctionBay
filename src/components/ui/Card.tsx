@@ -8,6 +8,7 @@ import EditAuction from '../auction/EditAuction'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import authStore from '../../stores/auth.store'
+import { BidType } from '../../models/bid'
 
 //shrani item v Props
 interface Props {
@@ -25,17 +26,19 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     const location = useLocation()
 
     // destruct props v posamezni var
-    const { id, title, currentPrice, image, status, duration, userId } = item
+    const { id, title, currentPrice, image, status, duration, userId, Bid } = item
     const [time, setTime] = useState('0')
     const [dateClose, setDateClose] = useState(false)
+
+    const [auctionStatus, setAuctionStatus] = useState('In progress')
 
     //da izrises buttone v auctionu ce je od trenutnega userja
     const isOwner = user?.id === userId
     //ce je auction duration ze potekel
-    const isOver = new Date(duration) > new Date();
+    const isOver = new Date(duration) > new Date()
 
     //Popup editAuction
-    const [showEditAuction, setShowEditAuction] = useState(false);
+    const [showEditAuction, setShowEditAuction] = useState(false)
 
     //sekunde v time remaining za auction
     const secondsToTimeString = (seconds: number) => {
@@ -73,6 +76,9 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     //kalkuliraj date ob zagonu widgeta
     useEffect(() => {
         calculateDate()
+        const status = getStatusText()
+        setAuctionStatus(status)
+        // console.log(`Status for price: ${item.currentPrice}:\n${status}`)
     }, [])
 
     //Za ko preklaplas med tabim v Profile
@@ -117,6 +123,33 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
         navigate('/auction', { state: { item: item, user: user } })
     }
 
+    const getStatusText = () => {
+        //ce je auctiona ze over
+        if (item.status === 'Done')
+            return 'Done'
+        //ce je auction od userja
+        //v produkciji ta koda ni potrebna, ker user ne more Bidat na svoje auctione 
+        // if (item.userId === user?.id)
+        //     return 'In progress'
+
+        //glede array Bid-ov, preglej ce je kaksen bid od userja
+        if (item.Bid && user) {
+            const userBids = item.Bid.filter(bid => bid.userId === user.id);
+            if (userBids.length > 0) {
+                const lastBid = item.Bid[item.Bid.length - 1]
+                //ce je zadnji bid od userja, vrni da zmaguje
+                if (lastBid.userId === user.id) {
+                    return 'Winning'
+                }
+                //sicer povej da ne zmaguje auctiona
+                else {
+                    return 'Outbid'
+                }
+            }
+        }
+        return status === 'In progress' ? 'In progress' : 'Done';
+    }
+
     return (
         <>
             <div className="h-[260px] w-[205px] bg-white rounded-2xl flex flex-col overflow-hidden">
@@ -128,7 +161,13 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                         {/* Tag header section */}
                         <div className="flex justify-between mb-2">
                             {/* left tag: status */}
-                            <span className="bg-customYellow py-1 px-2 rounded-full text-xs">{status}</span>
+                            <span className={`py-1 px-2 rounded-full text-xs 
+                            ${auctionStatus === 'In progress' ? 'bg-customYellow' : // 'In progress'
+                                    auctionStatus === 'Done' ? 'bg-gray-800 text-white' : // 'Done'
+                                        auctionStatus === 'Winning' ? 'bg-green-300' : // 'Winning'
+                                            auctionStatus === 'Outbid' ? 'bg-red-300' : // 'Outbid'
+                                                '' // Default empty string for no additional styling
+                                }`}>{auctionStatus}</span>
                             {/* right tag: date */}
                             {/* ce casa ze zmanjkalo (date v preteklost) ne kazi tega */}
                             {time !== '0' && (
@@ -147,8 +186,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
 
                         {/* Title section */}
                         <div className="flex flex-col items-start mb-2">
-                            <p className="text-lg text-color-primary">{title}
-                            {isOver}</p>
+                            <p className="text-lg text-color-primary">{title}</p>
                         </div>
 
                         {/* Price section */}
@@ -162,11 +200,14 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                         className={
                             //malce squishaj image za buttone
                             isOwner
-                                ? 'flex justify-center items-center overflow-hidden h-2/3'
-                                : 'flex justify-center items-center overflow-hidden h-full'
+                                ? 'flex justify-center items-center overflow-hidden h-2/3 bg-gray-200 m-2 rounded-xl'
+                                : 'flex justify-center items-center overflow-hidden h-full bg-gray-200 m-2 rounded-xl'
                         }>
-                        {/* className={isOwner ? 'flex justify-center items-center overflow-hidden h-2/3' : 'flex justify-center items-center overflow-hidden h-full'}> */}
-                        <img src={`${process.env.REACT_APP_API_URL}/files/${image}`} alt="Product" className="rounded-xl object-cover h-full w-full p-2" />
+                        {image ? ( // Check if image is not null or empty string
+                            <img src={`${process.env.REACT_APP_API_URL}/files/${image}`} alt="Product" className="rounded-xl object-cover h-full w-full" />
+                        ) : (
+                            <p className="text-center font-semibold text-black">No image available</p> // Display a message if image is null or empty string
+                        )}
                     </div>
                 </div>
 
@@ -219,4 +260,3 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     )
 }
 export default Card
-//userId} vs {user?.id

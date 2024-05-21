@@ -1,3 +1,5 @@
+import { BidType } from "./bid"
+
 export type AuctionType = {
   id: number
   title: string
@@ -7,4 +9,5 @@ export type AuctionType = {
   duration: Date
   image?: string
   userId: number
+  Bid?: BidType[]
 }

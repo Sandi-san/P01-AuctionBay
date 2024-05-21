@@ -80,22 +80,19 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                 else {
                     setShowError(false)
                     setShowSuccess(true)
-                    //ce si z v isti lokaciji, force refresh (da se podatki posodobijo)
-                    if (location.pathname === '/auctions')
-                        navigate('/auctions', { state: window.location.reload() })
-                    else
-                        navigate('/auctions')
+                    //refresh page
+                    if (location.pathname === '/auctions') {
+                        navigate(location.pathname, { state: window.location.reload() })
+                    }
                 }
             }
             else {
                 setShowError(false)
                 setShowSuccess(true)
-                //ce si z v isti lokaciji, force refresh (da se podatki posodobijo)
-                if (location.pathname === '/auctions')
-                    navigate('/auctions', { state: window.location.reload() })
-                else
-                    navigate('/auctions')
-
+                //refresh page
+                if (location.pathname === '/auctions') {
+                    navigate(location.pathname, { state: window.location.reload() })
+                }
             }
         }
     })

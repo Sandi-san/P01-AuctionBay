@@ -35,6 +35,8 @@ const LoginForm: FC = () => {
       setApiError(response.data.message)
       setShowError(true)
     } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+      setApiError(response.data.message)
+      setShowError(true)
       console.log("You are not logged in or access token has expired.")
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       setApiError(response.data.message)

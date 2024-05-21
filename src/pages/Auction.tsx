@@ -18,6 +18,8 @@ const Auction: FC = () => {
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
+  const [auctionStatus, setAuctionStatus] = useState('In progress')
+
   //propi, vendar ji dobis preko navigate()
   const location = useLocation()
   const { item, user } = location.state
@@ -41,6 +43,7 @@ const Auction: FC = () => {
         authStore.signout()
         setUserLogged(false)
         console.log("You are not logged in or access token has expired.")
+        navigate(location.pathname, { state: window.location.reload() })
       }
       else {
         setUserLogged(true)
@@ -116,16 +119,27 @@ const Auction: FC = () => {
 
   //kalkuliraj date ob zagonu widgeta
   useEffect(() => {
-    getUserData()
-    getBidsData()
-    calculateDate()
-    console.log("Item:", item)
-    console.log("User:", user)
+    const fetchData = async () => {
+      await getUserData()
+      await getBidsData()
+      calculateDate()
+      console.log("Item:", item)
+      console.log("User:", user)
+      const status = getStatusText()
+      setAuctionStatus(status)
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
-    setValue('price', item.currentPrice);
-  }, [setValue, item.currentPrice]);
+    setValue('price', item.currentPrice)
+  }, [setValue, item.currentPrice])
+
+
+  useEffect(() => {
+    const status = getStatusText()
+    setAuctionStatus(status)
+  }, [bids])
 
   const onSubmit = handleSubmit(async (data: CreateBidFields) => {
     console.log('Placing bid with value:', data)
@@ -150,7 +164,11 @@ const Auction: FC = () => {
     else {
       setShowError(false)
       setShowSuccess(true)
-      getBidsData()
+      //znova pridobi bide iz baze (refresh na rendering)
+      await getBidsData()
+      //pocakaj da pridobi bide in posodobi status text
+      const status = getStatusText()
+      setAuctionStatus(status)
     }
   })
 
@@ -168,6 +186,33 @@ const Auction: FC = () => {
         console.log("Bids:", bids)
       }
     }
+  }
+
+  const getStatusText = () => {
+    //ce je auctiona ze over
+    if (item.status === 'Done')
+      return 'Done'
+    //ce je auction od userja
+    //v produkciji ta koda ni potrebna, ker user ne more Bidat na svoje auctione 
+    // if (item.userId === user?.id)
+    //     return 'In progress'
+
+    //glede array Bid-ov, preglej ce je kaksen bid od userja
+    if (bids.length > 0 && user) {
+      const userBids = bids.filter((bid: { userId: any }) => bid.userId === user.id)
+      if (userBids.length > 0) {
+        //ce je zadnji bid od userja, vrni da zmaguje
+        //POZOR: v Auction je bid array v obratnem vrstnem redu
+        if (bids[0] === user.id) {
+          return 'Winning'
+        }
+        //sicer povej da ne zmaguje auctiona
+        else {
+          return 'Outbid'
+        }
+      }
+    }
+    return item.status === 'In progress' ? 'In progress' : 'Done'
   }
 
   return (
@@ -200,7 +245,13 @@ const Auction: FC = () => {
               {/* Tag header section (status, time) */}
               <div className="flex justify-between mb-1 h-1/8">
                 {/* left tag: status */}
-                <span className="bg-customYellow py-1 px-2 rounded-full text-xs">{item.status}</span>
+                <span className={`py-1 px-2 rounded-full text-xs 
+                            ${auctionStatus === 'In progress' ? 'bg-customYellow' : // 'In progress'
+                    auctionStatus === 'Done' ? 'bg-gray-800 text-white' : // 'Done'
+                      auctionStatus === 'Winning' ? 'bg-green-300' : // 'Winning'
+                        auctionStatus === 'Outbid' ? 'bg-red-300' : // 'Outbid'
+                          '' // Default empty string for no additional styling
+                  }`}>{auctionStatus}</span>
                 {/* right tag: date */}
                 {/* ce casa ze zmanjkalo (date v preteklost) ne kazi tega */}
                 {time !== '0' && (
