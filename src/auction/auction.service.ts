@@ -24,16 +24,12 @@ export class AuctionService {
         private bidService: BidService
     ) { }
 
-    //DOBI VSE AUCTIONE OD VSEH USERJEV
-    async getAll() {
-        return 'TODO: getting all auctions'
-    }
-
     //PAGINATE
     //Service za findAll (vseh tabel)
     async findAllPaginate(page = 1, relations = []): Promise<PaginatedResult> {
         const take = 14 //max stevilo za current display
         try {
+
             const data = await this.prisma.auction.findMany({
                 take,
                 skip: (page - 1) * take,
@@ -44,7 +40,7 @@ export class AuctionService {
                 },
                 include: {
                     // Include any relations you need
-                    // Example: user: true,
+                    // BIDS
                 },
                 orderBy: {
                     duration: 'asc', //order by
@@ -122,7 +118,7 @@ export class AuctionService {
             const auctions = await this.prisma.auction.findMany({
                 where: { userId },
                 orderBy: {
-                    duration: 'desc',
+                    createdAt: 'desc',
                 },
                 take: take,
                 skip: (page - 1) * take,
@@ -162,6 +158,9 @@ export class AuctionService {
                     duration: {
                         lt: new Date()
                     }
+                },
+                orderBy: {
+                    duration: 'desc',
                 }
             })
 
@@ -216,6 +215,9 @@ export class AuctionService {
                     duration: {
                         gt: new Date() // Auction duration is in the future
                     }
+                },
+                orderBy: {
+                    duration: 'desc',
                 }
             });
 
@@ -306,36 +308,36 @@ export class AuctionService {
         })
     }
 
-    //SPREMENI STATUS GLEDE NA DATE (OB PRIDOBITVI AUCTIONA/U?)
+    //SPREMENI STATUS AUCTIONV GLEDE NA DATE (PRED PRIDOBITVI AUCTIONOV)
     //UPDATE AVTOMATSKE VARIANTE
-    async statusDateChange(
-        id: number
-    ): Promise<Auction> {
-        //PREVERI CE JE CURRENT DATE CEZ DURATION DATE, CE JE SPREMENI STATUS V DONE
-        const auction = this.getById(id)
-        if (Date.now() > (await auction).duration.getTime()) {
-            const status = "Done"
-            try {
-                const editedAuction = await this.prisma.auction.update({
-                    where: { id },
-                    data: {
-                        status: status
-                    }
-                })
-                return editedAuction;
-            } catch (error) {
-                if (error instanceof PrismaClientKnownRequestError) {
-                    //error, kjer posljemo id, ki ne obstaja v DB
-                    if (error.code === 'P2025')
-                        throw new BadRequestException(`Id ${id} is invalid!`);
+    async changeStatusByDate(): Promise<void> {
+        console.log("Calling change Auctions status")
+
+        //Dobi vse auctione ki niso Status==Done
+        const allAuctions = await this.prisma.auction.findMany({
+            where:{
+                status: {
+                    not: 'Done'
                 }
-                else {
-                    console.log(error)
-                    throw new BadRequestException('Something went wrong while updating auction!')
-                }
+            },
+            orderBy: {
+                duration: 'desc',
             }
-        }
-        return auction
+        });
+
+        let count=0
+
+        //Ce je cas potekel, status=Done
+        await Promise.all(allAuctions.map(async (auction) => {
+            if (new Date(auction.duration) < new Date()) {
+                await this.prisma.auction.update({
+                    where: { id: auction.id },
+                    data: { status: 'Done' }
+                });
+                count++
+            }
+        }));
+        console.log("Changed auctions: ",count)
     }
 
     //UPDATE AUCTION

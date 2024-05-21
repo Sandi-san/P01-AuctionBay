@@ -14,6 +14,7 @@ export class AuctionController {
     @HttpCode(HttpStatus.OK)
     @Get('')
     async getAll(@Query('page') page: number): Promise<PaginatedResult> {
+        this.auctionService.changeStatusByDate()
         return this.auctionService.findAllPaginate(page)
     }
 

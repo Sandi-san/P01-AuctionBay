@@ -153,6 +153,7 @@ export class UserController {
         @GetLoggedUser() user: User,
         @Query('page') page: number
     ): Promise<PaginatedResult> {
+        this.userService.changeAuctionStatus()
         return this.userService.getUserAuctions(user.id, page)
     }
 
@@ -163,6 +164,7 @@ export class UserController {
         @GetLoggedUser() user: User,
         @Query('page') page: number
     ): Promise<PaginatedResult> {
+        this.userService.changeAuctionStatus()
         return this.userService.getUserAuctionsWon(user.id,page)
     }
 
@@ -173,6 +175,7 @@ export class UserController {
         @GetLoggedUser() user: User,
         @Query('page') page: number
     ): Promise<PaginatedResult> {
+        this.userService.changeAuctionStatus()
         return this.userService.getUserAuctionsBidding(user.id,page)
     }
 }

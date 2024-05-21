@@ -183,6 +183,12 @@ export class UserService {
         return this.auctionService.updateAuctionImage(auctionId, image)
     }
 
+    //SPREMENI AUCTION STATUS GLEDE DATE (klici iz user.controller)
+    async changeAuctionStatus(
+    ): Promise<void> {
+        return this.auctionService.changeStatusByDate()
+    }
+
     //DOBI VSE BIDE KI JE USER USTVARIL
     async getUserBids(
         userId: number
