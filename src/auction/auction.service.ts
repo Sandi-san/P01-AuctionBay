@@ -39,8 +39,7 @@ export class AuctionService {
                     },
                 },
                 include: {
-                    // Include any relations you need
-                    // BIDS
+                    Bid: true, // Include all bids related to each auction
                 },
                 orderBy: {
                     duration: 'asc', //order by
@@ -118,7 +117,10 @@ export class AuctionService {
             const auctions = await this.prisma.auction.findMany({
                 where: { userId },
                 orderBy: {
-                    createdAt: 'desc',
+                    duration: 'desc',
+                },
+                include: {
+                    Bid: true,
                 },
                 take: take,
                 skip: (page - 1) * take,
@@ -159,8 +161,11 @@ export class AuctionService {
                         lt: new Date()
                     }
                 },
+                include: {
+                    Bid: true,
+                },
                 orderBy: {
-                    duration: 'desc',
+                    duration: 'asc',
                 }
             })
 
@@ -209,38 +214,29 @@ export class AuctionService {
         try {
             const take = 14
 
-            // Step 1: Retrieve all auctions with a duration in the future
-            const filteredAuctions = await this.prisma.auction.findMany({
+            // Step 1: Retrieve auctions where the specified user has made a bid and the auction duration is in the future
+            const auctions = await this.prisma.auction.findMany({
                 where: {
                     duration: {
                         gt: new Date() // Auction duration is in the future
+                    },
+                    Bid: {
+                        some: {
+                            userId: userId // The user has placed a bid
+                        }
                     }
                 },
+                include: {
+                    Bid: true,
+                },
                 orderBy: {
-                    duration: 'desc',
+                    duration: 'asc',
                 }
             });
 
-            // Step 2: Filter auctions to ensure the latest bid is from the specified userId
-            let auctions = [];
 
-            await Promise.all(filteredAuctions.map(async (auction) => {
-                const latestBid = await this.prisma.bid.findFirst({
-                    where: {
-                        auctionId: auction.id
-                    },
-                    orderBy: {
-                        createdAt: 'desc' // Latest bid
-                    }
-                });
 
-                // Check if the latest bid is from the specified userId
-                if (latestBid && latestBid.userId === userId) {
-                    auctions.push(auction);
-                }
-            }));
-
-            // Step 3: Implement pagination on the filtered results
+            // Step 2: Implement pagination on the filtered results
             const total = auctions.length;
             const paginatedAuctions = auctions.slice((page - 1) * take, page * take);
 
@@ -315,7 +311,7 @@ export class AuctionService {
 
         //Dobi vse auctione ki niso Status==Done
         const allAuctions = await this.prisma.auction.findMany({
-            where:{
+            where: {
                 status: {
                     not: 'Done'
                 }
@@ -325,7 +321,7 @@ export class AuctionService {
             }
         });
 
-        let count=0
+        let count = 0
 
         //Ce je cas potekel, status=Done
         await Promise.all(allAuctions.map(async (auction) => {
@@ -337,7 +333,7 @@ export class AuctionService {
                 count++
             }
         }));
-        console.log("Changed auctions: ",count)
+        console.log("Changed auctions: ", count)
     }
 
     //UPDATE AUCTION

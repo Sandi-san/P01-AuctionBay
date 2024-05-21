@@ -1,7 +1,7 @@
 ##TESTS:
 
 #### TOKEN (TEST ONLY)
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJlbWFpbCI6Imp1cmVAZ21haWwuY29tIiwiaWF0IjoxNzE2MjIzMzYwLCJleHAiOjE3MTYyMjQyNjB9.gMlPV6OiEYJcVwWl_NabCfQEKC59PQGjgXwD519ehU8
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJlbWFpbCI6Imp1cmVAZ21haWwuY29tIiwiaWF0IjoxNzE2MzAwODA3LCJleHAiOjE3MTYzMDE3MDd9.jeuN6O24E7qbhoswuBNBvCvTCfl2DxyWb4QLYgwOSZk
 
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
