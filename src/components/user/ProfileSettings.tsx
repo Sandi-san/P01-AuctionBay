@@ -1,5 +1,5 @@
 import { FC, MouseEventHandler, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
@@ -33,7 +33,9 @@ const ProfileSettings: FC<Props> = (
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
+
     const navigate = useNavigate()
+    const location = useLocation()
 
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
         console.log(user?.id)
@@ -56,7 +58,8 @@ const ProfileSettings: FC<Props> = (
         else {
             setShowError(false)
             setShowSuccess(true)
-            navigate('/')
+            if(location.pathname === '/profile')
+                navigate(location.pathname, { state: window.location.reload() })
         }
     })
 

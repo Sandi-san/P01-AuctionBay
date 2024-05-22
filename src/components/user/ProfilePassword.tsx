@@ -18,7 +18,7 @@ interface Props {
 }
 
 const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
-    const navigate = useNavigate()
+    
     const { id, email } = user!
     const defaultValues: UpdateUserType = {
         id,
@@ -54,7 +54,6 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
         else {
             setShowError(false)
             setShowSuccess(true)
-            navigate('/')
         }
     })
 

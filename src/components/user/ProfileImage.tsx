@@ -36,6 +36,7 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
     const [file, setFile] = useState<File | null>(null)
     const [fileError, setFileError] = useState(false)
 
+    const location = useLocation()
 
     // da lahko uporabljas Custom Button za defaultni Choose file
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -73,7 +74,7 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
         else {
             setShowError(false)
             setShowSuccess(true)
-            navigate('/')
+            navigate(location.pathname, { state: window.location.reload() })
         }
     })
 

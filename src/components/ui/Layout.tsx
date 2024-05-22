@@ -49,6 +49,7 @@ const Layout: FC<Props> = ({ children }) => {
           if (authStore.user) {
             authStore.signout()
             navigate('/')
+            // navigate(location.pathname, { state: window.location.reload() })
           }
           //ce ni access_tokena, da lahko obiskuje PUBLIC page 
           authStore.signout()

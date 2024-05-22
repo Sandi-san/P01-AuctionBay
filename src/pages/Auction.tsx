@@ -43,7 +43,6 @@ const Auction: FC = () => {
         authStore.signout()
         setUserLogged(false)
         console.log("You are not logged in or access token has expired.")
-        navigate(location.pathname, { state: window.location.reload() })
       }
       else {
         setUserLogged(true)

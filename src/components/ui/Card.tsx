@@ -26,7 +26,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     const location = useLocation()
 
     // destruct props v posamezni var
-    const { id, title, currentPrice, image, status, duration, userId, Bid } = item
+    const { id, title, currentPrice, image, status, duration, userId } = item
     const [time, setTime] = useState('0')
     const [dateClose, setDateClose] = useState(false)
 
@@ -78,6 +78,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
         calculateDate()
         const status = getStatusText()
         setAuctionStatus(status)
+        console.log(`Item for: ${item.currentPrice}:\n${item}`)
         // console.log(`Status for price: ${item.currentPrice}:\n${status}`)
     }, [])
 
@@ -110,7 +111,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
     }
 
     //Popup editAuction
-    const toggleEditAuctionPopup = () => {
+    const toggleEditAuctionPopup = async (): Promise<void> => {
         setShowEditAuction(!showEditAuction)
         console.log("Closing and fetching Auction")
         fetchAuctions()

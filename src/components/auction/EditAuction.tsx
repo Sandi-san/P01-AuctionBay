@@ -16,7 +16,7 @@ interface Props {
     //dobi info od auctiona
     auction: AuctionType
     //zapri (ta) Profile popup
-    closePopup: MouseEventHandler<HTMLButtonElement>
+    closePopup: () => Promise<void>
     //referenca na fetchAuctions funkcijo v Auctions
     fetchAuctions: () => Promise<void>
 }
@@ -90,13 +90,15 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
                 else {
                     setShowError(false)
                     setShowSuccess(true)
-                    fetchAuctions()
+                    await fetchAuctions()
+                    closePopup()
                 }
             }
             else {
                 setShowError(false)
                 setShowSuccess(true)
-                fetchAuctions()
+                await fetchAuctions()
+                closePopup()
             }
         }
     })

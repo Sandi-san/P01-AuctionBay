@@ -22,8 +22,7 @@ const ProfilePopUp: FC<Props> = ({ user, signout, refreshUserData }) => {
     //za error prikazovanje (Toast)
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
-    const navigate = useNavigate()
-
+   
     //za vse tri Popup forme (Settings, Password, Avatar)
     const [showPopupSettings, setShowPopupSettings] = useState(false)
     const [showPopupPassword, setShowPopupPassword] = useState(false)

@@ -107,7 +107,7 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
     //effect ko se referenca na header spremeni
     useEffect(() => {
         setRef(headerRef.current)
-    }, [setRef])
+    }, [setRef]) 
 
 
     const togglePopup = () => {
@@ -130,7 +130,7 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
         <>
             <header ref={headerRef} className="flex justify-between items-center px-6 py-4 text-white">
                 {/* ce je user prijavljen, display Buttons */}
-                {user?.firstName ? (
+                {user?.email ? (
                     // div z logo, zraven z Buttoni, da so vsi na levi strani (items-start)
                     <>
                         <div className="flex items-center">
