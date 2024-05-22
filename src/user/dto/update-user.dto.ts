@@ -1,20 +1,28 @@
-import { IsEmail, IsOptional, IsString, Matches, ValidateIf } from 'class-validator'
-import { Match } from 'src/auth/decorator'
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  Matches,
+  ValidateIf,
+} from 'class-validator';
+import { Match } from 'src/auth/decorator';
 
+//strukture data, ki posljemo ki update-amo User-ja
 export class UpdateUserDto {
   @IsOptional()
-  firstName?: string
+  firstName?: string;
 
   @IsOptional()
-  lastName?: string
+  lastName?: string;
 
   @IsOptional()
   @IsEmail()
-  email?: string
+  email?: string;
 
+  //v frontend, poslje old_password
   @IsOptional()
   @IsString()
-  old_password?: string
+  old_password?: string;
 
   @ValidateIf((o) => typeof o.password === 'string' && o.password.length > 0)
   @IsOptional()
@@ -23,20 +31,23 @@ export class UpdateUserDto {
     message:
       'Password must contain one number, one uppercase or lowercase letter and has to be longer than 5 characters!',
   })
-  password?: string
+  password?: string;
 
-  @ValidateIf((o) => typeof o.confirm_password === 'string' && o.confirm_password.length > 0)
+  @ValidateIf(
+    (o) =>
+      typeof o.confirm_password === 'string' && o.confirm_password.length > 0,
+  )
   @IsOptional()
   @IsString()
   //custom decorator ()
   @Match(UpdateUserDto, (field) => field.password, {
     message: 'Passwords must match!',
   })
-  confirm_password?: string
+  confirm_password?: string;
 
   // @IsOptional()
   // refresh_token?: string
 
   @IsOptional()
-  image?: string
+  image?: string;
 }

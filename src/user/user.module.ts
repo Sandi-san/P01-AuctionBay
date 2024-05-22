@@ -9,6 +9,6 @@ import { BidModule } from 'src/bid/bid.module';
   imports: [AuctionModule, BidModule],
   providers: [UserService],
   controllers: [UserController],
-  exports: [UserService]
+  exports: [UserService],
 })
 export class UserModule {}

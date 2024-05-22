@@ -1,24 +1,25 @@
-import { IsDateString, IsNumber, IsOptional, IsString } from "class-validator"
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpdateAuctionDto{
-    @IsString()
-    title: string
-  
-    @IsString()
-    @IsOptional()
-    description?: string
+//struktura data, ki se poslje v funkcijo ko updateamo Auction
+export class UpdateAuctionDto {
+  @IsString()
+  title: string;
 
-    @IsNumber()
-    @IsOptional()
-    currentPrice: number
+  @IsString()
+  @IsOptional()
+  description?: string;
 
-    @IsString()
-    @IsOptional()
-    status: string
+  @IsNumber()
+  @IsOptional()
+  currentPrice: number;
 
-    @IsDateString()
-    duration: Date
+  @IsString()
+  @IsOptional()
+  status: string;
 
-    @IsOptional()
-    image?: string
+  @IsDateString()
+  duration: Date;
+
+  @IsOptional()
+  image?: string;
 }

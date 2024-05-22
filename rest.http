@@ -1,8 +1,10 @@
-##TESTS:
+## BACKEND REQUEST TESTS:
 
-#### TOKEN (TEST ONLY)
+### TOKEN (TEST ONLY)
+#### Use actual returned authentication token
 @token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJlbWFpbCI6Imp1cmVAZ21haWwuY29tIiwiaWF0IjoxNzE2MzAwODA3LCJleHAiOjE3MTYzMDE3MDd9.jeuN6O24E7qbhoswuBNBvCvTCfl2DxyWb4QLYgwOSZk
 
+## REGISTER USER
 ### POST /auth/register
 POST http://localhost:8080/auth/signup HTTP/1.1
 Content-Type: application/json
@@ -16,6 +18,7 @@ Content-Type: application/json
 	"this_field_should_not_be_passed": "filtered_variable"
 }
 
+## LOGIN USER
 ### POST /auth/login
 POST http://localhost:8080/auth/login HTTP/1.1
 Content-Type: application/json
@@ -25,6 +28,7 @@ Content-Type: application/json
   	"password": "John123!"
 }
 
+## LOGOUT USER
 ### POST /auth/signout
 POST http://localhost:8080/auth/signout HTTP/1.1
 Content-Type: application/json
@@ -34,15 +38,18 @@ Content-Type: application/json
   	"password": "John123!"
 }
 
+## GET USER INFO
 ### GET /me
 GET http://localhost:8080/me HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}} 
 
-### GET /me/upload-image
+## UPLOAD NEW USER IMAGE
+### POST /me/upload-image
 POST http://localhost:8080/me/upload-image HTTP/1.1
 #### Test with Postman: Body: key: 'image' (File), value: 'test_image.png' (dont forget to Authenticate)
 
+## UPDATE USER
 ### PATCH /me/edit
 PATCH http://localhost:8080/me/edit HTTP/1.1
 Content-Type: application/json
@@ -55,7 +62,8 @@ Authorization: {{token}}
   	"password": "John123456!"
 }
 
-### GET /me/update-password
+## CHANGE USER PASSWORD
+### PATCH /me/update-password
 PATCH http://localhost:8080/me/update-password HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}} 
@@ -68,13 +76,14 @@ Authorization: {{token}}
   	"confirm_password": "John12345!"
 }
 
-### GET /me/auction
+## CREATE AUCTION
+### POST /me/auction
 POST http://localhost:8080/me/auction HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-	"title": "new auction with image",
+	"title": "New auction",
 	"currentPrice": 200,
 	"status": "new status",
 	"duration": "2024-05-15T12:30:00",
@@ -82,59 +91,65 @@ Authorization: {{token}}
 	"userId": 0
 }
 
+## UPDATE AUCTION IMAGE
 ### POST /me/auction/:id/upload-image
 POST http://localhost:8080/me/auction/21/upload-image HTTP/1.1
 #### Test with Postman: Body: key: 'image' (File), value: 'test_image.png' (dont forget to Authenticate)
 
-### GET /me/auction/:id
+## UPDATE AUCTION
+### PATCH /me/auction/:id
 PATCH http://localhost:8080/me/auction/13 HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-	"title": "same title",
-	"description": "bla bla bla",
-	"status": "status changeD",
+	"title": "Title",
+	"description": "Description Desc cription",
+	"status": "status changed",
 	"duration": "2024-06-15T12:30:00",
 	"image": "new_new_image.png",
 	"userId": 0
 }
 
+## GET USER AUCTIONS (PAGINATED)
 ### GET /me/auctions
 GET http://localhost:8080/me/auctions HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
-
+## GET WON USER AUCTIONS (PAGINATED)
 ### GET /me/auctions/won
 GET http://localhost:8080/me/auctions/won HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
-
+## GET BIDDING USER AUCTIONS (PAGINATED)
 ### GET /me/auctions/bidding
 GET http://localhost:8080/me/auctions/bidding HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
-
-### GET all auctions
+## GET ALL AUCTIONS (PAGINATED)
+### GET /auctions
 GET http://localhost:8080/auctions HTTP/1.1
 
-### GET one auction
+## GET ONE AUCTION
+### GET /auctions/:id
 GET http://localhost:8080/auctions/3 HTTP/1.1
 
-### GET all bids from auction
+## GET ALL BIDS FROM AUCTION
+### GET /auctions/:id/bids
 GET http://localhost:8080/auctions/3/bids HTTP/1.1
 
-### POST bid on auction
+## CREATE BID ON AUCTION
+### POST /auctions/:id/bid
 POST http://localhost:8080/auctions/2/bid HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 
 {
 	"price": 200,
-	"status": "status changeD",
+	"status": "status changed",
 	"userId": 0,
 	"auctionId": 0
 }

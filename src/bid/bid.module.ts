@@ -1,10 +1,9 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { BidService } from './bid.service';
-import { UserModule } from 'src/user/user.module';
 
 @Module({
   providers: [BidService],
   //controllers: [BidController],
-  exports: [BidService]
+  exports: [BidService],
 })
 export class BidModule {}
