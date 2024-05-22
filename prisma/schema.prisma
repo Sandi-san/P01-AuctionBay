@@ -65,14 +65,12 @@ model Bid {
   createdAt DateTime @default(now())
 
   price  Int
-  //status auction, ko je user dodal bid
-  status String //outbid, winning, done
 
   //FOREIGN KEYS
   userId    Int
   user      User    @relation(fields: [userId], references: [id])
   auctionId Int
-  auction   Auction @relation(fields: [auctionId], references: [id])
+  auction   Auction @relation(fields: [auctionId], references: [id], onDelete: Cascade)
 
   @@map("bids")
 }

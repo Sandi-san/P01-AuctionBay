@@ -70,7 +70,6 @@ export class BidService {
     //dodaj tudi foreign key-e
     dto = {
       ...dto,
-      status: 'In progress', //Winning?
       userId: userId,
       auctionId: auctionId,
     };
