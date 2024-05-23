@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 import { FC } from 'react'
 import { Navigate, RouteProps, useLocation } from 'react-router-dom'
 
+//KO DOSTOPAMO PAGE BREZ LOGGANEGA USERJA
 const PrivateRoute: FC<RouteProps> = ({ children }: RouteProps) => {
   const location = useLocation()
 

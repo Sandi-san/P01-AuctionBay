@@ -2,11 +2,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 
+//STRUKTURA ZA LOGIN USER FORME
 export interface LoginUserFields {
   email: string
   password: string
 }
 
+//FORMA KATERO SKLICUJEMO V FORMAH
 export const useLoginForm = () => {
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email().required('Please enter a valid email'),

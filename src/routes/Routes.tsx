@@ -1,10 +1,8 @@
 import { FC, lazy, Suspense } from 'react'
 import { Route, RouteProps, Routes as Switch } from 'react-router-dom'
-
 import PrivateRoute from './PrivateRoute'
 import RestrictedRoute from './RestrictedRoute'
 import Loading from '../components/ui/Loading'
-import Layout from '../components/ui/Layout'
 import AuctionsIndex from '../pages/AuctionsIndex'
 
 export enum RouteType {
@@ -16,8 +14,6 @@ export enum RouteType {
 type AppRoute = RouteProps & {
   type?: RouteType
 }
-
-//TODO: add all pages/routes
 
 // Public routes
 const Home = lazy(() => import('../pages/Home'))

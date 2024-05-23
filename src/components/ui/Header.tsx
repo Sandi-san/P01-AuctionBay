@@ -1,24 +1,28 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import Toast from 'react-bootstrap/Toast'
-import ToastContainer from 'react-bootstrap/ToastContainer'
 import authStore from '../../stores/auth.store'
 import ProfilePopUp from '../user/ProfilePopUp'
 import 'reactjs-popup/dist/index.css'
 import Avatar from 'react-avatar'
 import AddAuction from '../auction/AddAuction'
 import { UserType } from '../../models/auth'
+import { routes } from '../../constants/routesConstants'
 
 interface Props {
+    //referenca na Header element (v Parentu) da dobis dynamic visino
     setRef: (ref: HTMLDivElement | null) => void
-    user: UserType | null // Receive user variable as prop
+    user: UserType | null
+    //dobi user data in signout user funkciji
     refreshUserData: () => Promise<void>
-    signout: () => Promise<void> // Receive signout function as prop
+    signout: () => Promise<void> 
 }
 
 const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
+    //Popup za add Auction formo
+    const [showAddAuction, setShowAddAuction] = useState(false)
+
     //za User settings popup
-    //ali je Popup odprt ali ne
+    //ali je Popup za user settinge odprt ali ne
     const [showPopup, setShowPopup] = useState(false)
     //dimenzije popupa (za pravilne dimenzije parenta)
     const [popupDimensions, setPopupDimensions] = useState({ height: 0 })
@@ -33,9 +37,7 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
     //za preverjanje na kateri strani smo (spremninjanje button stilov (Auction/Profile))
     const location = useLocation()
 
-    const [showAddAuction, setShowAddAuction] = useState(false)
-
-    //za sliko
+    //preview za user sliko v <img> elementu
     const [preview, setPreview] = useState<string | null>(null)
 
     //effect, ko se stran nalozi
@@ -46,8 +48,8 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
 
             //check ce je click v buttonu, ki odpre Popup (potrebno za pravilni toggle)
             if (buttonRef.current && event.target instanceof Node && buttonRef.current.contains(event.target)) {
-                console.log("Clicked on button")
-                //potrebni koncat izvajanje funk, da se toggle pravilno obnasa
+                // console.log("Clicked on button")
+                //potrebni koncat izvajanje funkcije, da se toggle pravilno obnasa
                 return
             }
             //check ce je click v Popup formu (ko je ze odprt)
@@ -87,7 +89,6 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
                     }
                     //sicer nastavi sliko unknown user
                     else {
-                        console.error('Image not found:', response.statusText)
                         setPreview('images/unknown_user.png')
                     }
                 } catch (error) {
@@ -109,15 +110,11 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
         setRef(headerRef.current)
     }, [setRef]) 
 
-
+    //toggle user settings popup 
     const togglePopup = () => {
         setShowPopup(!showPopup)
         //console.log(`Visibility status: ${showPopup}`)
     }
-
-    //za error prikazovanje (Toast)
-    const [apiError, setApiError] = useState('')
-    const [showError, setShowError] = useState(false)
 
     //za odpri/zapri new Auction popup
     const togglePopupAuction = () => {
@@ -143,7 +140,7 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
                                 <Link to="/auctions"
                                     // spremeni still glede na current page
                                     className={`rounded-full p-3 mr-2 
-                                    ${location.pathname === '/auctions'
+                                    ${location.pathname === routes.AUCTIONS
                                             ? 'bg-black text-white'
                                             : 'bg-white text-black'}`}>
                                     {/* svg ikonca zraven teksta */}
@@ -169,12 +166,6 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
                         {/* Buttoni na desni strani */}
                         <div className="flex items-end bg-white rounded-full pt-1 pl-1 pr-1">
                             {/* levi button */}
-                            {/* <Link to="/new_auction">
-                                <button className="rounded-full bg-white mr-2">
-                                    <img src="/images/new.png" alt="Add new auction"
-                                        className="h-12 w-12" />
-                                </button>
-                            </Link> */}
                             {/* ko kliknes button, odpri popup */}
                             <button onClick={togglePopupAuction} className="mb-1 mr-1 rounded-full bg-white">
                                 <Avatar
@@ -237,16 +228,6 @@ const Header: FC<Props> = ({ setRef, user, refreshUserData, signout }) => {
                     </>
                 )}
             </header>
-            {showError && (
-                <ToastContainer className="p-3" position="top-end">
-                    <Toast onClose={() => setShowError(false)} show={showError}>
-                        <Toast.Header>
-                            <strong className="me-auto text-red-500">Error</strong>
-                        </Toast.Header>
-                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            )}
         </>
     )
 

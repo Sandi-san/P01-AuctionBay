@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CUSTOM STYLE: vec tailwind stylov kot en */
+/* CUSTOM STYLE: vec tailwind stylov skupaj */
 @layer components {
     .form-control {
         @apply border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 w-full
@@ -29,13 +29,8 @@
     }
 }
 
-/* override componente */
+/* Override componente */
 @layer base {
-    /* odstrani default iconco pri input type='date' */
-    input[type='date']::-webkit-calendar-picker-indicator {
-        display: none;
-    }
-
     /* odstrani default buttone pri input type='number' */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {

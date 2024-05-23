@@ -9,6 +9,7 @@ import { UserType } from '../models/auth'
 import * as API from '../api/Api'
 import PaginateButtons from '../components/ui/PaginateButtons'
 import authStore from '../stores/auth.store'
+import { routes } from '../constants/routesConstants'
 
 interface Props {
   headerHeight: number
@@ -32,6 +33,7 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
 
   const fetchAuctionsData = async () => {
     try {
+      //iz url dobi ?page in stevilko za njim
       const pageParam = new URLSearchParams(location.search).get('page')
       const page = pageParam ? parseInt(pageParam) : 1
       const response = await API.fetchAuctions(page)
@@ -52,9 +54,11 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
         setShowError(true)
       } else {
         setAuctions(response.data.data)
+        //nastavi page
         setCurrentPage(page)
-        setTotalPages(response.data.meta.last_page) // Update the total pages
-    
+        //dobi stevilo zadnjega pagea iz responsa
+        setTotalPages(response.data.meta.last_page)
+        
         console.log("Auctions:",response)
         console.log("Total Pages:",totalPages)
         console.log("Page:",page)
@@ -72,7 +76,7 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
 
   // Pagination logic
   const goToPage = (pageNumber: number) => {
-    navigate(`/auctions?page=${pageNumber}`)
+    navigate(`${routes.AUCTIONS}?page=${pageNumber}`)
   }
 
   return (
@@ -104,7 +108,6 @@ const Auctions: FC<Props> = ({ headerHeight, user }) => {
               <br />navigation bar or wait for other users<br />to add new auctions.</p>
           </div>
         )}
-
         {showError && (
           <ToastContainer className="" position="top-end">
             <Toast onClose={() => setShowError(false)} show={showError}>

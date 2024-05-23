@@ -1,12 +1,14 @@
 import { FC, ReactNode } from 'react';
-import Header from './Header';
 import { Link, useLocation } from 'react-router-dom';
+import { routes } from '../../constants/routesConstants';
 
 interface Props {
   children: ReactNode | ReactNode[];
 }
 
+//SIDEBAR ZA LOGIN/REGISTER PAGE
 const Sidebar: FC<Props> = ({ children }) => {
+  //za na katerem pageu (url) smo trenutno
   const location = useLocation();
 
   return (
@@ -25,12 +27,12 @@ const Sidebar: FC<Props> = ({ children }) => {
         </div>
         {/* izris text za link do logi/register glede current page */}
         <div className="text-center">
-          {location.pathname === '/login' && (
+          {location.pathname === routes.LOGIN && (
             <p>
               Don't have an account? <Link to="/signup" className='font-bold'>Sign Up</Link>
             </p>
           )}
-          {location.pathname === '/signup' && (
+          {location.pathname === routes.SIGNUP && (
             <p>
               Already have an account? <Link to="/login" className='font-bold'>Login</Link>
             </p>

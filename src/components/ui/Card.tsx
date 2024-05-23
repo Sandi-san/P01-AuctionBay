@@ -1,5 +1,5 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { FC, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import { AuctionType } from '../../models/auction'
@@ -8,7 +8,7 @@ import EditAuction from '../auction/EditAuction'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import authStore from '../../stores/auth.store'
-import { BidType } from '../../models/bid'
+import { routes } from '../../constants/routesConstants'
 
 //shrani item v Props
 interface Props {
@@ -27,9 +27,11 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
 
     // destruct props v posamezni var
     const { id, title, currentPrice, image, status, duration, userId } = item
+
+    //za prikaz casa do konca Auctiona
     const [time, setTime] = useState('0')
     const [dateClose, setDateClose] = useState(false)
-
+    //za prikaz statusa (dynamic)
     const [auctionStatus, setAuctionStatus] = useState('In progress')
 
     //da izrises buttone v auctionu ce je od trenutnega userja
@@ -78,8 +80,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
         calculateDate()
         const status = getStatusText()
         setAuctionStatus(status)
-        console.log(`Item for: ${item.currentPrice}:\n${item}`)
-        // console.log(`Status for price: ${item.currentPrice}:\n${status}`)
+        // console.log(`Item for: ${item.currentPrice}:\n${item}`)
     }, [])
 
     //Za ko preklaplas med tabim v Profile
@@ -89,11 +90,12 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
 
     //klici delete auction
     const handleDeleteAuction = async () => {
-        console.log("Calling delete for id:", id)
-        console.log("User:", user)
+        // console.log("Calling delete for id:", id)
+        // console.log("User:", user)
         const response = await API.deleteAuction(id)
 
-        if (response.data?.statusCode === StatusCode.NOT_FOUND) {
+        if (response.data?.statusCode === StatusCode.NOT_FOUND ||
+            response.data?.statusCode === StatusCode.BAD_REQUEST) {
             setApiError(response.data.message)
             setShowError(true)
         } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
@@ -112,16 +114,18 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
 
     //Popup editAuction
     const toggleEditAuctionPopup = async (): Promise<void> => {
+        //odpri/zapri edit Auction formo
         setShowEditAuction(!showEditAuction)
-        console.log("Closing and fetching Auction")
+        // console.log("Closing and fetching Auction")
+        //dobi posodobljene Auctione iz DB
         fetchAuctions()
     }
 
 
     const openAuction = () => {
-        console.log(`Item: ${item.id}\nUser: ${user?.id}`)
-        // Navigate to Auction page with item data passed as props
-        navigate('/auction', { state: { item: item, user: user } })
+        // console.log(`Item: ${item.id}\nUser: ${user?.id}`)
+        //navigiraj na Auction page z auction data in user kot propi
+        navigate(routes.AUCTION, { state: { item: item, user: user } })
     }
 
     const getStatusText = () => {
@@ -133,13 +137,15 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
         // if (item.userId === user?.id)
         //     return 'In progress'
 
-        //glede array Bid-ov, preglej ce je kaksen bid od userja
+        //preglej ce item.Bid in user ni undefined
         if (item.Bid && user) {
-            const userBids = item.Bid.filter(bid => bid.userId === user.id);
-            if (userBids.length > 0) {
-                const lastBid = item.Bid[item.Bid.length - 1]
+            //glede array Bid-ov, preglej ce je kaksen bid od userja, pazi da user.id ni 0 (dummy user)
+            if (item.Bid?.length > 0 && user.id!==0) {
+                //dobi big z največjim price-om in primerjaj z current user-jom
+                const highestBid = item.Bid?.reduce((max, bid) => bid.price > max.price ? bid : max, item.Bid[0]);
+
                 //ce je zadnji bid od userja, vrni da zmaguje
-                if (lastBid.userId === user.id) {
+                if (highestBid.userId === user.id) {
                     return 'Winning'
                 }
                 //sicer povej da ne zmaguje auctiona
@@ -148,6 +154,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                 }
             }
         }
+        //ce ni logged userja, display In progress
         return status === 'In progress' ? 'In progress' : 'Done';
     }
 
@@ -161,19 +168,20 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                     <div className="pt-2 pr-2 pl-2 pb-1">
                         {/* Tag header section */}
                         <div className="flex justify-between mb-2">
-                            {/* left tag: status */}
+                            {/* left tag: status (dinamicen glede na User-ja) */}
                             <span className={`py-1 px-2 rounded-full text-xs 
-                            ${auctionStatus === 'In progress' ? 'bg-customYellow' : // 'In progress'
+                                ${auctionStatus === 'In progress' ? 'bg-customYellow' : // 'In progress'
                                     auctionStatus === 'Done' ? 'bg-gray-800 text-white' : // 'Done'
                                         auctionStatus === 'Winning' ? 'bg-green-300' : // 'Winning'
                                             auctionStatus === 'Outbid' ? 'bg-red-300' : // 'Outbid'
-                                                '' // Default empty string for no additional styling
+                                                '' // Default empty string brez additional styling-a
                                 }`}>{auctionStatus}</span>
                             {/* right tag: date */}
                             {/* ce casa ze zmanjkalo (date v preteklost) ne kazi tega */}
                             {time !== '0' && (
                                 <span className={`py-1 px-2 rounded-full text-xs 
-                        ${dateClose ? 'bg-red-300' : ''}`}>{time}
+                                ${dateClose ? 'bg-red-300' : ''}`}>
+                                    {time}
                                     <svg
                                         className='bi bi-clock-history inline-block w-3.5 ml-1'
                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -199,22 +207,24 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                     {/* Image container */}
                     <div
                         className={
-                            //malce squishaj image za buttone
+                            //malce squishaj image za prikaz Delete/Edit button-ov
                             isOwner
                                 ? 'flex justify-center items-center overflow-hidden h-2/3 bg-gray-200 m-2 rounded-xl'
                                 : 'flex justify-center items-center overflow-hidden h-full bg-gray-200 m-2 rounded-xl'
                         }>
-                        {image ? ( // Check if image is not null or empty string
+                        {image ? ( // Preglej ce image ni null ali empty string
                             <img src={`${process.env.REACT_APP_API_URL}/files/${image}`} alt="Product" className="rounded-xl object-cover h-full w-full" />
                         ) : (
-                            <p className="text-center font-semibold text-black">No image available</p> // Display a message if image is null or empty string
+                            //sicer display No image string
+                            <p className="text-center font-semibold text-black">No image available</p>
                         )}
                     </div>
                 </div>
 
-                {/* ce auction trenutno vpisanega userja, prikazi delete/edit buttone */}
+                {/* ce auction trenutno vpisanega userja, in durationa se ni konec, prikazi delete/edit buttone */}
                 {isOwner && isOver && (
                     <div className="flex justify-between px-3 pb-1">
+                        {/* button za delete + ikonca */}
                         <button className="text-gray-900 border border-black bg-white custom-button py-1 px-2 rounded-xl"
                             onClick={handleDeleteAuction}>
                             <svg className="bi bi-trash h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -222,6 +232,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                                 <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                             </svg>
                         </button>
+                        {/* button za popup edit formo + ikonca */}
                         <button
                             className="flex justify-center bg-black text-white py-1 px-2 ml-1 rounded-xl w-full"
                             onClick={toggleEditAuctionPopup}>
@@ -233,13 +244,15 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                     </div>
                 )}
 
-                {/* Edit Auction Popup */}
+                {/* Prikazi Edit Auction Popup Widget */}
                 {showEditAuction && (
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
                         <div className="bg-white rounded-lg p-4">
                             <EditAuction
+                                //podatki Auctiona
                                 auction={item}
-                                closePopup={toggleEditAuctionPopup} //zapri ta popup
+                                //zapri ta popup
+                                closePopup={toggleEditAuctionPopup}
                                 //referenca na fetchAuctions funkcijo v Auctions
                                 fetchAuctions={fetchAuctions}
                             />
@@ -247,6 +260,7 @@ const Card: FC<Props> = ({ item, user, fetchAuctions }) => {
                     </div>
                 )}
             </div>
+            {/* prikazi error iz backenda */}
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>

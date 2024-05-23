@@ -1,48 +1,49 @@
-import { apiRoutes } from '../constants/apiConstants'
-import { apiRequest } from './Api'
-import { CreateAuctionFields, UpdateAuctionFields } from '../hooks/react-hook-form/useCreateUpdateAuction'
-import { BidType } from '../models/bid'
-import { CreateBidFields } from '../hooks/react-hook-form/useCreateUpdateBid'
+import { apiRoutes } from '../constants/apiConstants';
+import { apiRequest } from './Api';
+import { BidType } from '../models/bid';
+import { CreateBidFields } from '../hooks/react-hook-form/useCreateUpdateBid';
 
+//dobi local storage access_token od userja
 const getAccessToken = () => {
-  const accessToken = localStorage.getItem('access_token')
+  const accessToken = localStorage.getItem('access_token');
   //parsaj access token iz JSON (dobi samo vsebini)
-  let parsedAccessToken
+  let parsedAccessToken;
   if (accessToken) {
-    const parsedToken = JSON.parse(accessToken)
+    const parsedToken = JSON.parse(accessToken);
     if (parsedToken && parsedToken.access_token) {
-      parsedAccessToken = parsedToken.access_token
-      return parsedAccessToken
+      parsedAccessToken = parsedToken.access_token;
+      return parsedAccessToken;
     }
   }
-  return null
-}
+  return null;
+};
 
+//GET Bids
 export const fetchBids = async (auctionId: number) => {
   const response = await apiRequest<undefined, BidType>(
     'get',
     `${apiRoutes.AUCTION_PREFIX}/${auctionId}/${apiRoutes.FETCH_BIDS}`,
     undefined,
-  )
+  );
 
   //poglej ce response vsebuje data
   if (response && response.data) {
-    return response.data //vrni data
+    return response.data; //vrni data
   } else {
-    console.error('No bid data found in response')
-    return null // return null ce data ni available
+    console.error('No bid data found in response');
+    return null; // return null ce data ni available
   }
-}
+};
 
-
+//POST Bid
 export const createBid = async (data: CreateBidFields, auctionId: number) => {
-  console.log('Create bid data:', JSON.stringify(data))
+  console.log('Create bid data:', JSON.stringify(data));
 
-  const accessToken = getAccessToken()
+  const accessToken = getAccessToken();
   return apiRequest<CreateBidFields, void>(
     'post',
     `${apiRoutes.AUCTION_PREFIX}/${auctionId}/${apiRoutes.BID_AUCTION}`,
     data,
-    { headers: { Authorization: `Bearer ${accessToken}` } }
-  )
-}
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+};

@@ -3,6 +3,7 @@ import Sidebar from '../components/ui/Sidebar'
 import ForgotPasswordForm from '../components/user/ForgotPasswordForm'
 import { FC } from 'react'
 
+//FORGOT PASSWORD PAGE
 const Password: FC = () => {
   return (
     <div className="flex items-center justify-center grid grid-cols-3 gap-4 h-full">

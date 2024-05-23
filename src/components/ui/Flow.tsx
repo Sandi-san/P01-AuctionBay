@@ -1,4 +1,6 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import Toast from 'react-bootstrap/Toast'
+import ToastContainer from 'react-bootstrap/ToastContainer'
 import Card from './Card'
 import Loading from './Loading'
 import { AuctionType } from '../../models/auction'
@@ -18,16 +20,11 @@ const Flow: FC = () => {
     //page se se nalaga?
     const [loading, setLoading] = useState(true)
 
-    const location = useLocation()
-
     const fetchAuctionsData = async () => {
         try {
-            const pageParam = new URLSearchParams(location.search).get('page')
-            const page = pageParam ? parseInt(pageParam) : 1
-            const response = await API.fetchAuctions(page)
+            const response = await API.fetchAuctions(1)
             console.log(response)
 
-            //TODO vsi status code ki lahko tu dobis
             if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
                 response.data?.statusCode === StatusCode.FORBIDDEN ||
                 response.data?.statusCode === StatusCode.UNAUTHORIZED
@@ -59,13 +56,15 @@ const Flow: FC = () => {
         return <Loading />
     }
 
+    //dummy user da posljemo v Card widget (ker ga dobi pri Propih)
+    //vendar User ne obstaja, ker nismo logged in
     const dummyUser: UserType = {
         id: 0,
         firstName: undefined,
         lastName: undefined,
         email: '',
         image: undefined,
-    };
+    }
 
     return (
         <>
@@ -73,7 +72,7 @@ const Flow: FC = () => {
             <div className="container mx-auto flex justify-center items-center h-screen">
                 {/* ustvari grid kjer so elementi skupaj v centru */}
                 <div className="grid grid-cols-2 gap-4">
-                    {/* izrisi vsak card posebej (da bodo pravilno postavljeni) */}
+                    {/* izrisi 4 prvih Auctionov iz backenda,  vsak card posebej (da bodo pravilno postavljeni) */}
                     {/* dodaj custom drop shadow gradient, rounded corners kot v Card widgetu, sicer ni pravilni color pri cornerjih */}
                     {auctions[0] && (
                         <div className="relative overflow-hidden rounded-2xl shadow-gradient">
@@ -97,6 +96,17 @@ const Flow: FC = () => {
                     )}
                 </div>
             </div>
+            {/* prikazi error iz backenda */}
+            {showError && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowError(false)} show={showError}>
+                        <Toast.Header>
+                            <strong className="me-auto text-red-500">Error</strong>
+                        </Toast.Header>
+                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
+            )}
         </>
     )
 }

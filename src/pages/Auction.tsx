@@ -11,14 +11,13 @@ import { Controller } from 'react-hook-form'
 import { CreateBidFields, useCreateBidForm } from '../hooks/react-hook-form/useCreateUpdateBid'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
+import { routes } from '../constants/routesConstants'
 
 const Auction: FC = () => {
   const { handleSubmit, errors, control, setValue } = useCreateBidForm()
   const [apiError, setApiError] = useState('')
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
-
-  const [auctionStatus, setAuctionStatus] = useState('In progress')
 
   //propi, vendar ji dobis preko navigate()
   const location = useLocation()
@@ -29,6 +28,14 @@ const Auction: FC = () => {
 
   //je user logged in?
   const [userLogged, setUserLogged] = useState<boolean>(false)
+
+  const [time, setTime] = useState('0')
+  const [dateClose, setDateClose] = useState(false)
+
+  //ostali bidi od aucitona
+  const [bids, setBids] = useState<BidType[]>([])
+
+  const [auctionStatus, setAuctionStatus] = useState('In progress')
 
   //dobi User data glede localni access_token
   const getUserData = async () => {
@@ -54,11 +61,11 @@ const Auction: FC = () => {
   const signout = async () => {
     const response = await API.signout()
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      // setApiError(response.data.message)
-      // setShowError(true)
+      setApiError(response.data.message)
+      setShowError(true)
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      // setApiError(response.data.message)
-      // setShowError(true)
+      setApiError(response.data.message)
+      setShowError(true)
     } else {
       console.log("Signing out")
       authStore.signout()
@@ -67,7 +74,7 @@ const Auction: FC = () => {
       user.lastName = undefined
       user.email = ''
       user.image = undefined
-      navigate('/')
+      navigate(routes.HOME)
     }
   }
 
@@ -75,15 +82,9 @@ const Auction: FC = () => {
     if (ref) {
       const height = ref.getBoundingClientRect().height
       setHeaderHeight(height)
-      console.log("Header height:", headerHeight)
+      // console.log("Header height:", headerHeight)
     }
   }
-
-  const [time, setTime] = useState('0')
-  const [dateClose, setDateClose] = useState(false)
-
-  //ostali bidi od aucitona
-  const [bids, setBids] = useState<BidType[]>([])
 
   //sekunde v time remaining za auction
   const secondsToTimeString = (seconds: number) => {
@@ -138,6 +139,7 @@ const Auction: FC = () => {
   useEffect(() => {
     const status = getStatusText()
     setAuctionStatus(status)
+    // console.log("Status:", status)
   }, [bids])
 
   const onSubmit = handleSubmit(async (data: CreateBidFields) => {
@@ -198,11 +200,13 @@ const Auction: FC = () => {
 
     //glede array Bid-ov, preglej ce je kaksen bid od userja
     if (bids.length > 0 && user) {
-      const userBids = bids.filter((bid: { userId: any }) => bid.userId === user.id)
-      if (userBids.length > 0) {
+      //glede array Bid-ov, preglej ce je kaksen bid od userja, pazi da user.id ni 0 (dummy user)
+      if (user.id !== 0) {
+        //dobi big z največjim price-om in primerjaj z current user-jom
+        const highestBid = bids.reduce((max, bid) => bid.price > max.price ? bid : max, bids[0]);
+
         //ce je zadnji bid od userja, vrni da zmaguje
-        //POZOR: v Auction je bid array v obratnem vrstnem redu
-        if (bids[0] === user.id) {
+        if (highestBid.userId === user.id) {
           return 'Winning'
         }
         //sicer povej da ne zmaguje auctiona
@@ -245,11 +249,11 @@ const Auction: FC = () => {
               <div className="flex justify-between mb-1 h-1/8">
                 {/* left tag: status */}
                 <span className={`py-1 px-2 rounded-full text-xs 
-                            ${auctionStatus === 'In progress' ? 'bg-customYellow' : // 'In progress'
+                  ${auctionStatus === 'In progress' ? 'bg-customYellow' : // 'In progress'
                     auctionStatus === 'Done' ? 'bg-gray-800 text-white' : // 'Done'
                       auctionStatus === 'Winning' ? 'bg-green-300' : // 'Winning'
                         auctionStatus === 'Outbid' ? 'bg-red-300' : // 'Outbid'
-                          '' // Default empty string for no additional styling
+                          '' // Default empty string brez additional styling-a
                   }`}>{auctionStatus}</span>
                 {/* right tag: date */}
                 {/* ce casa ze zmanjkalo (date v preteklost) ne kazi tega */}
@@ -301,11 +305,6 @@ const Auction: FC = () => {
                                   : 'form-control-sm'
                               }
                             />
-                            {/* {errors.price && (
-                            <div className="invalid-feedback">
-                              {errors.price.message}
-                            </div>
-                          )} */}
                           </div>
                         </Form.Group>
                       )}

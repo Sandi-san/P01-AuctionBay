@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 
+//STRUKTURA ZA REGISTER USER FORME
 export interface RegisterUserFields {
   firstName?: string
   lastName?: string
@@ -10,6 +11,7 @@ export interface RegisterUserFields {
   confirm_password: string
 }
 
+//FORMA KATERO SKLICUJEMO V FORMAH
 export const useRegisterForm = () => {
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().notRequired(),

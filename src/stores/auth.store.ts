@@ -1,30 +1,31 @@
-import { makeAutoObservable } from 'mobx'
-import { UserType } from '../models/auth'
-import { userStorage } from '../utils/localStorage'
+import { makeAutoObservable } from 'mobx';
+import { UserType } from '../models/auth';
+import { userStorage } from '../utils/localStorage';
 
+//SHRANJEVANJE USERJA V LOCAL STORAGE
 export interface AuthContextType {
-  user?: UserType | null
-  login: () => void
-  signout: () => void
+  user?: UserType | null;
+  login: () => void;
+  signout: () => void;
 }
 
 class AuthStore {
-  user?: UserType | null = userStorage.getUser() || null
+  user?: UserType | null = userStorage.getUser() || null;
 
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this);
   }
 
   login(user: UserType) {
-    userStorage.setUser(user)
-    this.user = user
+    userStorage.setUser(user);
+    this.user = user;
   }
 
   signout() {
-    userStorage.clearUser()
-    this.user = undefined
+    userStorage.clearUser();
+    this.user = undefined;
   }
 }
 
-const authStore = new AuthStore()
-export default authStore
+const authStore = new AuthStore();
+export default authStore;

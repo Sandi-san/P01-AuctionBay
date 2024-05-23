@@ -1,8 +1,4 @@
 import { FC, useState } from 'react'
-import 'reactjs-popup/dist/index.css'
-import { useNavigate } from 'react-router-dom'
-import Toast from 'react-bootstrap/Toast'
-import ToastContainer from 'react-bootstrap/ToastContainer'
 import { Button } from 'react-bootstrap'
 import ProfileSettings from './ProfileSettings'
 import ProfilePassword from './ProfilePassword'
@@ -19,10 +15,6 @@ interface Props {
 }
 
 const ProfilePopUp: FC<Props> = ({ user, signout, refreshUserData }) => {
-    //za error prikazovanje (Toast)
-    const [apiError, setApiError] = useState('')
-    const [showError, setShowError] = useState(false)
-   
     //za vse tri Popup forme (Settings, Password, Avatar)
     const [showPopupSettings, setShowPopupSettings] = useState(false)
     const [showPopupPassword, setShowPopupPassword] = useState(false)
@@ -100,16 +92,6 @@ const ProfilePopUp: FC<Props> = ({ user, signout, refreshUserData }) => {
                     Logout
                 </button>
             </div>
-            {showError && (
-                <ToastContainer className="p-3" position="top-end">
-                    <Toast onClose={() => setShowError(false)} show={showError}>
-                        <Toast.Header>
-                            <strong className="me-auto text-red-500">Error</strong>
-                        </Toast.Header>
-                        <Toast.Body className="text-red-500 bg-light">{apiError}</Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            )}
         </>
     )
 }

@@ -10,6 +10,9 @@ import { CreateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/rea
 import { AuctionType } from '../../models/auction'
 import { UserType } from '../../models/auth'
 import authStore from '../../stores/auth.store'
+import { routes } from '../../constants/routesConstants'
+
+//POPUP ZA ADD AUCTION FORMO
 
 //shrani item v Props
 interface Props {
@@ -29,12 +32,23 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
         userId: 0,
     }
 
+    //control=form struktura za Create in Update Auction
     const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({ defaultValues })
+    //API response error iz backenda
     const [apiError, setApiError] = useState('')
+    //za prikaz error text na strani
     const [showError, setShowError] = useState(false)
+    //za prikaz success text na strani
     const [showSuccess, setShowSuccess] = useState(false)
+    //za navigacijo na drugo stran
     const navigate = useNavigate()
+    //za trenutno stran
     const location = useLocation()
+
+    //var kamor shranjujemo image file (file)
+    const [image, setImage] = useState<File | null>(null)
+    //var kamor shranjujemo sliko za preview (prikaz v <img> elementu) (ime)
+    const [imagePreview, setImagePreview] = useState<string | null>(null)
 
     const onSubmit = handleSubmit(async (data: CreateAuctionFields) => {
         // console.log(user.id)
@@ -42,18 +56,24 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
         const response = await API.createAuction(data)
         console.log(response)
 
-        //TODO vsi status code ki lahko tu dobis
+        //Errorji ki so definirani v create Auction metodi
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
             response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
             setApiError(response.data.message)
             setShowSuccess(false)
             setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+        }
+        //ce iz backenda dobimo UNAUTH response, ker nimamo ustreznega access_tokena oz. je potekel
+        else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+            //zbrisi local storage access_token ce obstaja
             authStore.signout()
             console.log("You are not logged in or access token has expired.")
+            //reload page (ce smo na PRIVATE page, bo avtomatsko relocated)
             navigate(location.pathname, { state: window.location.reload() })
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+        }
+        //error iz serverja, pogosto Prisma
+        else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
             setApiError(response.data.message)
             setShowSuccess(false)
             setShowError(true)
@@ -63,11 +83,13 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
             if (image) {
                 const formData = new FormData()
                 formData.append('image', image, image.name)
+                //ce je bil poslan file, klici update image route
                 const fileResponse = await API.uploadAuctionImage(
                     response.data.id, formData
                 )
                 if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST ||
-                    fileResponse.data?.statusCode === StatusCode.FORBIDDEN
+                    fileResponse.data?.statusCode === StatusCode.FORBIDDEN ||
+                    response.data?.statusCode === StatusCode.UNAUTHORIZED
                 ) {
                     setApiError(fileResponse.data.message)
                     setShowSuccess(false)
@@ -80,43 +102,41 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                 else {
                     setShowError(false)
                     setShowSuccess(true)
-                    //refresh page
-                    if (location.pathname === '/auctions') {
+                    //ce si na /auctions pageu, refresh page, sicer ni potrebno ker auctioni niso prikazani
+                    if (location.pathname === routes.AUCTIONS) {
                         navigate(location.pathname, { state: window.location.reload() })
                     }
                 }
             }
+            //update uspel, vendar nismo poslali file
             else {
                 setShowError(false)
                 setShowSuccess(true)
-                //refresh page
-                if (location.pathname === '/auctions') {
+                //ce si na /auctions pageu, refresh page, sicer ni potrebno ker auctioni niso prikazani
+                if (location.pathname === routes.AUCTIONS) {
                     navigate(location.pathname, { state: window.location.reload() })
                 }
             }
         }
     })
 
-    // State variable to store the uploaded image file
-    const [image, setImage] = useState<File | null>(null)
-    // State variable to store the image preview URL
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
-
-    // Function to handle image upload
+    //funkcija za image upload
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedImage = event.target.files && event.target.files[0]
         if (selectedImage) {
+            //nastavi file
             setImage(selectedImage)
 
             const reader = new FileReader()
             reader.onloadend = () => {
+                //preview za <img> element
                 setImagePreview(reader.result as string)
             }
             reader.readAsDataURL(selectedImage)
         }
     }
 
-    // Function to handle image removal
+    //ko pritisnemo remove image gumb
     const handleImageRemove = () => {
         setImage(null)
         setImagePreview(null)
@@ -128,16 +148,17 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
             <div className="mb-6">
                 <p className="text-2xl font-bold">Add auction</p>
             </div>
+            {/* ob Submit, klici onSubmit formo */}
             <Form className="m-2" onSubmit={onSubmit}>
                 {/* Slika */}
                 <div className="flex justify-center items-center p-4 mb-3 rounded-2xl bg-gray-100 max-w-[524px] h-[200px] relative overflow-hidden">
+                    {/* prikaz slike v formi */}
                     {imagePreview ? (
                         <>
                             <div className="relative">
                                 <img
                                     id="image"
                                     src={imagePreview} alt="Uploaded"
-                                    // className="w-auto max-w-[524px] h-[200px]" />
                                     className="w-full h-full object-cover" />
                             </div>
                             {/* button ki odstrani sliko */}
@@ -152,7 +173,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                             </button>
                         </>
                     ) : (
-                        // button ki doda sliko
+                        // button ki doda sliko, ce nimamom image preview za <img> element
                         <label className="cursor-pointer">
                             <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                             <div
@@ -165,6 +186,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                 </div>
                 {/* Title in ostali */}
                 <Controller
+                    // form je povezan z createUpdateAuctionForm (glej name, type,...)
                     control={control}
                     name="title"
                     render={({ field }) => (
@@ -183,6 +205,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                             : 'form-control'
                                     }
                                 />
+                                {/* prikazi, ce nastane error v formi (lokalni error) */}
                                 {errors.title && (
                                     <div className="invalid-feedback">
                                         {errors.title.message}
@@ -268,7 +291,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                     <div className='px-2 py-1 mb-1 w-full'>
                                         <input
                                             {...field}
-                                            // type="date"
+                                            // type="date + time"
                                             type="datetime-local"
                                             placeholder="dd/mm/yyyy --:--"
                                             aria-label="End date"
@@ -281,16 +304,6 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                                             //input ne more dobit Date, zato pretvori Date v string
                                             value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
                                         />
-                                        {/* Ikonca v input formu: Clock*/}
-                                        {/* <span className="absolute right-0 p-3 mr-2 text-gray-500">
-                                            <svg
-                                                className='bi bi-clock-history'
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z" />
-                                                <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
-                                                <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
-                                            </svg>
-                                        </span> */}
                                         {errors.duration && (
                                             <div className="invalid-feedback">
                                                 {errors.duration.message}
@@ -303,10 +316,12 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                     </div>
                 </div>
                 <div className='flex justify-end'>
+                    {/* ko kliknemo cancel, klici closePopup funkcijo v parent Widgetu (glej props) */}
                     <Button onClick={closePopup}
                         className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">
                         Cancel
                     </Button>
+                    {/* ko kliknemo submit, klici onSubmit funkcijo (glej zacetek <Form>) */}
                     <Button
                         type="submit"
                         className="mr-4 bg-customYellow custom-button hover:bg-customYellow-dark">
@@ -314,6 +329,7 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                     </Button>
                 </div>
             </Form>
+            {/* prikazi error iz backenda */}
             {showError && (
                 <ToastContainer className="p-3" position="top-end">
                     <Toast onClose={() => setShowError(false)} show={showError}>
@@ -324,16 +340,15 @@ const AddAuction: FC<Props> = ({ user, closePopup }) => {
                     </Toast>
                 </ToastContainer>
             )}
-            {
-                showSuccess && (
-                    <ToastContainer className="p-3" position="top-end">
-                        <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
-                            <Toast.Header>
-                                <strong className="me-auto text-green-500">Success</strong>
-                            </Toast.Header>
-                        </Toast>
-                    </ToastContainer>
-                )
+            {showSuccess && (
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
+                        <Toast.Header>
+                            <strong className="me-auto text-green-500">Success</strong>
+                        </Toast.Header>
+                    </Toast>
+                </ToastContainer>
+            )
             }
         </div>
     )

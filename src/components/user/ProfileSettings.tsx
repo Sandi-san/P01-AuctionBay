@@ -8,6 +8,7 @@ import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hoo
 import { StatusCode } from '../../constants/errorConstants'
 import * as API from '../../api/Api'
 import { UpdateUserType, UserType } from '../../models/auth'
+import { routes } from '../../constants/routesConstants'
 
 //shrani item v Props
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 
 const ProfileSettings: FC<Props> = (
     { user, closePopup, openPopupPassword, openPopupImage }) => {
+    //destruct user variables
     const { id, firstName, lastName, email } = user!
     const defaultValues: UpdateUserType = {
         id,
@@ -38,12 +40,10 @@ const ProfileSettings: FC<Props> = (
     const location = useLocation()
 
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
-        console.log(user?.id)
-
+        // console.log(user?.id)
         const response = await API.updateUser(data)
         console.log(response)
 
-        //TODO vsi status code ki lahko tu dobis
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
             response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
@@ -58,7 +58,7 @@ const ProfileSettings: FC<Props> = (
         else {
             setShowError(false)
             setShowSuccess(true)
-            if(location.pathname === '/profile')
+            if (location.pathname === routes.PROFILE)
                 navigate(location.pathname, { state: window.location.reload() })
         }
     })

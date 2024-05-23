@@ -1,9 +1,6 @@
-import { FC, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import Toast from 'react-bootstrap/Toast'
-import ToastContainer from 'react-bootstrap/ToastContainer'
-import authStore from '../../stores/auth.store'
+import { FC } from 'react'
 
+//CUSTOM STYLE PAGE KO SE ELEMENTI IZ BACKEND SE NALAGAJO 
 const Loading: FC = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen">

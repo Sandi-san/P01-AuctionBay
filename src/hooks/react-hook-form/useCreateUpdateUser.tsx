@@ -3,6 +3,7 @@ import { UpdateUserType } from '../../models/auth'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 
+//STRUKTURA ZA CREATE USER FORME
 export interface CreateUserFields {
   firstName?: string
   lastName?: string
@@ -11,6 +12,7 @@ export interface CreateUserFields {
   confirm_password: string
 }
 
+//STRUKTURA ZA UPDATE USER FORME
 export interface UpdateUserFields {
   firstName?: string
   lastName?: string
@@ -25,6 +27,7 @@ interface Props {
   defaultValues?: UpdateUserType
 }
 
+//FORMA KATERO SKLICUJEMO V FORMAH
 export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
   const CreateUserSchema = Yup.object().shape({
     firstName: Yup.string().notRequired(),

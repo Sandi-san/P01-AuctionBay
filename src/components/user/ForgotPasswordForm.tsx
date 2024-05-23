@@ -18,15 +18,18 @@ import { StatusCode } from '../../constants/errorConstants'
 import authStore from '../../stores/auth.store'
 
 const ForgotPasswordForm: FC = () => {
-
   const navigate = useNavigate()
   const { handleSubmit, errors, control } = useLoginForm()
   const [apiError, setApiError] = useState('')
   const [showError, setShowError] = useState(false)
 
   const onSubmit = handleSubmit(async (data: LoginUserFields) => {
+    //RESET PASSWORD PO EMAILU NI IMPLEMENTIRANA V TEM PROJEKTU (MOCKUP)
     const response = await API.login(data)
-    if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
+    if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
+      response.data?.statusCode === StatusCode.NOT_FOUND ||
+      response.data?.statusCode === StatusCode.UNAUTHORIZED
+    ) {
       setApiError(response.data.message)
       setShowError(true)
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
@@ -34,7 +37,7 @@ const ForgotPasswordForm: FC = () => {
       setShowError(true)
     } else {
       authStore.login(response.data)
-      navigate('/')
+      navigate(routes.HOME)
     }
   })
 
@@ -84,7 +87,7 @@ const ForgotPasswordForm: FC = () => {
       <div className="text-center mt-4">
         <Link to="/login" className="text-gray-500 text-xs cursor-pointer flex items-center justify-center">
           {/* SVG icon */}
-          <svg className="w-3 h-3 mr-2 bi bi-chevron-left"xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <svg className="w-3 h-3 mr-2 bi bi-chevron-left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
           </svg>
           {/* Text */}

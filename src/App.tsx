@@ -4,12 +4,13 @@ import { usePageIdentification } from './hooks/usePageIdentification'
 import { observer } from 'mobx-react'
 import './styles.css'
 
+//MAIN PAGE OD APLIKACIJE
 const App: FC = () => {
   usePageIdentification()
 
   return (
     <div className="bg-gray-100 min-h-screen">
-    <Routes />
+      <Routes />
     </div>
   )
 }

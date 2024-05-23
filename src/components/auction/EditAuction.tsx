@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
@@ -8,7 +8,6 @@ import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import { UpdateAuctionFields, useCreateUpdateAuctionForm } from '../../hooks/react-hook-form/useCreateUpdateAuction'
 import { AuctionType } from '../../models/auction'
-import { UserType } from '../../models/auth'
 import authStore from '../../stores/auth.store'
 
 //shrani item v Props
@@ -29,11 +28,12 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
         description,
         currentPrice,
         status,
-        duration: new Date(duration), // Convert duration to Date object
+        duration: new Date(duration), //convert duration string v Date
         image,
         userId,
     }
 
+    //forma za create in update Auction
     const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({ defaultValues })
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
@@ -41,28 +41,39 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    const onSubmit = handleSubmit(async (data: UpdateAuctionFields) => {
-        console.log("SUBMIT DATA:", data)
-        console.log("SUBMIT FILE:", imageFile)
+    //shrani FILE od posodobljene slike
+    const [imageFile, setImageFile] = useState<File | null>(null)
+    //image ki se zacasno prikaze v img elementu
+    const [imagePreview, setImagePreview] = useState<string | null>(null)
 
+    const onSubmit = handleSubmit(async (data: UpdateAuctionFields) => {
+        // console.log("SUBMIT DATA:", data)
+        // console.log("SUBMIT FILE:", imageFile)
+
+        //ce sta file in preview prazna, odstrani image od auctiona
+        //(ce je prej bil image in ga je zdaj user odstranil)
         if (!imageFile && !imagePreview)
             data.image = ""
 
         const response = await API.updateAuction(id, data)
         console.log(response)
 
-        //TODO vsi status code ki lahko tu dobis
+        //errori, ki lahko dobimo v update Auction metodi
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
             response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
             setApiError(response.data.message)
             setShowSuccess(false)
             setShowError(true)
-        } else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
+        }
+        //ce vrne UNAUTH response, ker ni validni access_token
+        else if (response.data?.statusCode === StatusCode.UNAUTHORIZED) {
             authStore.signout()
             console.log("You are not logged in or access token has expired.")
             navigate(location.pathname, { state: window.location.reload() })
-        } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
+        } 
+        //server error, pogosto v Prismi
+        else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
             setApiError(response.data.message)
             setShowSuccess(false)
             setShowError(true)
@@ -77,7 +88,8 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
                     response.data.id, formData
                 )
                 if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST ||
-                    fileResponse.data?.statusCode === StatusCode.FORBIDDEN
+                    fileResponse.data?.statusCode === StatusCode.FORBIDDEN || 
+                    response.data?.statusCode === StatusCode.UNAUTHORIZED
                 ) {
                     setApiError(fileResponse.data.message)
                     setShowSuccess(false)
@@ -90,6 +102,7 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
                 else {
                     setShowError(false)
                     setShowSuccess(true)
+                    //posodobi Auctione, in potem zapri formo
                     await fetchAuctions()
                     closePopup()
                 }
@@ -97,39 +110,37 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
             else {
                 setShowError(false)
                 setShowSuccess(true)
+                //posodobi Auctione, in potem zapri formo
                 await fetchAuctions()
                 closePopup()
             }
         }
     })
 
-    //shrani FILE od posodobljene slike
-    const [imageFile, setImageFile] = useState<File | null>(null)
-    //image ki se zacasno prikaze v img elementu
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
-
-    // Function to handle image upload
+    //funkcija za image upload
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedImage = event.target.files && event.target.files[0]
         if (selectedImage) {
+            //trenutni file (za posiljanje v backend)
             setImageFile(selectedImage)
 
             const reader = new FileReader()
             reader.onloadend = () => {
+                //preview sliko za <img> element
                 setImagePreview(reader.result as string)
             }
             reader.readAsDataURL(selectedImage)
         }
     }
 
-    // Function to handle image removal
+    //ko kliknemo remove image
     const handleImageRemove = () => {
         setImageFile(null)
         setImagePreview(null)
     }
 
     useEffect(() => {
-        //dobi image ob zagonu
+        //ce obstaja image od Auctiona, dobi in izrisi v <img>
         if (defaultValues.image)
             setImagePreview(`${process.env.REACT_APP_API_URL}/files/${defaultValues.image}`)
         // console.log("Data:", defaultValues)
@@ -146,12 +157,12 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
             <Form className="m-2" onSubmit={onSubmit}>
                 {/* Slika */}
                 <div className="flex justify-center items-center p-4 mb-3 rounded-2xl bg-gray-100 max-w-[524px] h-[200px] relative overflow-hidden">
+                    {/* ce obstaja image za izris */}
                     {imagePreview ? (
                         <>
                             <div className="relative">
                                 <img
                                     id="image"
-                                    // src={`${process.env.REACT_APP_API_URL}/files/${imagePreview}`} alt="Uploaded"
                                     src={imagePreview} alt="Uploaded"                                    // className="w-auto max-w-[524px] h-[200px]" />
                                     className="w-full h-full object-cover" />
 
@@ -256,16 +267,6 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
                                     //input ne more dobit Date, zato pretvori Date v string
                                     value={field.value instanceof Date ? field.value.toISOString().substring(0, 16) : field.value}
                                 />
-                                {/* Ikonca v input formu: Clock*/}
-                                {/* <span className="absolute right-0 p-3 mr-2 text-gray-500">
-                                    <svg
-                                        className='bi bi-clock-history'
-                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z" />
-                                        <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
-                                        <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
-                                    </svg>
-                                </span> */}
                                 {errors.duration && (
                                     <div className="invalid-feedback">
                                         {errors.duration.message}
@@ -297,8 +298,7 @@ const EditAuction: FC<Props> = ({ auction, closePopup, fetchAuctions }) => {
                     </Toast>
                 </ToastContainer>
             )}
-            {
-                showSuccess && (
+            {showSuccess && (
                     <ToastContainer className="p-3" position="top-end">
                         <Toast onClose={() => setShowSuccess(false)} show={showSuccess}>
                             <Toast.Header>

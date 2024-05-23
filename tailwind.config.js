@@ -3,6 +3,7 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  //CUSTOM STYLES
   theme: {
     extend: {
       colors: {

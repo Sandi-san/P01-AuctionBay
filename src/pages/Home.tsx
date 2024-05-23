@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import Header from '../components/ui/Header'
 import Layout from '../components/ui/Layout'
 import { FC } from 'react'
 import { Button } from 'react-bootstrap'
 
+//MAIN PAGE
 const Home: FC = () => {
   return (
     <>

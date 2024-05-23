@@ -1,9 +1,7 @@
 import { FC, MouseEventHandler, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button, Form, FormLabel } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
-import authStore from '../../stores/auth.store'
 import { Controller } from 'react-hook-form'
 import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hook-form/useCreateUpdateUser'
 import { StatusCode } from '../../constants/errorConstants'
@@ -18,11 +16,10 @@ interface Props {
 }
 
 const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
-    
     const { id, email } = user!
     const defaultValues: UpdateUserType = {
         id,
-        email, //OBVEZEN email sicer sploh ne klice onSubmit??
+        email, //OBVEZEN email sicer sploh ne klice onSubmit (glej UserType)
     }
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
     const [apiError, setApiError] = useState('')
@@ -34,14 +31,13 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
     const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
         const response = await API.updateUserPassword(data)
-        console.log(response);
+        console.log(response)
 
-        //TODO vsi status code ki lahko tu dobis
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
-            response.data?.statusCode === StatusCode.FORBIDDEN
+            response.data?.statusCode === StatusCode.FORBIDDEN ||
+            response.data?.statusCode === StatusCode.NOT_FOUND
         ) {
             setApiError(response.data.message)
             setShowSuccess(false)
@@ -56,9 +52,6 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
             setShowSuccess(true)
         }
     })
-
-    //TODO: dobi vrednosti userja iz baze /me
-    //in izpisi v formi
 
     return (
         <div className="text-black bg-white rounded-lg w-[540px]">
@@ -129,8 +122,7 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
                                 <button
                                     type="button"
                                     className="absolute right-0 p-3 mr-2"
-                                    onClick={() => setShowPassword(prev => !prev)}
-                                >
+                                    onClick={() => setShowPassword(prev => !prev)}>
                                     <svg className="bi bi-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
                                         <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
@@ -188,7 +180,6 @@ const ProfilePassword: FC<Props> = ({ user, closePopup }) => {
                         </Form.Group>
                     )}
                 />
-
                 <div className='flex justify-end'>
                     <Button onClick={closePopup}
                         className="mr-4 bg-gray-200 custom-button hover:bg-gray-300">

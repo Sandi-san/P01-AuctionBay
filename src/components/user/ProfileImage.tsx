@@ -1,10 +1,8 @@
 import { ChangeEvent, FC, MouseEventHandler, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Button, Form, FormLabel } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
-import authStore from '../../stores/auth.store'
-import { Controller } from 'react-hook-form'
 import { UpdateUserFields, useCreateUpdateUserForm } from '../../hooks/react-hook-form/useCreateUpdateUser'
 import { StatusCode } from '../../constants/errorConstants'
 import * as API from '../../api/Api'
@@ -23,7 +21,7 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
     const { id, email, image } = user!
     const defaultValues: UpdateUserType = {
         id,
-        email, //OBVEZEN email sicer sploh ne klice onSubmit??
+        email, //OBVEZEN email sicer sploh ne klice onSubmit (glej UserType)
         image,
     }
     const { handleSubmit, errors, control } = useCreateUpdateUserForm({ defaultValues })
@@ -31,7 +29,7 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
     const [showError, setShowError] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
 
-    //ua sliko
+    //za sliko
     const [preview, setPreview] = useState<string | null>(null)
     const [file, setFile] = useState<File | null>(null)
     const [fileError, setFileError] = useState(false)
@@ -59,7 +57,6 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
         const response = await API.updateUserImage(formData)
         console.log(response)
 
-        //TODO vsi status code ki lahko tu dobis
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
             response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
@@ -87,10 +84,9 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
                 //ce response 200-OK, nastavi sliko
                 if (response.ok) {
                     setPreview(response.url)
-                } 
+                }
                 //sicer nastavi sliko unknown user
                 else {
-                    console.error('Image not found:', response.statusText)
                     setPreview('images/unknown_user.png')
                 }
             } catch (error) {
@@ -145,10 +141,6 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
                         <Avatar round
                             src={
                                 preview as string
-                                // preview
-                                //   ? preview
-                                //   : defaultValues &&
-                                //     `${process.env.REACT_APP_API_URL}/files/${defaultValues.image}`
                             }
                             alt="Image" />
                     </label>
@@ -179,6 +171,11 @@ const ProfileImage: FC<Props> = ({ user, closePopup }) => {
                     aria-describedby="image"
                     className="hidden"
                 />
+                {errors.image && (
+                    <div className="invalid-feedback">
+                        {errors.image.message}
+                    </div>
+                )}
 
                 <div className='flex justify-end'>
                     <Button onClick={closePopup}

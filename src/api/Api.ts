@@ -1,5 +1,7 @@
-import Axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
+import Axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
+//API Requesti z uporabo Axios.
+//Vse funkcije za API requeste v backend uporabljajo to metodo
 export async function apiRequest<D = Record<string, unknown>, R = unknown>(
   method: 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch',
   path: string,
@@ -17,14 +19,14 @@ export async function apiRequest<D = Record<string, unknown>, R = unknown>(
       data: input,
       headers: options?.headers,
       withCredentials: true,
-    })
-    return response
+    });
+    return response;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return error.response
+    return error.response;
   }
 }
 
-export * from './User'
-export * from './Auction'
-export * from './Bid'
+export * from './User';
+export * from './Auction';
+export * from './Bid';

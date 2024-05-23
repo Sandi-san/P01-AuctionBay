@@ -3,6 +3,7 @@ import { AuctionType } from "../../models/auction"
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 
+//STRUKTURA ZA CREATE AUCTION FORME
 export interface CreateAuctionFields {
   title: string
   description?: string
@@ -13,6 +14,7 @@ export interface CreateAuctionFields {
   userId: number
 }
 
+//STRUKTURA ZA EDIT AUCTION FORME
 export interface UpdateAuctionFields {
   title?: string
   description?: string
@@ -28,6 +30,7 @@ interface Props {
   defaultValues?: AuctionType
 }
 
+//FORMA KATERO SKLICUJEMO V FORMAH
 export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
   const CreateAuctionSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
@@ -70,13 +73,11 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
       : yupResolver(CreateAuctionSchema),
   })
 
-return {
-  handleSubmit,
-  errors,
-  control,
-}
+  return {
+    handleSubmit,
+    errors,
+    control,
+  }
 }
 
-export type CreateUpdateAuctionSchema = ReturnType<
-  typeof useCreateUpdateAuctionForm
->
+export type CreateUpdateAuctionSchema = ReturnType<typeof useCreateUpdateAuctionForm>

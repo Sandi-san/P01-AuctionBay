@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import Header from '../components/ui/Header'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { UserType } from '../models/auth'
@@ -7,14 +7,19 @@ import authStore from '../stores/auth.store'
 import * as API from '../api/Api'
 import Auctions from './Auctions'
 import Loading from '../components/ui/Loading'
+import { routes } from '../constants/routesConstants'
+import Toast from 'react-bootstrap/Toast'
+import ToastContainer from 'react-bootstrap/ToastContainer'
 
+//INDEX ZA AUCTIONE (ker v Auctions mores dat Props, kar ni dovoljeno v Routes)
 const AuctionsIndex: FC = () => {
-
-  const headerRef = useRef<HTMLDivElement>(null)
   const [headerHeight, setHeaderHeight] = useState<number>(0)
 
   const navigate = useNavigate()
   const location = useLocation()
+
+  const [apiError, setApiError] = useState('')
+  const [showError, setShowError] = useState(false)
 
   //dobi user iz DB glede localni access_token
   const [user, setUser] = useState<UserType>({
@@ -28,19 +33,19 @@ const AuctionsIndex: FC = () => {
   //dobi User data glede localni access_token
   const getUserData = async () => {
     // Fetch user data from API
-    const userData = await API.fetchUser()
-    console.log('Fetching User Data:', userData)
+    const response = await API.fetchUser()
+    console.log('Fetching User Data:', response)
 
     // Check if userData is not undefined
-    if (userData !== undefined) {
+    if (response !== undefined) {
       //ce userData vrnil unauthorized, izbrisi localni access_token
-      if (userData.statusCode === StatusCode.UNAUTHORIZED) {
+      if (response.statusCode === StatusCode.UNAUTHORIZED) {
         //ce si ze na main pageu IN obstaja access_token, force refreshaj stran
-        if (location.pathname === '/'
+        if (location.pathname === routes.HOME
           && window.localStorage.getItem(`access_token`)
         ) {
           authStore.signout()
-          navigate('/', { state: window.location.reload() })
+          navigate(routes.HOME, { state: window.location.reload() })
         }
         //vrni na main page
         else {
@@ -48,14 +53,14 @@ const AuctionsIndex: FC = () => {
           //(za ko userju potece access_token ko je nekje v aplikaciji (ki ni PUBLIC))
           if (authStore.user) {
             authStore.signout()
-            navigate('/')
+            navigate(routes.HOME)
           }
           //ce ni access_tokena, da lahko obiskuje PUBLIC page 
           authStore.signout()
         }
       }
       else {
-        setUser(userData)
+        setUser(response)
       }
     }
   }
@@ -64,11 +69,11 @@ const AuctionsIndex: FC = () => {
   const signout = async () => {
     const response = await API.signout()
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      // setApiError(response.data.message)
-      // setShowError(true)
+      setApiError(response.data.message)
+      setShowError(true)
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      // setApiError(response.data.message)
-      // setShowError(true)
+      setApiError(response.data.message)
+      setShowError(true)
     } else {
       console.log("Signing out")
       authStore.signout()
@@ -79,7 +84,7 @@ const AuctionsIndex: FC = () => {
         email: '',
         image: undefined,
       })
-      navigate('/')
+      navigate(routes.HOME)
     }
   }
 
@@ -87,16 +92,11 @@ const AuctionsIndex: FC = () => {
     if (ref) {
       const height = ref.getBoundingClientRect().height
       setHeaderHeight(height)
-      console.log("Header height:",headerHeight)
+      // console.log("Header height:", headerHeight)
     }
   }
 
   useEffect(() => {
-    // if (headerRef.current) {
-    //     const height = headerRef.current.getBoundingClientRect().height
-    //     setHeaderHeight(height)
-    //     console.log("HH:",headerHeight)
-    // }
     const fetchData = async () => {
       // dobi userja ob zagonu komponente
       await getUserData()
@@ -118,6 +118,16 @@ const AuctionsIndex: FC = () => {
         <Auctions headerHeight={headerHeight} user={user} />
       ) : (
         <Loading />
+      )}
+      {showError && (
+        <ToastContainer className="" position="top-end">
+          <Toast onClose={() => setShowError(false)} show={showError}>
+            <Toast.Header>
+              <strong className="me-auto text-red-500 text-md">Error</strong>
+            </Toast.Header>
+            <Toast.Body className="text-red-500 bg-light text-sm">{apiError}</Toast.Body>
+          </Toast>
+        </ToastContainer>
       )}
     </>
   )

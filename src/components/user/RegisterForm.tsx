@@ -1,21 +1,17 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { observer } from 'mobx-react'
-
-import {
-    RegisterUserFields,
-    useRegisterForm,
-} from '../../hooks/react-hook-form/useRegister'
+import { RegisterUserFields, useRegisterForm } from '../../hooks/react-hook-form/useRegister'
 import { useNavigate, Link } from 'react-router-dom'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from 'react-bootstrap/Toast'
 import { Form } from 'react-bootstrap'
 import { Controller } from 'react-hook-form'
 import FormLabel from 'react-bootstrap/FormLabel'
-import { routes } from '../../constants/routesConstants'
 import Button from 'react-bootstrap/Button'
 import * as API from '../../api/Api'
 import { StatusCode } from '../../constants/errorConstants'
 import authStore from '../../stores/auth.store'
+import { routes } from '../../constants/routesConstants'
 
 const RegisterForm: FC = () => {
     //za toggle show password ko kliknes na eye icon (pass in confirm posebej gumb)
@@ -31,7 +27,6 @@ const RegisterForm: FC = () => {
         const response = await API.register(data)        
         console.log(response);
 
-        //TODO vsi status code ki lahko tu dobis
         if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
             response.data?.statusCode === StatusCode.FORBIDDEN
         ) {
@@ -43,7 +38,7 @@ const RegisterForm: FC = () => {
         }
         else {
             authStore.login(response.data)
-            navigate('/')
+            navigate(routes.HOME)
           }
     })
 

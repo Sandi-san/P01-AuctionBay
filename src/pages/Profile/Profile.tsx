@@ -1,8 +1,7 @@
 import { FC, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
-import Header from '../../components/ui/Header'
 import * as API from '../../api/Api'
 import { UserType } from '../../models/auth'
 import { AuctionType } from '../../models/auction'
@@ -10,10 +9,11 @@ import { StatusCode } from '../../constants/errorConstants'
 import Card from '../../components/ui/Card'
 import authStore from '../../stores/auth.store'
 import PaginateButtons from '../../components/ui/PaginateButtons'
+import { routes } from '../../constants/routesConstants'
 
 interface Props {
   headerHeight: number
-  user: UserType | null // Receive user variable as prop
+  user: UserType | null
   currentTab: number
 }
 
@@ -32,6 +32,7 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
+  //returnaj Auctione glede na current tab (my auctions, bidding, won)
   const fetchAuctionsData = async () => {
     try {
       console.log("Current tab: ", currentTab)
@@ -51,7 +52,6 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
       }
       console.log(response)
 
-      //TODO vsi status code ki lahko tu dobis
       if (response.data?.statusCode === StatusCode.BAD_REQUEST ||
         response.data?.statusCode === StatusCode.FORBIDDEN
       ) {
@@ -88,9 +88,10 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
 
   // Pagination logic
   const goToPage = (pageNumber: number) => {
-    navigate(`/profile?page=${pageNumber}`)
+    navigate(`${routes.PROFILE}?page=${pageNumber}`)
   }
 
+  //glede na katerem tabu smo, vrni content za izpis, ce so response Auctioni empty
   const renderContent = () => {
     switch (currentTab) {
       case 1:
@@ -140,7 +141,7 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
                 </div>
               ))}
             </div>
-
+            {/* buttoni za preklapljanje cez strani */}
             <PaginateButtons
               currentPage={currentPage}
               totalPages={totalPages}
@@ -148,6 +149,7 @@ const Profile: FC<Props> = ({ headerHeight, user, currentTab }) => {
             />
           </>
         ) : (
+          // izrisi tekst, ce ni Auctionov
           renderContent()
         )}
         {showError && (
