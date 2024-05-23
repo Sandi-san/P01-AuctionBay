@@ -1,7 +1,7 @@
-import Flow from '../components/ui/Flow'
-import Sidebar from '../components/ui/Sidebar'
-import LoginForm from '../components/user/LoginForm'
-import { FC } from 'react'
+import Flow from '../components/ui/Flow';
+import Sidebar from '../components/ui/Sidebar';
+import LoginForm from '../components/user/LoginForm';
+import { FC } from 'react';
 
 //LOGIN PAGE
 const Login: FC = () => {
@@ -18,6 +18,6 @@ const Login: FC = () => {
         </Sidebar>
       </div>
     </div>
-  )
-}
-export default Login
+  );
+};
+export default Login;

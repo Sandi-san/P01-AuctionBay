@@ -1,12 +1,12 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm } from 'react-hook-form'
-import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 //STRUKTURA ZA CREATE BID FORME
 export interface CreateBidFields {
-  price: number,
-  userId: number,
-  auctionId: number,
+  price: number;
+  userId: number;
+  auctionId: number;
 }
 
 //FORMA KATERO SKLICUJEMO V FORMAH
@@ -15,7 +15,7 @@ export const useCreateBidForm = () => {
     price: Yup.number().required('Price is required'),
     userId: Yup.number().required(),
     auctionId: Yup.number().required(),
-  })
+  });
 
   const {
     handleSubmit,
@@ -29,15 +29,15 @@ export const useCreateBidForm = () => {
       auctionId: 0,
     },
     mode: 'onSubmit',
-    resolver: yupResolver(CreateBidSchema)
-  })
+    resolver: yupResolver(CreateBidSchema),
+  });
 
   return {
     handleSubmit,
     errors,
     control,
     setValue,
-  }
-}
+  };
+};
 
-export type CreateUpdateBidSchema = ReturnType<typeof useCreateBidForm>
+export type CreateUpdateBidSchema = ReturnType<typeof useCreateBidForm>;

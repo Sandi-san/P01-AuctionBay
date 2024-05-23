@@ -1,9 +1,9 @@
-import { FC, lazy, Suspense } from 'react'
-import { Route, RouteProps, Routes as Switch } from 'react-router-dom'
-import PrivateRoute from './PrivateRoute'
-import RestrictedRoute from './RestrictedRoute'
-import Loading from '../components/ui/Loading'
-import AuctionsIndex from '../pages/AuctionsIndex'
+import { FC, lazy, Suspense } from 'react';
+import { Route, RouteProps, Routes as Switch } from 'react-router-dom';
+import PrivateRoute from './PrivateRoute';
+import RestrictedRoute from './RestrictedRoute';
+import Loading from '../components/ui/Loading';
+import AuctionsIndex from '../pages/AuctionsIndex';
 
 export enum RouteType {
   PUBLIC,
@@ -12,24 +12,24 @@ export enum RouteType {
 }
 
 type AppRoute = RouteProps & {
-  type?: RouteType
-}
+  type?: RouteType;
+};
 
 // Public routes
-const Home = lazy(() => import('../pages/Home'))
-const Auction = lazy(() => import('../pages/Auction'))
-const Auctions = lazy(() => import('../pages/Auctions'))
+const Home = lazy(() => import('../pages/Home'));
+const Auction = lazy(() => import('../pages/Auction'));
+const Auctions = lazy(() => import('../pages/Auctions'));
 
 // Private routes
-const ProfileIndex = lazy(() => import('../pages/Profile/ProfileIndex'))
+const ProfileIndex = lazy(() => import('../pages/Profile/ProfileIndex'));
 
 // Restricted routes
-const Login = lazy(() => import('../pages/Login'))
-const Register = lazy(() => import('../pages/Register'))
-const Password = lazy(() => import('../pages/Password'))
+const Login = lazy(() => import('../pages/Login'));
+const Register = lazy(() => import('../pages/Register'));
+const Password = lazy(() => import('../pages/Password'));
 
 // Error routes
-const Page404 = lazy(() => import('../pages/Page404'))
+const Page404 = lazy(() => import('../pages/Page404'));
 
 export const AppRoutes: AppRoute[] = [
   // Restricted Routes
@@ -65,7 +65,7 @@ export const AppRoutes: AppRoute[] = [
   {
     type: RouteType.PUBLIC,
     path: '/auctions',
-    children: <AuctionsIndex />
+    children: <AuctionsIndex />,
   },
   {
     type: RouteType.PUBLIC,
@@ -79,7 +79,7 @@ export const AppRoutes: AppRoute[] = [
     path: '*',
     children: <Page404 />,
   },
-]
+];
 
 const Routes: FC = () => {
   return (
@@ -113,7 +113,7 @@ const Routes: FC = () => {
         <Route path="*" element={<Page404 />} />
       </Switch>
     </Suspense>
-  )
-}
+  );
+};
 
-export default Routes
+export default Routes;

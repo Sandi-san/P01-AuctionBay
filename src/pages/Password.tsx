@@ -1,7 +1,7 @@
-import Flow from '../components/ui/Flow'
-import Sidebar from '../components/ui/Sidebar'
-import ForgotPasswordForm from '../components/user/ForgotPasswordForm'
-import { FC } from 'react'
+import Flow from '../components/ui/Flow';
+import Sidebar from '../components/ui/Sidebar';
+import ForgotPasswordForm from '../components/user/ForgotPasswordForm';
+import { FC } from 'react';
 
 //FORGOT PASSWORD PAGE
 const Password: FC = () => {
@@ -16,6 +16,6 @@ const Password: FC = () => {
         </Sidebar>
       </div>
     </div>
-  )
-}
-export default Password
+  );
+};
+export default Password;

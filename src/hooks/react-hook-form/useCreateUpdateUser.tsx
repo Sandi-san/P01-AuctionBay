@@ -1,30 +1,30 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { UpdateUserType } from '../../models/auth'
-import { useForm } from 'react-hook-form'
-import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup';
+import { UpdateUserType } from '../../models/auth';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 //STRUKTURA ZA CREATE USER FORME
 export interface CreateUserFields {
-  firstName?: string
-  lastName?: string
-  email: string
-  password: string
-  confirm_password: string
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  password: string;
+  confirm_password: string;
 }
 
 //STRUKTURA ZA UPDATE USER FORME
 export interface UpdateUserFields {
-  firstName?: string
-  lastName?: string
-  email: string
-  old_password?: string
-  password?: string
-  confirm_password?: string
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  old_password?: string;
+  password?: string;
+  confirm_password?: string;
 }
 
 //za update
 interface Props {
-  defaultValues?: UpdateUserType
+  defaultValues?: UpdateUserType;
 }
 
 //FORMA KATERO SKLICUJEMO V FORMAH
@@ -48,7 +48,7 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
     confirm_password: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords do not match')
       .required('Passwords do not match'),
-  })
+  });
 
   const UpdateUserSchema = Yup.object().shape({
     firstName: Yup.string().notRequired(),
@@ -59,7 +59,7 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
     confirm_password: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords do not match')
       .notRequired(),
-  })
+  });
 
   const {
     handleSubmit,
@@ -80,13 +80,13 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
     resolver: defaultValues
       ? yupResolver(UpdateUserSchema)
       : yupResolver(CreateUserSchema),
-  })
+  });
 
   return {
     handleSubmit,
     errors,
     control,
-  }
-}
+  };
+};
 
-export type CreateUpdateUserForm = ReturnType<typeof useCreateUpdateUserForm>
+export type CreateUpdateUserForm = ReturnType<typeof useCreateUpdateUserForm>;

@@ -1,33 +1,33 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { AuctionType } from "../../models/auction"
-import { useForm } from 'react-hook-form'
-import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup';
+import { AuctionType } from '../../models/auction';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 //STRUKTURA ZA CREATE AUCTION FORME
 export interface CreateAuctionFields {
-  title: string
-  description?: string
-  currentPrice: number
-  status: string
-  duration: Date
-  image?: string
-  userId: number
+  title: string;
+  description?: string;
+  currentPrice: number;
+  status: string;
+  duration: Date;
+  image?: string;
+  userId: number;
 }
 
 //STRUKTURA ZA EDIT AUCTION FORME
 export interface UpdateAuctionFields {
-  title?: string
-  description?: string
-  currentPrice: number
-  status?: string
-  duration: Date
-  image?: string
+  title?: string;
+  description?: string;
+  currentPrice: number;
+  status?: string;
+  duration: Date;
+  image?: string;
   // userId: number
 }
 
 //za update
 interface Props {
-  defaultValues?: AuctionType
+  defaultValues?: AuctionType;
 }
 
 //FORMA KATERO SKLICUJEMO V FORMAH
@@ -40,7 +40,7 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     duration: Yup.date().required('Duration is required'),
     image: Yup.string().notRequired(),
     userId: Yup.number().required(),
-  })
+  });
 
   const UpdateAuctionSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
@@ -49,7 +49,7 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     status: Yup.string().notRequired(),
     duration: Yup.date().notRequired(),
     image: Yup.string().notRequired(),
-  })
+  });
 
   const {
     handleSubmit,
@@ -71,13 +71,15 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     resolver: defaultValues
       ? yupResolver(UpdateAuctionSchema)
       : yupResolver(CreateAuctionSchema),
-  })
+  });
 
   return {
     handleSubmit,
     errors,
     control,
-  }
-}
+  };
+};
 
-export type CreateUpdateAuctionSchema = ReturnType<typeof useCreateUpdateAuctionForm>
+export type CreateUpdateAuctionSchema = ReturnType<
+  typeof useCreateUpdateAuctionForm
+>;

@@ -1,7 +1,7 @@
-import Flow from '../components/ui/Flow'
-import Sidebar from '../components/ui/Sidebar'
-import RegisterForm from '../components/user/RegisterForm'
-import { FC } from 'react'
+import Flow from '../components/ui/Flow';
+import Sidebar from '../components/ui/Sidebar';
+import RegisterForm from '../components/user/RegisterForm';
+import { FC } from 'react';
 
 //REGISTER PAGE
 const Register: FC = () => {
@@ -16,6 +16,6 @@ const Register: FC = () => {
         </Sidebar>
       </div>
     </div>
-  )
-}
-export default Register
+  );
+};
+export default Register;
