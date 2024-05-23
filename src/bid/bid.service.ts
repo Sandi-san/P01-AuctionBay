@@ -43,7 +43,7 @@ export class BidService {
           },
         },
         orderBy: {
-          createdAt: 'desc', //order by
+          price: 'desc', //order by
         },
       });
       return bids;
