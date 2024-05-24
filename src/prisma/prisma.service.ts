@@ -6,23 +6,23 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-    constructor(config: ConfigService) {
-        //constructor od PrismaClient
-        super({
-            datasources: {
-                db:{
-                    url: config.get('DATABASE_URL')
-                }
-            }
-        })
-    }
+  constructor(config: ConfigService) {
+    //constructor od PrismaClient
+    super({
+      datasources: {
+        db: {
+          url: config.get('DATABASE_URL'),
+        },
+      },
+    });
+  }
 
-    cleanDB(){
-        //delete najprej bookmarks & nato users (transaction)
-        return this.$transaction([
-            this.user.deleteMany(),
-            this.auction.deleteMany(),
-            this.bid.deleteMany(),
-        ])
-    }
+  cleanDB() {
+    //delete najprej bookmarks & nato users (transaction)
+    return this.$transaction([
+      this.user.deleteMany(),
+      this.auction.deleteMany(),
+      this.bid.deleteMany(),
+    ]);
+  }
 }

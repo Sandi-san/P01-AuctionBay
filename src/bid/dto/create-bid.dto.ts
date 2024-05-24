@@ -1,17 +1,15 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString } from 'class-validator';
 
-export class CreateBidDto{
-    @IsNumber()
-    price: number
+//struktura data za ustvarjanje Bid-a
+export class CreateBidDto {
+  @IsNumber()
+  price: number;
+  
+  @IsNumber()
+  //@IsNotEmpty()
+  userId: number;
 
-    @IsString()
-    status: string
-
-    @IsNumber()
-    //@IsNotEmpty()
-    userId: number
-
-    @IsNumber()
-    //@IsNotEmpty()
-    auctionId: number
+  @IsNumber()
+  //@IsNotEmpty()
+  auctionId: number;
 }

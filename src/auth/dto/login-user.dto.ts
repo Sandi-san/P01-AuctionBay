@@ -1,13 +1,12 @@
-//DEFINIRAJ OBLIKO BODY PRI POST (CREATE) ZAHTEVKIH
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-import { IsEmail, IsNotEmpty, IsString } from "class-validator"
+//struktura data, ki posiljamo pri user login (POST)
+export class LoginUserDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
-export class LoginUserDto{
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
-
-    @IsString()
-    @IsNotEmpty()
-    password: string;
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }

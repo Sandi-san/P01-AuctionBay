@@ -8,8 +8,10 @@ import { BidModule } from './bid/bid.module';
 
 @Module({
   //DEFINIRAJ VSE MODULE PROJEKTA, DA BO LAHKO APP ZAZNAL
+  //ConfigModule: da lahko uporabljamo config v celim app brez import
+  //PrismaModule: povezava z DB
   imports: [
-    ConfigModule.forRoot({isGlobal:true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
     UserModule,

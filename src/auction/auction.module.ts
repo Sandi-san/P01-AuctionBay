@@ -8,6 +8,6 @@ import { BidModule } from 'src/bid/bid.module';
   imports: [BidModule, forwardRef(() => UserModule)],
   controllers: [AuctionController],
   providers: [AuctionService],
-  exports: [AuctionService]
+  exports: [AuctionService],
 })
 export class AuctionModule {}

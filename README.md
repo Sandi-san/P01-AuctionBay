@@ -2,156 +2,198 @@
 
 <img alt="image" src="https://c1india.com/wp-content/uploads/2020/05/Bidding-process.jpg" width="600px" /> 
 
-**Short description** :
+## Description:
 
-Build a Full-stack auction web application that enables users to create and manage events for auctions. Registered users can create auction events by providing images, event titles, descriptions, starting prices, and auction durations. Bidders can participate in auctions, place bids, and view the status of their bids. Bids are incrementally increased until reaching the user's specified maximum bid. The highest bid at the end of the auction period wins the item. Sellers can manage their auction events and view bidding histories.
+AuctionBay is a dynamic full-stack auction web application where users can effortlessly create and manage auction events.<br>
+Sellers can showcase their items with images, descriptions, and starting prices, while bidders engage in the purchase of items through incremental bidding until reaching their maximum bid or end duration of an auction.<br>
+Bidders can track their bids, and at the end of the auction period, the highest bid secures the item. Sellers have access to comprehensive analytics and bidding histories throughout the auction process.
 
+## Used technologies:
+<img alt="image" src="https://brotherants.com/skillupmentor/images/image5.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image7.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image12.png" width="25px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image17.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image4.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image3.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image19.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image1.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image11.png" width="30px" /> <img alt="image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX9fZzRj7BuQAtuf6RSuqIjWEaai2Vl7sFq2Y6tKq5hA&s" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image2.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image10.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image8.png" width="30px" /> <img alt="image" src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/287/square_480/prismaHD.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image14.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image9.png" width="30px" />
+<br>
 
-**Technologies you will use** :
+**Backend:**
+- Nest.js (application main structure)
+- Node (main framework)
+- Prisma (interaction with database)
+- PostgreSQL (database)
+- Argon2 (encryption)
+- Express (API handling)
+- Jwt (Authentication)
 
-Html, Css, Figma, JavaScript, Typescript, Node, NestJS, Express, React, Docker, AWS, Git, GitHub, PostgreSQL, Prisma, JWT, Postman, Trello
+**Frontend:**
+- React (application main structure)
+- React Bootstrap (bootstrap CSS framework)
+- React Dom (DOM element management)
+- React Hook Form (form state and validation)
+- React Query (fetching server data)
+- Axios (API request)
+- Mobx (component management)
+- Yup (schema definition for forms)
+- TailWind (CSS styling)
 
-<img alt="image" src="https://brotherants.com/skillupmentor/images/image5.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image7.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image12.png" width="25px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image17.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image4.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image3.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image19.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image1.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image11.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image18.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image16.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image2.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image10.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image8.png" width="30px" /> <img alt="image" src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/287/square_480/prismaHD.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image14.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image9.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image13.png" width="30px" /> 
+**Other:**
+- JSON (structure of API calls)
+- HTML (browser display)
+- Figma (frontend design)
+- JavaScript, TypeScript (main programming language)
+- Git, GitHub (versioning)
+- Postman (testing of API calls)
 
-**Pre-requirements** :
+## Installation:
 
-- GitHub account
-- Trello account
-- AWS account
-- Figma account
-- Local PostgreSQL
+1. Open command prompt in directory where you want to run the project.
+2. Download Node Package Manager (NPM): [Node.js](https://nodejs.org/)
+3. Clone this repo:
+   ```sh
+   git clone https://github.com/Sandi-san/P01-AuctionBay.git
+4. Navigate to project directory:
+    ```sh
+   cd P01-AuctionBay
+5.	Install project dependencies:
+    ```sh
+    npm install
+6.	Configure project:
+  - Create database
+  - Create credentials in .env file
+    ```sh
+    DATABASE_URL="postgresql://postgres:USER@localhost:5432/DB_NAME?schema=public"
+    JWT_SECRET="YOUR_JWT_TOKEN"
+7.	Run the application:
+    ```sh
+    npm run
 
-**Prepared** :
+## Endpoints
 
-- Figma design and UX for frontend
-- Trello template for managing tasks
+The backend portion of the project consists of API endpoint routes that the frontend portion of the application calls to receive or change data in the database.
 
-**Use** :
+The endpoints expect and return requests in JSON format. They consist of three main classes: User, Auction, and Bid. User is split into its own class, User, as well as Auth.
 
-- The latest stable Node
-- **Typescript**
-- For DBMS use PostgreSQL
-- Latest stable NestJS with Express.js framework (**Typescript**)
-- Git &amp; GitHub (create separate Git for backend and frontend)
-- Latest stable ReactJS for frontend (with **TypeScript** )
-- Postman for testing API
-- Use local storage for images.
-- Use DB migrations (NestJS has great way for this).
+All available endpoint routes are noted below. The **bolded endpoints** require authentication to be accessed: `Authorization: Bearer "token"`.
 
+### Auth class:
 
-**Required functionality** :
+The Auth endpoints return an access token rather than the entire User object for security reasons. The frontend uses the access token to reach authorized endpoints.
 
-- JWT token authentication
-- JSON server responses
-- Figma pixel perfect design
-- Deploy the application to an online service of your choice (Heroku, Netlify, AWS …).
-- **Think about security issues that can emerge (https://owasp.org/www-project-top-ten).**
-- In frontend prepare a section for all feedback error messages (use state management).
-- Use .ENV for database credentials (security).
+- **/auth/signup**
 
-**Don&#39;t forget** :
+    Signup with a new user profile (first name, last name, **email, password, confirm password**).
 
-- Prepare Readme.md to describe the application in GitHub.
-- Maintain a consistent code style (Usage of linters/prettifiers is recommended).
-- Divide the tasks in Trello according to the instructions. For each task estimated time (in hours) for completing the task.
-- Branch each task in Github (GitFlow).
-- For design use CSS or Styled components.
+- **/auth/login**
 
-**Bonus** :
+    Login as a user (**email, password**).
+    
+- **/auth/signout**
 
-- Docker (for backend)
-  - For local environment configuration (database, env vars, ...)
-  - Dockerfile for building a docker image from the application code
-
-- Deploy backend Docker Container on AWS
-- Deploy frontend on AWS S3
-
-- Image storage on AWS S3.
-
-- Buld Frontend in NextJS.
-
-- Implement an automatic bidding feature.
-- Notified the winner of the auction with message in app.
-
-- Tests
-  - All your endpoints must have at least one test, multiple edge case tests are a bonus
-  - All tests must pass
-  - Separate environment for testing
-
-**Description** :
-
-The REST API should provide adequate JSON responses to these endpoints. The **bolded** endpoints are authenticated calls. Select the appropriate REST calls (get, put, post, delete) by yourself.
-
-**Design (Figma):**
-
-- [Link to Figma](https://www.figma.com/file/uDZgkwfYXsrf90uDlqp7Iu/ahub?type=design&node-id=0-1&mode=design)
-- On page Components/Bonus you have UI for bonus version (Autobiding, Messeging).
-
-**Endpoints** :
-
-/signup
-
-```Sign up to the system (username, password)```
-
-/login
-
-```Logs in an existing user with a password```
-
-**/me**
-
-```Get the currently logged in user information```
-
-**/me/auction**
-
-```Post your auction```
-
-**/me/auction/:id**
-
-```Update your auction (you can update only your auctions)```
-
-**/me/update-password**
-
-```Update the current users password```
-
-**/auctions/:id/bid**
-
-```Bid on a auction```
-
-/auctions
-
-```List active auctions orderd by date od auction ending ```
-
-**Check design and if the needed endpoint is not listed, add endpoints that you need.**
+    Logs out the user and deletes the local access token.
 
 
-**Material (tutorials …)**:
+### User class:
+- **/me**
+    
+    Returns the user object of the currently logged user.
 
-- <a href="https://ionian-pram-941.notion.site/SkillUp-Mentor-Pre-Boarding-SLO-6867a8fefbee4e6c8e073a72c0119aa2" target="_blank">Pre-boarding document</a>
-- <a href="https://trello.com/b/zDGE8zl0/project-template" target="_blank">Trello template</a>
-- <a href="https://ionian-pram-941.notion.site/SkillUp-Mentor-Pre-Boarding-SLO-6867a8fefbee4e6c8e073a72c0119aa2" target="_blank">Project materials</a>
-  
-**But first**:
-- Share your GitHub repository with mentors@skillupmentor.com
-- Share your Trello board with mentors@skillupmentor.com
+- **/me/edit**
 
-**Tips (how to start):**
+    Update the credentials of the current user (first name, last name, email).
 
-- Backend: 
-  - Create a new NestJS project https://docs.nestjs.com/first-steps
-  - Create database and connect to it https://docs.nestjs.com/techniques/database
-  - Consider what kind of tables we will need and create Entities (we generate a database structure from entities with the help of Prisma, recommended via migrations, but we can also start with the help of sync: true)
-  - Add configuration to securely read env variables https://docs.nestjs.com/techniques/configuration
-  - Continue creating modules (module, controller, service, repository) following the example of the Repository pattern https://docs.nestjs.com/techniques/database#repository-pattern
-- Frontend:
-  - <a href="https://vitejs.dev/guide/" target="_blank">Vite React with TypeScript</a>
-  - Data structure + Boilerplate: <a href="https://dev.to/yacouri/reactjs-folder-structure-boilerplate-155n" target="_blank">https://dev.to/yacouri/reactjs-folder-structure-boilerplate-155n</a>
+- **/me/upload-image**
 
-**Use Functional Components in React!**
+    Upload and update the profile image of the current user (**file**).
 
-<img alt="Use Functional Components in React!" src="https://brotherants.com/skillupmentor/images/functional-class-compnent.png" width="600px" />
+- **/me/update-password**
 
-**CODE REVIEW**:
-When you finish the project, apply for a code review: <a href="https://forms.gle/sxtxWrzJaom81Dxx8" target="_blank">Code review apply</a>
+    Change the password of the current user (**old password, new password, confirm new password**).
+
+- **/me/auction**
+
+    Create a new auction as current user (**title**, description, **current price, duration**, image).
+
+- **/me/auction/:id**
+
+    Update the info of an auction (title, description, duration, image)<br>
+    The image is uploaded onto a separate route, that is called if the frontend posts an image file:<br>
+    **/me/auction/:id/upload-image** (**file**)
+
+- **/me/auctions**
+
+    Return all auctions created by the current user. Returns paginated result.
+
+- **/me/auctions/won**
+
+    Return all auctions won by the current user. Returns paginated result.
+
+- **/me/auctions/bidding**
+
+    Return all auctions that the current user is bidding on. Returns paginated result.
+
+### Auction class:
+- /auctions
+
+    Return all currently running auctions from all users. Returns paginated result.
+
+- /auctions/:id
+
+    Return one auction.
+
+- /auctions/:id/bids
+
+    Return all bids placed on one auction.
+
+- **/auctions/:id/bid**
+
+    Bid on an auction as current user (**price**).
+
+#### Bid class has no defined routes.
+
+For more information, check the rest.http file.
+
+## Database scheme:
+
+```graphql
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  email    String @unique
+  password String
+  image   String?
+  Auction Auction[]
+  Bid     Bid[]
+  @@map("users")
+}
+
+model Auction {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title       String
+  description String?
+  currentPrice Int
+  status       String @default("In progress") //done, in progress
+  duration DateTime
+  image    String?
+  //FOREIGN KEY
+  userId Int
+  user   User  @relation(fields: [userId], references: [id])
+  Bid    Bid[]
+  @@map("auctions")
+}
+
+model Bid {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  price  Int
+  //FOREIGN KEYS
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+  auctionId Int
+  auction   Auction @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  @@map("bids")
+}
+```
 
 **Disclaimer :**
 
