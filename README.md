@@ -69,7 +69,7 @@ The backend portion of the project consists of API endpoint routes that the fron
 
 The endpoints expect and return requests in JSON format. They consist of three main classes: User, Auction, and Bid. User is split into its own class, User, as well as Auth.
 
-All available endpoint routes are noted below. The **bolded endpoints** require authentication to be accessed: `Authorization: Bearer "{{token}}"`.
+All available endpoint routes are noted below. The **bolded endpoints** require authentication to be accessed: `Authorization: Bearer "token"`.
 
 ### Auth class:
 
@@ -145,6 +145,8 @@ The Auth endpoints return an access token rather than the entire User object for
     Bid on an auction as current user (**price**).
 
 #### Bid class has no defined routes.
+
+For more information, check the rest.http file.
 
 ## Database scheme:
 
