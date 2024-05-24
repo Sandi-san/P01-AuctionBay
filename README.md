@@ -67,8 +67,8 @@ Bidders can track their bids, and at the end of the auction period, the highest 
 
 The layout of the frontend was styled after the [Figma design](https://www.figma.com/file/uDZgkwfYXsrf90uDlqp7Iu/ahub?type=design&node-id=0-1&mode=design).
 
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A1.png" width="30px" /><br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A2.png" width="30px" />
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A1.png" width="1000px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A2.png" width="1000px" />
 
 ## Structure
 
