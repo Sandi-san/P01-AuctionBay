@@ -9,7 +9,7 @@ Sellers can showcase their items with images, descriptions, and starting prices,
 Bidders can track their bids, and at the end of the auction period, the highest bid secures the item. Sellers have access to comprehensive analytics and bidding histories throughout the auction process.
 
 ## Used technologies:
-<img alt="image" src="https://brotherants.com/skillupmentor/images/image5.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image7.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image12.png" width="25px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image17.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image4.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image3.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image19.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image1.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image11.png" width="30px" /><img alt="image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX9fZzRj7BuQAtuf6RSuqIjWEaai2Vl7sFq2Y6tKq5hA&s" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image2.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image10.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image8.png" width="30px" /><img alt="image" src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/287/square_480/prismaHD.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image14.png" width="30px" /><img alt="image" src="https://brotherants.com/skillupmentor/images/image9.png" width="30px" />
+<img alt="image" src="https://brotherants.com/skillupmentor/images/image5.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image7.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image12.png" width="25px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image17.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image4.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image3.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image19.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image1.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image11.png" width="30px" /> <img alt="image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX9fZzRj7BuQAtuf6RSuqIjWEaai2Vl7sFq2Y6tKq5hA&s" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image2.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image10.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image8.png" width="30px" /> <img alt="image" src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/287/square_480/prismaHD.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image14.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image9.png" width="30px" />
 <br>
 
 **Backend:**
@@ -52,17 +52,16 @@ Bidders can track their bids, and at the end of the auction period, the highest 
    cd P01-AuctionBay
 5.	Install project dependencies:
     ```sh
-   npm install
+    npm install
 6.	Configure project:
   - Create database
   - Create credentials in .env file
     ```sh
-   DATABASE_URL="postgresql://postgres:USER@localhost:5432/DB_NAME?schema=public"
-   JWT_SECRET="YOUR_JWT_TOKEN"
-    
+    DATABASE_URL="postgresql://postgres:USER@localhost:5432/DB_NAME?schema=public"
+    JWT_SECRET="YOUR_JWT_TOKEN"
 7.	Run the application:
     ```sh
-   npm run
+    npm run
 
 ## Endpoints
 
