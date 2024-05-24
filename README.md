@@ -67,8 +67,8 @@ Bidders can track their bids, and at the end of the auction period, the highest 
 
 The layout of the frontend was styled after the [Figma design](https://www.figma.com/file/uDZgkwfYXsrf90uDlqp7Iu/ahub?type=design&node-id=0-1&mode=design).
 
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A1.png" width="30px" /><br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A2.png" width="30px" />
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A1.png" width="1000px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A2.png" width="1000px" />
 
 ## Structure
 
@@ -83,61 +83,61 @@ The frontend is split into three main areas, same as in the Figma design:
 ### Landing pages:
 
 **Home:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B1.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B1.png" width="1000px" /><br>
 The home page is the main page of the application where a new user can choose to sign up into the service, or already start browsing auctions from other users without needing to log in.
 
 **Signup:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B2.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B2.png" width="1000px" /><br>
 The page where a new user will input their credentials. First and last name are optional, but a user must provide an email and password.
 
 **Login:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B3.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B3.png" width="1000px" /><br>
 After signing up, the user can use their new created credentials to log into the site and use all its features.
 
 ### Auction pages:
 
 **Auctions:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C1.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C1.png" width="1000px" /><br>
 The page where all currently running auctions from all users are displayed. To prevent heavy resource intensiveness, only a few auctions are displayed at a time. More auctions can be viewed by browsing the pages.
 
 **Auction:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C5.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C5.png" width="1000px" /><br>
 The page where you can view the full details of an auction item and also the latest bids placed on said item. Logged users can also bid on the item.
 
 ### Profile pages:
 
 **My auctions:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C2.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C2.png" width="1000px" /><br>
 These pages are only available to logged users and are separated in tabs. This tab displays all auctions created by the current user.
 
 **Bidding:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C3.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C3.png" width="1000px" /><br>
 This tab shows the auctions where the user has placed a bid and the auction is still ongoing.
 
 **Won:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C4.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C4.png" width="1000px" /><br>
 This tab shows all the auctions the user has won in the past.
 
 ### Popups and other forms:
 
 **Add auction:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D2.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D2.png" width="300px" /><br>
 The logged user can create a new auction that other users can bid on.
 
 **Edit auction:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D1.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D1.png" width="300px" /><br>
 The logged user can edit the details of their own auction.
 
 **Profile settings:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D3.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D3.png" width="300px" /><br>
 The logged user can change their credentials; their first and last name, as well as their email.
 
 **Profile password:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D4.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D4.png" width="300px" /><br>
 The logged user can change their password.
 
 **Profile image:**<br>
-<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D5.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D5.png" width="300px" /><br>
 The logged user can add or change their profile image, which is used for their recognition on the site.
 
 **Disclaimer :**
