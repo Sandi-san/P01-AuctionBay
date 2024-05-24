@@ -2,40 +2,36 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const onDefault = () => {
-  document.title = 'Tutorial';
+  document.title = 'AuctionBay';
   document.body.id = '';
 };
 const onHome = () => {
-  document.title = 'Tutorial';
+  document.title = 'AuctionBay';
   document.body.id = 'home-page';
 };
-const onDashboard = () => {
-  document.title = 'Tutorial - Dashboard';
-  document.body.id = 'dashboard-page';
+const onAuctions = () => {
+  document.title = 'AuctionBay - Auctions';
+  document.body.id = 'auctions-page';
+};
+const onProfile = () => {
+  document.title = 'AuctionBay - Profile';
+  document.body.id = 'profile-page';
 };
 const onLogin = () => {
-  document.title = 'Tutorial - Login';
+  document.title = 'AuctionBay - Login';
   document.body.id = 'login-page';
 };
 const onSignup = () => {
-  document.title = 'Tutorial - Signup';
+  document.title = 'AuctionBay - Signup';
   document.body.id = 'signup-page';
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const callbacks: any = {
   '/': [onHome],
-  '/dashboard': [onDashboard],
-  '/dashboard/users': [onDashboard],
-  '/dashboard/users/add': [onDashboard],
-  '/dashboard/users/edit': [onDashboard],
-  '/dashboard/roles': [onDashboard],
-  '/dashboard/roles/add': [onDashboard],
-  '/dashboard/roles/edit': [onDashboard],
-  '/dashboard/products': [onDashboard],
-  '/dashboard/products/add': [onDashboard],
-  '/dashboard/products/edit': [onDashboard],
-  '/dashboard/orders': [onDashboard],
+  '/auction': [onAuctions],
+  '/auctions': [onAuctions],
+  '/profile': [onProfile],
   '/login': [onLogin],
   '/signup': [onSignup],
   '*': [onDefault],

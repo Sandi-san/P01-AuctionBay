@@ -2,156 +2,143 @@
 
 <img alt="image" src="https://c1india.com/wp-content/uploads/2020/05/Bidding-process.jpg" width="600px" /> 
 
-**Short description** :
+## Description:
 
-Build a Full-stack auction web application that enables users to create and manage events for auctions. Registered users can create auction events by providing images, event titles, descriptions, starting prices, and auction durations. Bidders can participate in auctions, place bids, and view the status of their bids. Bids are incrementally increased until reaching the user's specified maximum bid. The highest bid at the end of the auction period wins the item. Sellers can manage their auction events and view bidding histories.
+AuctionBay is a dynamic full-stack auction web application where users can effortlessly create and manage auction events.<br>
+Sellers can showcase their items with images, descriptions, and starting prices, while bidders engage in the purchase of items through incremental bidding until reaching their maximum bid or end duration of an auction.<br>
+Bidders can track their bids, and at the end of the auction period, the highest bid secures the item. Sellers have access to comprehensive analytics and bidding histories throughout the auction process.
 
+## Used technologies:
+<img alt="image" src="https://brotherants.com/skillupmentor/images/image5.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image7.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image12.png" width="25px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image17.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image4.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image3.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image19.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image1.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image11.png" width="30px" /> <img alt="image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX9fZzRj7BuQAtuf6RSuqIjWEaai2Vl7sFq2Y6tKq5hA&s" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image2.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image10.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image8.png" width="30px" /> <img alt="image" src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/287/square_480/prismaHD.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image14.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image9.png" width="30px" />
+<br>
 
-**Technologies you will use** :
+**Backend:**
+- Nest.js (application main structure)
+- Node (main framework)
+- Prisma (interaction with database)
+- PostgreSQL (database)
+- Argon2 (encryption)
+- Express (API handling)
+- Jwt (Authentication)
 
-Html, Css, Figma, JavaScript, Typescript, Node, NestJS, Express, React, Docker, AWS, Git, GitHub, PostgreSQL, Prisma, JWT, Postman, Trello
+**Frontend:**
+- React (application main structure)
+- React Bootstrap (bootstrap CSS framework)
+- React Dom (DOM element management)
+- React Hook Form (form state and validation)
+- React Query (fetching server data)
+- Axios (API request)
+- Mobx (component management)
+- Yup (schema definition for forms)
+- TailWind (CSS styling)
 
-<img alt="image" src="https://brotherants.com/skillupmentor/images/image5.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image7.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image12.png" width="25px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image17.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image4.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image3.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image19.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image1.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image11.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image18.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image16.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image2.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image10.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image8.png" width="30px" /> <img alt="image" src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/287/square_480/prismaHD.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image14.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image9.png" width="30px" /> <img alt="image" src="https://brotherants.com/skillupmentor/images/image13.png" width="30px" /> 
+**Other:**
+- JSON (structure of API calls)
+- HTML (browser display)
+- Figma (frontend design)
+- JavaScript, TypeScript (main programming language)
+- Git, GitHub (versioning)
+- Postman (testing of API calls)
 
-**Pre-requirements** :
+## Installation:
 
-- GitHub account
-- Trello account
-- AWS account
-- Figma account
-- Local PostgreSQL
+1. Open command prompt in directory where you want to run the project.
+2. Download Node Package Manager (NPM): [Node.js](https://nodejs.org/)
+3. Clone this repo:
+   ```sh
+   git clone https://github.com/Sandi-san/P01-AuctionBay.git
+4. Navigate to project directory:
+    ```sh
+   cd P01-AuctionBay
+5.	Install project dependencies:
+    ```sh
+    npm install
+6.	Configure project:
+  - Create credentials in .env file
+    ```sh
+    REACT_APP_API_URL="DOMAIN_AND_PORT_OF_YOUR_BACKEND"
+7.	Run the application:
+    ```sh
+    npm run
 
-**Prepared** :
+# Overview
 
-- Figma design and UX for frontend
-- Trello template for managing tasks
+## Design
 
-**Use** :
+The layout of the frontend was styled after the [Figma design](https://www.figma.com/file/uDZgkwfYXsrf90uDlqp7Iu/ahub?type=design&node-id=0-1&mode=design).
 
-- The latest stable Node
-- **Typescript**
-- For DBMS use PostgreSQL
-- Latest stable NestJS with Express.js framework (**Typescript**)
-- Git &amp; GitHub (create separate Git for backend and frontend)
-- Latest stable ReactJS for frontend (with **TypeScript** )
-- Postman for testing API
-- Use local storage for images.
-- Use DB migrations (NestJS has great way for this).
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A1.png" width="30px" /><br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/A2.png" width="30px" />
 
+## Structure
 
-**Required functionality** :
+The frontend is split into three main areas, same as in the Figma design:
+    
+- Landing page (Home, Login, Signup)
 
-- JWT token authentication
-- JSON server responses
-- Figma pixel perfect design
-- Deploy the application to an online service of your choice (Heroku, Netlify, AWS …).
-- **Think about security issues that can emerge (https://owasp.org/www-project-top-ten).**
-- In frontend prepare a section for all feedback error messages (use state management).
-- Use .ENV for database credentials (security).
+- Auction (All auctions, One auction)
 
-**Don&#39;t forget** :
+- Profile (My auctions, Bidding auctions, Won auctions)
 
-- Prepare Readme.md to describe the application in GitHub.
-- Maintain a consistent code style (Usage of linters/prettifiers is recommended).
-- Divide the tasks in Trello according to the instructions. For each task estimated time (in hours) for completing the task.
-- Branch each task in Github (GitFlow).
-- For design use CSS or Styled components.
+### Landing pages:
 
-**Bonus** :
+**Home:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B1.png" width="30px" /><br>
+The home page is the main page of the application where a new user can choose to sign up into the service, or already start browsing auctions from other users without needing to log in.
 
-- Docker (for backend)
-  - For local environment configuration (database, env vars, ...)
-  - Dockerfile for building a docker image from the application code
+**Signup:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B2.png" width="30px" /><br>
+The page where a new user will input their credentials. First and last name are optional, but a user must provide an email and password.
 
-- Deploy backend Docker Container on AWS
-- Deploy frontend on AWS S3
+**Login:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/B3.png" width="30px" /><br>
+After signing up, the user can use their new created credentials to log into the site and use all its features.
 
-- Image storage on AWS S3.
+### Auction pages:
 
-- Buld Frontend in NextJS.
+**Auctions:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C1.png" width="30px" /><br>
+The page where all currently running auctions from all users are displayed. To prevent heavy resource intensiveness, only a few auctions are displayed at a time. More auctions can be viewed by browsing the pages.
 
-- Implement an automatic bidding feature.
-- Notified the winner of the auction with message in app.
+**Auction:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C5.png" width="30px" /><br>
+The page where you can view the full details of an auction item and also the latest bids placed on said item. Logged users can also bid on the item.
 
-- Tests
-  - All your endpoints must have at least one test, multiple edge case tests are a bonus
-  - All tests must pass
-  - Separate environment for testing
+### Profile pages:
 
-**Description** :
+**My auctions:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C2.png" width="30px" /><br>
+These pages are only available to logged users and are separated in tabs. This tab displays all auctions created by the current user.
 
-The REST API should provide adequate JSON responses to these endpoints. The **bolded** endpoints are authenticated calls. Select the appropriate REST calls (get, put, post, delete) by yourself.
+**Bidding:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C3.png" width="30px" /><br>
+This tab shows the auctions where the user has placed a bid and the auction is still ongoing.
 
-**Design (Figma):**
+**Won:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/C4.png" width="30px" /><br>
+This tab shows all the auctions the user has won in the past.
 
-- [Link to Figma](https://www.figma.com/file/uDZgkwfYXsrf90uDlqp7Iu/ahub?type=design&node-id=0-1&mode=design)
-- On page Components/Bonus you have UI for bonus version (Autobiding, Messeging).
+### Popups and other forms:
 
-**Endpoints** :
+**Add auction:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D2.png" width="30px" /><br>
+The logged user can create a new auction that other users can bid on.
 
-/signup
+**Edit auction:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D1.png" width="30px" /><br>
+The logged user can edit the details of their own auction.
 
-```Sign up to the system (username, password)```
+**Profile settings:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D3.png" width="30px" /><br>
+The logged user can change their credentials; their first and last name, as well as their email.
 
-/login
+**Profile password:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D4.png" width="30px" /><br>
+The logged user can change their password.
 
-```Logs in an existing user with a password```
-
-**/me**
-
-```Get the currently logged in user information```
-
-**/me/auction**
-
-```Post your auction```
-
-**/me/auction/:id**
-
-```Update your auction (you can update only your auctions)```
-
-**/me/update-password**
-
-```Update the current users password```
-
-**/auctions/:id/bid**
-
-```Bid on a auction```
-
-/auctions
-
-```List active auctions orderd by date od auction ending ```
-
-**Check design and if the needed endpoint is not listed, add endpoints that you need.**
-
-
-**Material (tutorials …)**:
-
-- <a href="https://ionian-pram-941.notion.site/SkillUp-Mentor-Pre-Boarding-SLO-6867a8fefbee4e6c8e073a72c0119aa2" target="_blank">Pre-boarding document</a>
-- <a href="https://trello.com/b/zDGE8zl0/project-template" target="_blank">Trello template</a>
-- <a href="https://ionian-pram-941.notion.site/SkillUp-Mentor-Pre-Boarding-SLO-6867a8fefbee4e6c8e073a72c0119aa2" target="_blank">Project materials</a>
-  
-**But first**:
-- Share your GitHub repository with mentors@skillupmentor.com
-- Share your Trello board with mentors@skillupmentor.com
-
-**Tips (how to start):**
-
-- Backend: 
-  - Create a new NestJS project https://docs.nestjs.com/first-steps
-  - Create database and connect to it https://docs.nestjs.com/techniques/database
-  - Consider what kind of tables we will need and create Entities (we generate a database structure from entities with the help of Prisma, recommended via migrations, but we can also start with the help of sync: true)
-  - Add configuration to securely read env variables https://docs.nestjs.com/techniques/configuration
-  - Continue creating modules (module, controller, service, repository) following the example of the Repository pattern https://docs.nestjs.com/techniques/database#repository-pattern
-- Frontend:
-  - <a href="https://vitejs.dev/guide/" target="_blank">Vite React with TypeScript</a>
-  - Data structure + Boilerplate: <a href="https://dev.to/yacouri/reactjs-folder-structure-boilerplate-155n" target="_blank">https://dev.to/yacouri/reactjs-folder-structure-boilerplate-155n</a>
-
-**Use Functional Components in React!**
-
-<img alt="Use Functional Components in React!" src="https://brotherants.com/skillupmentor/images/functional-class-compnent.png" width="600px" />
-
-**CODE REVIEW**:
-When you finish the project, apply for a code review: <a href="https://forms.gle/sxtxWrzJaom81Dxx8" target="_blank">Code review apply</a>
+**Profile image:**<br>
+<img alt="image" src="https://github.com/Sandi-san/P01-AuctionBay/raw/frontend-main/public/readme_images/D5.png" width="30px" /><br>
+The logged user can add or change their profile image, which is used for their recognition on the site.
 
 **Disclaimer :**
 
