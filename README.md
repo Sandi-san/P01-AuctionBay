@@ -146,9 +146,11 @@ The Auth endpoints return an access token rather than the entire User object for
 
 #### Bid class has no defined routes.
 
-For more information, check the rest.http file.
+For more information, check the *rest.http* file.
 
 ## Database scheme:
+
+To access the database, use the `prisma studio` command.
 
 ```graphql
 model User {
