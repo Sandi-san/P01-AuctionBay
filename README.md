@@ -61,6 +61,11 @@ Bidders can track their bids, and at the end of the auction period, the highest 
     ```sh
     npm run
 
+
+## Online preview:
+
+You can check out the live preview for the frontend portion of the website [here](https://candid-daifuku-eec7c3.netlify.app/).
+
 # Overview
 
 ## Design
