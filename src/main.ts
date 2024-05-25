@@ -10,7 +10,10 @@ async function bootstrap() {
   //odobri requeste iz drugih domain-ov
   app.enableCors({
     //react = port 3000
-    origin: ['http://localhost:3000'],
+    origin: [
+      'http://localhost:3000',
+      'https://candid-daifuku-eec7c3.netlify.app',
+    ],
     credentials: true,
   });
 
